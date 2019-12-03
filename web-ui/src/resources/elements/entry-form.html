@@ -1,0 +1,19 @@
+<template>
+    <div class="card" style="height: 750px; overflow: auto">
+        <div class="card-body">
+            <h5 class="card-title">Edit Scenario:</h5>
+            <div class="form-group mb-2">
+                <label for="formGroupExampleInput">Feature</label>
+                <input type="text" class="form-control" value.bind="feature" placeholder="...">
+                <label for="formGroupExampleInput">Scenario</label>
+                <input type="text" class="form-control" value.bind="name" placeholder="...">
+            </div>
+
+            <entry-form-group title="Given" entries.bind="scenario.given"></entry-form-group>
+
+            <entry-form-group title="When" entries.bind="scenario.when" single-entry.bind="true"></entry-form-group>
+
+            <entry-form-group title="Then" entries.bind="scenario.then"></entry-form-group>
+        </div>
+    </div>
+</template>

@@ -1,0 +1,17 @@
+<template>
+    <div class="card mb-2">
+        <div class="card-body">
+            <h5 class="card-title">${title}</h5>
+            <div class="input-group mb-2" repeat.for="entry of entries">
+                <input type="text" class="form-control" placeholder="${title}..." aria-label="${title}..."
+                    aria-describedby="button-addon2" value.bind="entry">
+                <div hidden.bind="singleEntry" class="input-group-append">
+                    <button class="btn btn-outline-danger" type="button" click.delegate="remove($index, $event)"><i
+                            class="fas fa-trash-alt"></i></button>
+                </div>
+            </div>
+            <button hidden.bind="singleEntry" class="btn btn-outline-success" type="button" click.delegate="add()"><i
+                    class="fas fa-plus"></i> ${title}</button>
+        </div>
+    </div>
+</template>

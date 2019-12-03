@@ -255,6 +255,11 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
+"@fortawesome/fontawesome-free@^5.11.2":
+  version "5.11.2"
+  resolved "https://registry.yarnpkg.com/@fortawesome/fontawesome-free/-/fontawesome-free-5.11.2.tgz#8644bc25b19475779a7b7c1fc104bc0a794f4465"
+  integrity sha512-XiUPoS79r1G7PcpnNtq85TJ7inJWe0v+b5oZJZKb0pGHNIV6+UiNeQWiFGmuQ0aj7GEhnD/v9iqxIsjuRKtEnQ==
+
 "@jest/console@^24.7.1", "@jest/console@^24.9.0":
   version "24.9.0"
   resolved "https://registry.yarnpkg.com/@jest/console/-/console-24.9.0.tgz#79b1bc06fb74a8cfb01cbdedf945584b1b9707f0"
@@ -1206,6 +1211,14 @@ aurelia-polyfills@^1.0.0, aurelia-polyfills@^1.3.4:
   dependencies:
     aurelia-pal "^1.0.0"
 
+aurelia-resize@^1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/aurelia-resize/-/aurelia-resize-1.1.2.tgz#e8519e49aa35549c083c3f5563eeab62399a5dd9"
+  integrity sha1-6FGeSao1VJwIPD9VY+6rYjmaXdk=
+  dependencies:
+    aurelia-pal "^1.3.0"
+    element-resize-detector "^1.1.10"
+
 aurelia-route-recognizer@^1.3.2:
   version "1.3.2"
   resolved "https://registry.yarnpkg.com/aurelia-route-recognizer/-/aurelia-route-recognizer-1.3.2.tgz#b3b53deafeb9f2a90c729159cbc50d54a4017a0c"
@@ -1441,6 +1454,11 @@ base@^0.11.1:
     isobject "^3.0.1"
     mixin-deep "^1.2.0"
     pascalcase "^0.1.1"
+
+batch-processor@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/batch-processor/-/batch-processor-1.0.0.tgz#75c95c32b748e0850d10c2b168f6bdbe9891ace8"
+  integrity sha1-dclcMrdI4IUNEMKxaPa9vpiRrOg=
 
 batch@0.6.1:
   version "0.6.1"
@@ -2751,6 +2769,13 @@ electron-to-chromium@^1.3.317:
   version "1.3.322"
   resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.322.tgz#a6f7e1c79025c2b05838e8e344f6e89eb83213a8"
   integrity sha512-Tc8JQEfGQ1MzfSzI/bTlSr7btJv/FFO7Yh6tanqVmIWOuNCu6/D1MilIEgLtmWqIrsv+o4IjpLAhgMBr/ncNAA==
+
+element-resize-detector@^1.1.10:
+  version "1.1.15"
+  resolved "https://registry.yarnpkg.com/element-resize-detector/-/element-resize-detector-1.1.15.tgz#48eba1a2eaa26969a4c998d972171128c971d8d2"
+  integrity sha512-16/5avDegXlUxytGgaumhjyQoM6hpp5j3+L79sYq5hlXfTNRy5WMMuTVWkZU3egp/CokCmTmvf18P3KeB57Iog==
+  dependencies:
+    batch-processor "^1.0.0"
 
 elliptic@^6.0.0:
   version "6.5.2"

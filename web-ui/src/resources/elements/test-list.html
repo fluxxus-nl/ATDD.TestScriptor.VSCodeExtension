@@ -1,21 +1,23 @@
 <template>
-    <div style="height: 500px;">
+    <div class="card mb-3" style="height: 750px;">
+        <div class="card-body">
+            <h5 class="card-title">Test Scenarios</h5>
 
-        <ag-grid-aurelia #agGrid style="width: 100%; height: 100%;"
-            class="ag-theme-material" 
-            context.bind="$this" 
-            row-data.bind="data"
-            row-selection.bind="'single'"
-            row-selected.call="selectRow($event.node.data, $event)"
-            grid-options.bind="gridOptions">
+            <ag-grid-aurelia #agGrid style="width: 100%; height: 100%;" class="ag-theme-material" context.bind="$this"
+                row-data.bind="data" row-selection.bind="'single'"
+                row-selected.call="selectRow($event.node.data, $event)" grid-options.bind="gridOptions">
 
-            <ag-grid-column header-name="Feature" field="Feature"></ag-grid-column>
-            <ag-grid-column header-name="Scenario" field="Scenario"></ag-grid-column>
-            <ag-grid-column header-name="Given" field="Given" filter="agTextColumnFilter"></ag-grid-column>
-            <ag-grid-column header-name="When" field="When"></ag-grid-column>
-            <ag-grid-column header-name="Then" field="Then"></ag-grid-column>
-            <ag-grid-column header-name="Description" field="Description"></ag-grid-column>
-        </ag-grid-aurelia>                    
+                <ag-grid-column header-name="Project" field="Project"></ag-grid-column>
+                <ag-grid-column header-name="Feature" field="Feature"></ag-grid-column>
+                <ag-grid-column header-name="Scenario" field="Scenario"></ag-grid-column>
+                <ag-grid-column header-name="Codeunit" field="Codeunit" filter="agTextColumnFilter">
+                    <ag-cell-template>
+                        <a href="#click"
+                            click.delegate="params.context.sendCommand(params.data, 'OpenFile')">${params.data.Codeunit}</a>
+                    </ag-cell-template>
+                </ag-grid-column>
+                <ag-grid-column header-name="Local Result" field="LocalResult"></ag-grid-column>
+            </ag-grid-aurelia>
 
-    </div>
+        </div>
 </template>

@@ -2,16 +2,25 @@
   <require from="styles/bootstrap/bootstrap.min.css"></require>
   <require from="ag-grid-community/dist/styles/ag-grid.css"></require>
   <require from="ag-grid-community/dist/styles/ag-theme-material.css"></require>
+  <require from="styles/common.css"></require>
 
-  <toolbar></toolbar>
+  <div class="fixed-top">
+    <toolbar></toolbar>
+  </div>
 
-  <div class="container-fluid">
-    
+  <div id="main-content" class="container-fluid">
+
     <div class="row">
 
-      <div class="col-md-12">
+      <div class="col-md-8">
 
         <test-list data.bind="state.testEntries"></test-list>
+
+      </div>
+
+      <div class="col-md-4">
+
+        <entry-form scenario.bind="scenario"></entry-form>
 
       </div>
 

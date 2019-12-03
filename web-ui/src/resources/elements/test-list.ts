@@ -32,4 +32,8 @@ export class TestList {
     selectRow(data: any, e: any) {
 
     }
+
+    sendCommand(entry: any, type: string) {
+        
+    }
 }

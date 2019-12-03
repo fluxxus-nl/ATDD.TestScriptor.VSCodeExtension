@@ -8,13 +8,23 @@ export class App {
 
   public state: State;
 
+  private scenario: any = {
+    feature: 'Feature 1',
+    name: 'Scenario 1',
+    given: ['This', 'That', 'And these'],
+    when: ['This happens'],
+    then: ['This should be it', 'That is also true']
+  }
+
   constructor(private store: Store<State>) {
     this.store.registerAction('updateEntries', updateEntries);
   }
 
   attached() {
     this.store.dispatch('updateEntries', [
-      { Feature: 'Test 1', Scenario: 'Scenario 1' }
+      { Project: 'My app', Feature: 'Test 1', Scenario: 'Scenario 1', Codeunit: 'Test 1 Codeunit' },
+      { Project: 'My app', Feature: 'Test 1', Scenario: 'Scenario 2', Codeunit: 'Test 1 Codeunit' },
+      { Project: 'My other app', Feature: 'Test 2', Scenario: 'Scenario 1', Codeunit: 'Test 2 Codeunit' }
     ]);
   }
 

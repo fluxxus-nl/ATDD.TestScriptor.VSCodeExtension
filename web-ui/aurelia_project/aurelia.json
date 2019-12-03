@@ -59,14 +59,12 @@
     },
     "bundles": [
       {
-        "name": "app-bundle.js",
+        "name": "vendor-bundle.js",
         "source": [
           "**/*.{js,json,css,html}"
-        ]
-      },
-      {
-        "name": "vendor-bundle.js",
+        ],
         "prepend": [
+          "node_modules/@fortawesome/fontawesome-free/js/all.min.js",
           "node_modules/promise-polyfill/dist/polyfill.min.js",
           "node_modules/requirejs/require.js"
         ],
