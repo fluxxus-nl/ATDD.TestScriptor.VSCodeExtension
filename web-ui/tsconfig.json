@@ -1,0 +1,29 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "module": "amd",
+    "noImplicitAny": false,
+    "declaration": false,
+    "typeRoots": [
+      "./node_modules/@types"
+    ],
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "sourceMap": true,
+    "target": "es5",
+    "lib": ["es2017", "dom"], 
+    "moduleResolution": "node",
+    "baseUrl": "src",
+    "resolveJsonModule": true,
+    "allowJs": true
+  },
+  "include": [
+    "./src/**/*.ts",
+    "./test/**/*.ts",
+    "./types/**/*.d.ts"
+  ],
+  "atom": {
+    "rewriteTsconfig": false
+  }
+}

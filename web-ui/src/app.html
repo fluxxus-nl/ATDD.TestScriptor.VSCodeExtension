@@ -1,0 +1,22 @@
+<template>
+  <require from="styles/bootstrap/bootstrap.min.css"></require>
+  <require from="ag-grid-community/dist/styles/ag-grid.css"></require>
+  <require from="ag-grid-community/dist/styles/ag-theme-material.css"></require>
+
+  <toolbar></toolbar>
+
+  <div class="container-fluid">
+    
+    <div class="row">
+
+      <div class="col-md-12">
+
+        <test-list data.bind="state.testEntries"></test-list>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</template>

@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": "web-ui"
+		},
+		{
+			"path": "vscode-extension"
+		},
+		{
+			"path": "web-server"
+		}
+	]
+}
