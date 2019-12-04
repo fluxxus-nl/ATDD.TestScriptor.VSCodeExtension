@@ -1,5 +1,5 @@
-import {bootstrap} from 'aurelia-bootstrapper';
-import {StageComponent} from 'aurelia-testing';
+import { bootstrap } from 'aurelia-bootstrapper';
+import { StageComponent } from 'aurelia-testing';
 
 describe('Stage App Component', () => {
   let component;
@@ -12,10 +12,32 @@ describe('Stage App Component', () => {
 
   afterEach(() => component.dispose());
 
-  it('should render message', done => {
+  it('should have main-content', done => {
     component.create(bootstrap).then(() => {
-      const view = component.element;
-      expect(view.textContent.trim()).toBe('Hello World!');
+      const elem = document.querySelector('#main-content');
+      expect(elem).toBeDefined();
+      done();
+    }).catch(e => {
+      fail(e);
+      done();
+    });
+  });
+
+  it('should have Test List', done => {
+    component.create(bootstrap).then(() => {
+      const elem = document.querySelector('test-list');
+      expect(elem).toBeDefined();
+      done();
+    }).catch(e => {
+      fail(e);
+      done();
+    });
+  });
+
+  it('should have Entry Form', done => {
+    component.create(bootstrap).then(() => {
+      const elem = document.querySelector('entry-form');
+      expect(elem).toBeDefined();
       done();
     }).catch(e => {
       fail(e);

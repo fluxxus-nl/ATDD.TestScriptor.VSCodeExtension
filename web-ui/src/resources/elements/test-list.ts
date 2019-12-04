@@ -42,9 +42,9 @@ export class TestList {
     attached() {
         //this.gridOptions.rowHeight = 40; TODO
         this.gridOptions.onGridReady = () => {
-          this.api = this.gridOptions.api;
-          this.columnApi = this.gridOptions.columnApi;
-        };    
+            this.api = this.gridOptions.api;
+            this.columnApi = this.gridOptions.columnApi;
+        };
     }
 
     detached() {
@@ -61,6 +61,7 @@ export class TestList {
     }
 
     stateChanged(newState: State, oldState: State) {
-        console.log('CurrEntry changed', newState.currEntry);
+        if (newState)
+            console.log('CurrEntry changed', newState.currEntry);
     }
 }
