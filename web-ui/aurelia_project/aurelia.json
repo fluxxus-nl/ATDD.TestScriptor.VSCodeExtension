@@ -77,7 +77,6 @@
             "env": "dev"
           },
           "text",
-          "bootstrap",
           {
             "name": "ag-grid-community",
             "path": "../node_modules/ag-grid-community",

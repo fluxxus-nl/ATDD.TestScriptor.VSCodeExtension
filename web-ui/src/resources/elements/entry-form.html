@@ -1,19 +1,22 @@
 <template>
     <div class="card" style="height: 750px; overflow: auto">
         <div class="card-body">
-            <h5 class="card-title">Edit Scenario:</h5>
-            <div class="form-group mb-2">
+            <h5 class="card-title">${scenario !== null ? 'Edit Scenario:' : 'Select a Scenario to edit.'}</h5>
+            <div show.bind="scenario !== null" class="form-group mb-2">
                 <label for="formGroupExampleInput">Feature</label>
-                <input type="text" class="form-control" value.bind="feature" placeholder="...">
+                <input type="text" class="form-control" value.bind="scenario.Feature" placeholder="...">
                 <label for="formGroupExampleInput">Scenario</label>
-                <input type="text" class="form-control" value.bind="name" placeholder="...">
+                <input type="text" class="form-control" value.bind="scenario.Scenario" placeholder="...">
             </div>
 
-            <entry-form-group title="Given" entries.bind="scenario.given"></entry-form-group>
+            <div show.bind="scenario !== null">
+                <entry-form-group title="Given" entries.bind="scenario.Details.given"></entry-form-group>
 
-            <entry-form-group title="When" entries.bind="scenario.when" single-entry.bind="true"></entry-form-group>
+                <entry-form-group title="When" entries.bind="scenario.Details.when" single-entry.bind="true">
+                </entry-form-group>
 
-            <entry-form-group title="Then" entries.bind="scenario.then"></entry-form-group>
+                <entry-form-group title="Then" entries.bind="scenario.Details.then"></entry-form-group>
+            </div>
         </div>
     </div>
 </template>

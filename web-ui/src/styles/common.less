@@ -1,5 +1,5 @@
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family     : 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: rgb(246, 247, 248) !important;
 }
 
@@ -8,5 +8,71 @@ body {
 }
 
 #main-content {
-    margin-top: 130px;
+    margin-top: 108px;
+}
+
+/* ag-grid custom styles */
+
+@bc-green-dark: #008089;
+@bc-green-light: rgb(178, 233, 237);
+@bc-green-lighter: lighten(@bc-green-light, 10%);
+
+.ag-theme-material {
+    background-color: transparent;
+    font-size: 16px;
+
+    .ag-header {
+        background    : none;
+        text-transform: uppercase;
+        font-size     : 16px;
+        font-weight   : 400;
+        color         : #222;
+    }
+
+    .ag-header-cell,
+    .ag-cell {
+        padding-left : 5px;
+        padding-right: 5px;
+    }
+
+    .ag-cell-inline-editing {
+        height: inherit;
+    }
+
+    .ag-cell-inline-editing {
+
+        input[type="text"]:focus,
+        input[type="tel"]:focus,
+        input[type="date"]:focus,
+        input[type="datetime-local"]:focus {
+            border-color: @bc-green-dark !important;
+        }
+    }
+
+    .ag-popup-editor {
+
+        input[type="text"]:focus,
+        input[type="tel"]:focus,
+        input[type="date"]:focus,
+        input[type="datetime-local"]:focus {
+            border-color: @bc-green-dark !important;
+        }
+    }
+
+    .ag-row-hover {
+        background: @bc-green-lighter !important;
+    }
+
+    .ag-row-selected {
+        background: @bc-green-light !important;
+
+        .ag-row-hover {
+            background: @bc-green-light !important;
+        }
+    }
+}
+
+.ag-cell.ag-cell-with-height.ag-cell-value.ag-cell-focus.ag-cell-inline-editing,
+.ag-has-focus .ag-cell-focus {
+    border-color: @bc-green-dark !important;
 }

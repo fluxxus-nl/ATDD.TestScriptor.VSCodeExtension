@@ -25,7 +25,11 @@ export class EntryFormGroup {
     }
 
     add() {
-        this.entries.push('');
+        if (this.entries) {
+            this.entries.push('');
+        } else {
+            this.entries = [''];
+        }
     }
 
     remove(index: number, e: MouseEvent) {

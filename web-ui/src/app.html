@@ -1,8 +1,8 @@
 <template>
-  <require from="styles/bootstrap/bootstrap.min.css"></require>
+  <require from="./styles/bootstrap/bootstrap.min.css"></require>
   <require from="ag-grid-community/dist/styles/ag-grid.css"></require>
   <require from="ag-grid-community/dist/styles/ag-theme-material.css"></require>
-  <require from="styles/common.css"></require>
+  <require from="./styles/common.css"></require>
 
   <div class="fixed-top">
     <toolbar></toolbar>
@@ -14,13 +14,13 @@
 
       <div class="col-md-8">
 
-        <test-list data.bind="state.testEntries"></test-list>
+        <test-list></test-list>
 
       </div>
 
       <div class="col-md-4">
 
-        <entry-form scenario.bind="scenario"></entry-form>
+        <entry-form scenario.to-view="state.currEntry"></entry-form>
 
       </div>
 

@@ -1,12 +1,13 @@
+import { Actions } from './actions/index';
+import { BackendService } from './backend/BackendService';
 import { connectTo, StateHistory, Store } from 'aurelia-store';
 import { State } from 'state';
-import { autoinject } from 'aurelia-framework';
+import { autoinject, observable } from 'aurelia-framework';
+import updateEntries from 'actions/updateEntries';
 
 @autoinject()
 @connectTo<State>()
 export class App {
-
-  public state: State;
 
   private scenario: any = {
     feature: 'Feature 1',
@@ -16,26 +17,20 @@ export class App {
     then: ['This should be it', 'That is also true']
   }
 
-  constructor(private store: Store<State>) {
-    this.store.registerAction('updateEntries', updateEntries);
+  constructor(private store: Store<State>, private backendService: BackendService) {
+    this.store.registerAction(Actions.updateEntries.name, updateEntries);
+    this.backendService.determineType();
   }
 
-  attached() {
-    this.store.dispatch('updateEntries', [
-      { Project: 'My app', Feature: 'Test 1', Scenario: 'Scenario 1', Codeunit: 'Test 1 Codeunit' },
-      { Project: 'My app', Feature: 'Test 1', Scenario: 'Scenario 2', Codeunit: 'Test 1 Codeunit' },
-      { Project: 'My other app', Feature: 'Test 2', Scenario: 'Scenario 1', Codeunit: 'Test 2 Codeunit' }
+  async attached() {
+    await this.store.dispatch(Actions.updateEntries, [
+      { Project: 'My app', Feature: 'Test 1', Scenario: 'Scenario 1', Codeunit: 'Test 1 Codeunit', Details: Object.assign({}, this.scenario) },
+      { Project: 'My app', Feature: 'Test 1', Scenario: 'Scenario 2', Codeunit: 'Test 1 Codeunit', Details: Object.assign({}, this.scenario) },
+      { Project: 'My other app', Feature: 'Test 2', Scenario: 'Scenario 1', Codeunit: 'Test 2 Codeunit', Details: Object.assign({}, this.scenario) }
     ]);
   }
 
   stateChanged(newState: State, oldState: State) {
     console.log('The state has changed', newState);
   }
-}
-
-
-const updateEntries = (state: State, newEntries: Array<any>) => {
-  const newState = Object.assign({}, state);
-  newState.testEntries = newEntries;
-  return newState;
 }
