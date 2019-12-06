@@ -4,7 +4,7 @@
             <h5 class="card-title">Test Scenarios</h5>
 
             <ag-grid-aurelia #agGrid style="width: 100%; height: 100%;" class="ag-theme-material" context.bind="$this"
-                row-data.bind="state.testEntries" row-selection.bind="'single'"
+                row-data.bind="entries" row-selection.bind="'single'"
                 selection-changed.call="selectionChanged($event.node.data, $event)" grid-options.bind="gridOptions">
 
                 <ag-grid-column header-name="Project" field="Project"></ag-grid-column>

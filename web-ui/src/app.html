@@ -14,13 +14,13 @@
 
       <div class="col-md-8">
 
-        <test-list></test-list>
+        <test-list entries.two-way="entries" curr-entry.two-way="currEntry"></test-list>
 
       </div>
 
       <div class="col-md-4">
 
-        <entry-form scenario.to-view="state.currEntry"></entry-form>
+        <entry-form scenario.two-way="currEntry"></entry-form>
 
       </div>
 

@@ -1,12 +1,8 @@
-import { Actions } from './actions/index';
 import { BackendService } from './backend/BackendService';
-import { connectTo, StateHistory, Store } from 'aurelia-store';
-import { State } from 'state';
-import { autoinject, observable } from 'aurelia-framework';
-import updateEntries from 'actions/updateEntries';
+import { autoinject, observable, Disposable, BindingEngine } from 'aurelia-framework';
+import { EventAggregator } from 'aurelia-event-aggregator';
 
 @autoinject()
-@connectTo<State>()
 export class App {
 
   private scenario: any = {
@@ -17,20 +13,30 @@ export class App {
     then: ['This should be it', 'That is also true']
   }
 
-  constructor(private store: Store<State>, private backendService: BackendService) {
-    this.store.registerAction(Actions.updateEntries.name, updateEntries);
+  subscriptions: Array<Disposable> = [];
+
+  @observable()
+  entries: Array<any>;
+
+  @observable()
+  currEntry: any;
+
+  constructor(private backendService: BackendService, private eventAggregator: EventAggregator, private bindingEngine: BindingEngine) {
     this.backendService.determineType();
+    let scenarioBase = JSON.stringify(this.scenario);
+    this.entries = [
+      { Project: 'My app', Feature: 'Test 1', Scenario: 'Scenario 1', Codeunit: 'Test 1 Codeunit', Details: JSON.parse(scenarioBase) },
+      { Project: 'My app', Feature: 'Test 1', Scenario: 'Scenario 2', Codeunit: 'Test 1 Codeunit', Details: JSON.parse(scenarioBase) },
+      { Project: 'My other app', Feature: 'Test 2', Scenario: 'Scenario 1', Codeunit: 'Test 2 Codeunit', Details: JSON.parse(scenarioBase) }
+    ];
+
   }
 
-  async attached() {
-    await this.store.dispatch(Actions.updateEntries, [
-      { Project: 'My app', Feature: 'Test 1', Scenario: 'Scenario 1', Codeunit: 'Test 1 Codeunit', Details: Object.assign({}, this.scenario) },
-      { Project: 'My app', Feature: 'Test 1', Scenario: 'Scenario 2', Codeunit: 'Test 1 Codeunit', Details: Object.assign({}, this.scenario) },
-      { Project: 'My other app', Feature: 'Test 2', Scenario: 'Scenario 1', Codeunit: 'Test 2 Codeunit', Details: Object.assign({}, this.scenario) }
-    ]);
+  attached() {
+
   }
 
-  stateChanged(newState: State, oldState: State) {
-    console.log('The state has changed', newState);
+  detached() {
+
   }
 }

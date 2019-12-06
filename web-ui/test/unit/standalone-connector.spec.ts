@@ -1,20 +1,19 @@
+import { BackendService } from './../../src/backend/BackendService';
 import { App } from '../../src/app';
 import { BackendType } from '../../src/backend/BackendType';
-import { State } from '../../src/state';
 import { Container, view } from 'aurelia-framework';
 import { bootstrap } from 'aurelia-bootstrapper';
 import { StageComponent, ComponentTester } from 'aurelia-testing';
-import { Store } from 'aurelia-store';
 
 describe('Stage Backend Connectors', () => {
   let component: ComponentTester<any>;
   let container: Container;
-  let store: Store<State>;
+  let backendService: BackendService;
   let viewModel: App;
 
   beforeEach(async () => {
     container = new Container();
-    store = container.get<Store<State>>(Store);
+    backendService = container.get(BackendService);
     viewModel = container.get(App);
 
     component = StageComponent
@@ -28,9 +27,7 @@ describe('Stage Backend Connectors', () => {
   it('should have Standalone backend', done => {
     (<any>window).aquireVsCodeApi = null;
     component.create(bootstrap).then(() => {
-      store.state.subscribe(
-        (state: State) => expect(state.backendType).toEqual(BackendType.Standalone)
-      );
+      expect(backendService.type).toEqual(BackendType.Standalone);
       done();
     }).catch(e => {
       fail(e);

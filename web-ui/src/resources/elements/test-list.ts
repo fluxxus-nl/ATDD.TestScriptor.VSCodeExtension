@@ -1,25 +1,22 @@
-import { Actions } from './../../actions/index';
-import { autoinject, bindable, observable, BindingEngine, ICollectionObserverSplice } from 'aurelia-framework';
+import { autoinject, bindable, observable, BindingEngine, Disposable, ICollectionObserverSplice } from 'aurelia-framework';
 import { ColumnApi, GridApi, GridOptions } from 'ag-grid-community';
-import { connectTo, Store } from 'aurelia-store';
-import { State } from 'state';
-import { Subscription } from 'rxjs';
-import updateCurrEntry from 'actions/updateCurrEntry';
+import { Subscription, EventAggregator } from 'aurelia-event-aggregator';
 
 @autoinject()
-@connectTo<State>()
 export class TestList {
 
-    public state: State;
-    private subscription: Subscription;
-
+    subscriptions: Array<Disposable> = [];
     private gridOptions: GridOptions;
     private api: GridApi;
     private columnApi: ColumnApi;
 
-    constructor(private store: Store<State>) {
-        this.store.registerAction(Actions.updateCurrEntry.name, updateCurrEntry);
+    @bindable()
+    entries: Array<any> = [];
 
+    @bindable()
+    currEntry: any;
+
+    constructor(private eventAggregator: EventAggregator, private bindingEngine: BindingEngine) {
         this.gridOptions = <GridOptions>{
             defaultColDef: {
                 resizable: true,
@@ -30,13 +27,16 @@ export class TestList {
     }
 
     bind() {
-        this.subscription = this.store.state.subscribe(
-            (state) => this.state = state
-        );
+        this.subscriptions.push(this.eventAggregator.subscribe('onNewScenario', response => {
+            this.entries.push(response);
+            console.log(response, this.entries);
+        }));
+
+        this.subscriptions.push(this.bindingEngine.collectionObserver(this.entries).subscribe(this.listChanged.bind(this)));
     }
 
     unbind() {
-        this.subscription.unsubscribe();
+        this.subscriptions.forEach(s => s.dispose());
     }
 
     attached() {
@@ -51,17 +51,17 @@ export class TestList {
 
     }
 
-    async selectionChanged() {
+    listChanged(splices: Array<ICollectionObserverSplice<any>>) {
+        this.api.setRowData(this.entries);
+    }
+
+    selectionChanged() {
         let data = this.api.getSelectedRows();
-        await this.store.dispatch(Actions.updateCurrEntry, data[0]);
+        this.currEntry = data[0];
+        console.log('Selection changed', this.currEntry);
     }
 
     sendCommand(entry: any, type: string) {
 
-    }
-
-    stateChanged(newState: State, oldState: State) {
-        if (newState)
-            console.log('CurrEntry changed', newState.currEntry);
     }
 }

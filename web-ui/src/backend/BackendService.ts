@@ -1,19 +1,14 @@
 import { DummyConnector } from './connectors/DummyConnector';
 import { VSCodeConnector } from './connectors/VSCodeConnector';
 import { IBackendConnector } from './connectors/IBackendConnector';
-import { Actions } from './../actions/index';
 import { BackendType } from './BackendType';
-import { connectTo, Store } from 'aurelia-store';
-import { State } from 'state';
-import updateBackendMode from 'actions/updateBackendMode';
 
-@connectTo<State>()
 export class BackendService implements IBackendService {
 
+    private _type: BackendType;
     private backendClient: IBackendConnector;
 
-    constructor(private store: Store<State>) {
-        this.store.registerAction(Actions.updateBackendMode.name, updateBackendMode);
+    constructor() {
     }
 
     async loadTests(): Promise<void> {
@@ -33,10 +28,9 @@ export class BackendService implements IBackendService {
     }
 
     determineType() {
-        let newType = (<any>window).acquireVsCodeApi ? BackendType.VSCode : BackendType.Standalone;
-        this.store.dispatch(Actions.updateBackendMode, newType);
+        this._type = (<any>window).acquireVsCodeApi ? BackendType.VSCode : BackendType.Standalone;
 
-        switch (newType) {
+        switch (this._type) {
             default:
                 this.backendClient = new DummyConnector();
                 break;
@@ -44,6 +38,10 @@ export class BackendService implements IBackendService {
                 this.backendClient = new VSCodeConnector();
                 break;
         }
+    }
+
+    get type() {
+        return this._type;
     }
 }
 
