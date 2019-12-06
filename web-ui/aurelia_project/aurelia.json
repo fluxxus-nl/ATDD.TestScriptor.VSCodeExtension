@@ -29,6 +29,11 @@
       "src/**/*.less"
     ]
   },
+  "bundleCss": {
+    "source": [
+      "src/**/*.css"
+    ]
+  },
   "jsonProcessor": {
     "source": [
       "src/**/*.json"
@@ -94,6 +99,10 @@
         ]
       }
     ],
+    "copyFiles": {
+      "./scripts/*": "../vscode-extension/WebView/scripts",
+      "index.html": "../vscode-extension/WebView"
+    },
     "loader": {
       "type": "require",
       "configTarget": "vendor-bundle.js",
@@ -105,7 +114,7 @@
             ".html",
             ".css"
           ],
-          "stub": false
+          "stub": true
         }
       ]
     }

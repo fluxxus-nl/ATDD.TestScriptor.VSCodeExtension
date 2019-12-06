@@ -7,7 +7,7 @@
 			"path": "vscode-extension"
 		},
 		{
-			"path": "web-server"
+			"path": "services"
 		}
 	]
 }

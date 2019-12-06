@@ -31,7 +31,6 @@ describe('Stage Test List Component', () => {
 
   it('should have state changed', done => {
     component.create(bootstrap).then(() => {
-      console.log(component.viewModel);
       expect(component.viewModel.currEntry.Feature).toBe('Test 1');
       done();
     }).catch(e => {

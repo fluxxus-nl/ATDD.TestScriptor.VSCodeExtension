@@ -1,10 +1,13 @@
+import { PLATFORM } from 'aurelia-framework';
 import { IBackendConnector } from './IBackendConnector';
 export class VSCodeConnector implements IBackendConnector {
 
     protected vscode: any;
 
     constructor() {
-        this.vscode = (<any>window).acquireVsCodeApi ? (<any>window).acquireVsCodeApi() : { postMessage: (msg: any) => { } };
+        if (typeof(<any>PLATFORM.global).acquireVsCodeApi !== "function") {
+            throw "Window.acquireVsCodeApi function is not registered.";
+        }
     }
 
     async send(payload: any): Promise<any> {

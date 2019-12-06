@@ -2,7 +2,9 @@ import { DummyConnector } from './connectors/DummyConnector';
 import { VSCodeConnector } from './connectors/VSCodeConnector';
 import { IBackendConnector } from './connectors/IBackendConnector';
 import { BackendType } from './BackendType';
+import { autoinject, PLATFORM } from 'aurelia-framework';
 
+@autoinject()
 export class BackendService implements IBackendService {
 
     private _type: BackendType;
@@ -28,7 +30,7 @@ export class BackendService implements IBackendService {
     }
 
     determineType() {
-        this._type = (<any>window).acquireVsCodeApi ? BackendType.VSCode : BackendType.Standalone;
+        this._type = typeof (<any>PLATFORM.global.window).acquireVsCodeApi == "function"  ? BackendType.VSCode : BackendType.Standalone;
 
         switch (this._type) {
             default:
@@ -38,6 +40,8 @@ export class BackendService implements IBackendService {
                 this.backendClient = new VSCodeConnector();
                 break;
         }
+
+        console.log(this._type);
     }
 
     get type() {

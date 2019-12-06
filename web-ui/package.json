@@ -48,6 +48,8 @@
     "jest": "^24.1.0",
     "jest-cli": "^24.1.0",
     "jest-transform-stub": "^2.0.0",
+    "jsdom": "^15.2.1",
+    "jsdom-global": "^3.0.2",
     "minimatch": "^3.0.4",
     "postcss-url": "^8.0.0",
     "promise-polyfill": "^8.1.0",
@@ -108,6 +110,9 @@
       "lcov",
       "text",
       "html"
-    ]
+    ],
+    "globals": {
+      "window": {}
+    }
   }
 }
