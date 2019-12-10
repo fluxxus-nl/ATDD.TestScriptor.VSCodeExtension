@@ -20,8 +20,6 @@ Thumbs.db
 # Ref: https://github.com/github/gitignore/blob/master/Global/VisualStudioCode.gitignore
 .idea
 .chrome
-out
-.vscode-test/*
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
@@ -38,4 +36,9 @@ node_modules
 /dist
 /test/coverage-jest
 /test/coverage-karma
+.vs/
+.config/
 bin/
+obj/
+ATDD.TestScriptor.BackendServices.csproj.user
+ATDD.TestScriptor.BackendServices.exe

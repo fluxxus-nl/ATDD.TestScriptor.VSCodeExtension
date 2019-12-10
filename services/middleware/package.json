@@ -1,0 +1,17 @@
+{
+  "name": "middleware",
+  "version": "1.0.0",
+  "main": "dist/middleware.js",
+  "types": "dist/middleware.d.ts",
+  "license": "MIT",
+  "dependencies": {
+    "@microsoft/signalr": "^3.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^12.12.16",
+    "typescript": "^3.7.3"
+  },
+  "scripts": {
+    "middleware:watch": "tsc -w"
+  }
+}

@@ -1,8 +1,11 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as utils from './utils';
+import { ATDDMiddleware } from 'middleware';
 
 export class WebPanel {
+
+    private middleware = new ATDDMiddleware();
 
     public static instance: WebPanel;
 
@@ -17,6 +20,8 @@ export class WebPanel {
     }
 
     async createPanel() {
+        await this.middleware.init('http://localhost:51561');
+
         this.panel = vscode.window.createWebviewPanel("attTestScriptor", "Test Scenarios", vscode.ViewColumn.One, {
             // Enable javascript in the webview
             enableScripts: true,
@@ -42,6 +47,8 @@ export class WebPanel {
                 await handler.dispatch(message);
             }*/
         }, null, this._disposables);
+
+        await this.middleware.getProjects('test');
     }
 
     public static async open(extensionPath: string) {
@@ -66,6 +73,8 @@ export class WebPanel {
 
     public dispose() {
         (WebPanel.instance as any) = null;
+
+        this.middleware.dispose();
 
         // Clean up our resources
         this.panel.dispose();

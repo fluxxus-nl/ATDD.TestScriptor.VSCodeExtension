@@ -1,0 +1,29 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "module": "CommonJS",
+    "noImplicitAny": false,
+    "declaration": true,
+    "typeRoots": [
+      "./node_modules/@types"
+    ],
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "esModuleInterop": true,
+    "sourceMap": true,
+    "target": "ES6",
+    "lib": ["es2017", "dom"], 
+    "moduleResolution": "node",
+    "baseUrl": "src",
+    "outDir": "dist"
+  },
+  "include": [
+    "./src/**/*.ts",
+    "./test/**/*.ts",
+    "./types/**/*.d.ts"
+  ],
+  "atom": {
+    "rewriteTsconfig": false
+  }
+}

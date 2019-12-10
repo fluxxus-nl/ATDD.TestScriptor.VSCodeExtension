@@ -11,8 +11,8 @@ export function activate(context: vscode.ExtensionContext) {
             console.error(e);
             vscode.window.showErrorMessage(`ATDD TestScriptor could not be opened. Error: '${e.message}'`);
         }
-    }));
+    }));    
 }
 
-export function deactivate() {
+export function deactivate() {    
 }

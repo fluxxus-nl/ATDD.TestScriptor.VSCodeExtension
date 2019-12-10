@@ -7,7 +7,7 @@
 			"path": "vscode-extension"
 		},
 		{
-			"path": "services"
+			"path": "services\\middleware"
 		}
 	]
 }

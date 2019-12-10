@@ -50,6 +50,7 @@
         "vscode": "^1.1.25"
     },
     "dependencies": {
-        "fs-extra": "^8.1.0"
+        "fs-extra": "^8.1.0",
+        "middleware": "../services/middleware"
     }
 }
