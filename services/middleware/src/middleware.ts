@@ -34,11 +34,13 @@ export class ATDDMiddleware {
         await this._connection.stop();
     }
 
-    async getProjects(msg: string) {
-        this._connection.on('GetProjects', (msg: string) => {
-            console.log(msg);
+    async getProjects(msg: Array<string>): Promise<any> {
+        return new Promise((resolve, reject) => {
+            this._connection.on('GetProjects', (msg: any) => {
+                resolve(msg);
+            });
+    
+            this._connection.invoke('QueryProjects', msg).catch(err => reject(err));
         });
-
-        await this._connection.invoke('QueryProjects', msg);
     }
 }

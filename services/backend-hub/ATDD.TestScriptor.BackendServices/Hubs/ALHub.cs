@@ -1,4 +1,5 @@
-﻿using ATDD.TestScriptor.BackendServices.Models;
+﻿using ALObjectDesigner.Library;
+using ATDD.TestScriptor.BackendServices.Models;
 using Microsoft.AspNetCore.SignalR;
 using System;
 using System.Collections.Generic;
@@ -9,9 +10,11 @@ namespace ATDD.TestScriptor.BackendServices.Hubs
 {
     public class ALHub: Hub
     {
-        public Task QueryProjects(string msg)
+        public Task QueryProjects(IEnumerable<string> msg)
         {
-            return Clients.All.SendAsync("GetProjects", msg);
+            var projects = ALProjectCollector.Discover(msg.ToList());
+
+            return Clients.All.SendAsync("GetProjects", projects);
         }
 
     }

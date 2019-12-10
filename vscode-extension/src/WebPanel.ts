@@ -1,11 +1,14 @@
+import { CommandHandlerService } from './Services/CommandHandlerService';
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as utils from './utils';
 import { ATDDMiddleware } from 'middleware';
+import { IMessageBase } from './typings/IMessageBase';
+import { LoadProjectsCommand } from './Commands/LoadProjectsCommand';
 
 export class WebPanel {
 
-    private middleware = new ATDDMiddleware();
+    public static middleware = new ATDDMiddleware();
 
     public static instance: WebPanel;
 
@@ -20,7 +23,7 @@ export class WebPanel {
     }
 
     async createPanel() {
-        await this.middleware.init('http://localhost:51561');
+        await WebPanel.middleware.init('http://localhost:51561');
 
         this.panel = vscode.window.createWebviewPanel("attTestScriptor", "Test Scenarios", vscode.ViewColumn.One, {
             // Enable javascript in the webview
@@ -40,15 +43,16 @@ export class WebPanel {
         this.panel.onDidDispose(() => this.dispose(), null, this._disposables);
 
         // Handle messages from the webview
-        this.panel.webview.onDidReceiveMessage(async (messages) => {
-            /*let handler: CommandHandler = new CommandHandler(this, extensionPath);
+        this.panel.webview.onDidReceiveMessage(async (messages: Array<IMessageBase>) => {
+            let handler: CommandHandlerService = new CommandHandlerService(this.extensionPath);
 
             for (let message of messages) {
                 await handler.dispatch(message);
-            }*/
+            }
         }, null, this._disposables);
 
-        await this.middleware.getProjects('test');
+        let command = new LoadProjectsCommand();
+        await command.execute({Command: 'LoadProjects'});
     }
 
     public static async open(extensionPath: string) {
@@ -58,8 +62,16 @@ export class WebPanel {
         }
 
         let instance = new WebPanel(extensionPath);
-        await instance.createPanel();
         WebPanel.instance = instance;
+        await instance.createPanel();        
+    }
+
+    public static async postMessage(message: any) {
+        await WebPanel.instance.postMessage(message);
+    }
+
+    public async postMessage(message: any) {
+        await this.panel.webview.postMessage(message);
     }
 
     private async _getHtmlForWebview() {
@@ -74,7 +86,7 @@ export class WebPanel {
     public dispose() {
         (WebPanel.instance as any) = null;
 
-        this.middleware.dispose();
+        WebPanel.middleware.dispose();
 
         // Clean up our resources
         this.panel.dispose();

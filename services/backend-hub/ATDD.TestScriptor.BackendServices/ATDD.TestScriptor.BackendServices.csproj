@@ -8,4 +8,9 @@
     <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.1.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\ALObjectDesigner\ALObjectDesigner.Library\ALObjectDesigner.Library.csproj" />
+    <ProjectReference Include="..\..\..\..\..\ALObjectParser\ALObjectParser.Library\ALObjectParser.Library.csproj" />
+  </ItemGroup>
+
 </Project>

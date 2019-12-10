@@ -44,10 +44,12 @@ class ATDDMiddleware {
     }
     getProjects(msg) {
         return __awaiter(this, void 0, void 0, function* () {
-            this._connection.on('GetProjects', (msg) => {
-                console.log(msg);
+            return new Promise((resolve, reject) => {
+                this._connection.on('GetProjects', (msg) => {
+                    resolve(msg);
+                });
+                this._connection.invoke('QueryProjects', msg).catch(err => reject(err));
             });
-            yield this._connection.invoke('QueryProjects', msg);
         });
     }
 }

@@ -5,5 +5,5 @@ export declare class ATDDMiddleware {
     init(url: string): Promise<void>;
     connect(): Promise<boolean>;
     dispose(): Promise<void>;
-    getProjects(msg: string): Promise<void>;
+    getProjects(msg: Array<string>): Promise<any>;
 }
