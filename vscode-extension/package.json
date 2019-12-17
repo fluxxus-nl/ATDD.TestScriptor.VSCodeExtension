@@ -1,6 +1,6 @@
 {
     "name": "atdd-testscriptor",
-    "displayName": "ATDD TestScriptor",
+    "displayName": "ATDD.TestScriptor",
     "publisher": "fluxxus-nl",
     "license": "MIT",
     "author": {
@@ -31,7 +31,7 @@
         "commands": [
             {
                 "command": "atddTestScriptor.open",
-                "title": "ATDD Test Scriptor"
+                "title": "ATDD.TestScriptor"
             }
         ]
     },
