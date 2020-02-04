@@ -53,7 +53,7 @@ namespace ATDD.TestScriptor.BackendServices
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers();
+                //endpoints.MapControllers();
                 endpoints.MapHub<ATDDHub>("/atdd");
             });
         }
