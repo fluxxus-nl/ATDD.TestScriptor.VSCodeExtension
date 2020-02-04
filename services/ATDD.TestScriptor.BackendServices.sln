@@ -5,9 +5,9 @@ VisualStudioVersion = 16.0.29519.181
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ATDD.TestScriptor.BackendServices", "ATDD.TestScriptor.BackendServices\ATDD.TestScriptor.BackendServices.csproj", "{79FF08BB-A4CF-4CE6-8B5E-64F9EE6ED8AD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ALObjectParser.Library", "..\..\..\..\ALObjectParser\ALObjectParser.Library\ALObjectParser.Library.csproj", "{F551F79C-6B30-49EA-8712-7EAF60E17B4D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ALObjectParser.Library", "..\..\..\ALObjectParser\ALObjectParser.Library\ALObjectParser.Library.csproj", "{31B36C63-A0B4-416F-B310-8C10BA26FCBA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ALObjectDesigner.Library", "..\..\..\..\ALObjectDesigner\ALObjectDesigner.Library\ALObjectDesigner.Library.csproj", "{CA5225EF-5BDC-42AB-91E4-7674EB34F259}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ATDD.TestScriptor.Library", "ATDD.TestScriptor.Library\ATDD.TestScriptor.Library.csproj", "{1299FEC8-21EA-4161-83F1-DFBF2387F327}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,14 +19,14 @@ Global
 		{79FF08BB-A4CF-4CE6-8B5E-64F9EE6ED8AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{79FF08BB-A4CF-4CE6-8B5E-64F9EE6ED8AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{79FF08BB-A4CF-4CE6-8B5E-64F9EE6ED8AD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F551F79C-6B30-49EA-8712-7EAF60E17B4D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F551F79C-6B30-49EA-8712-7EAF60E17B4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F551F79C-6B30-49EA-8712-7EAF60E17B4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F551F79C-6B30-49EA-8712-7EAF60E17B4D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CA5225EF-5BDC-42AB-91E4-7674EB34F259}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CA5225EF-5BDC-42AB-91E4-7674EB34F259}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CA5225EF-5BDC-42AB-91E4-7674EB34F259}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CA5225EF-5BDC-42AB-91E4-7674EB34F259}.Release|Any CPU.Build.0 = Release|Any CPU
+		{31B36C63-A0B4-416F-B310-8C10BA26FCBA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{31B36C63-A0B4-416F-B310-8C10BA26FCBA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{31B36C63-A0B4-416F-B310-8C10BA26FCBA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{31B36C63-A0B4-416F-B310-8C10BA26FCBA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1299FEC8-21EA-4161-83F1-DFBF2387F327}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1299FEC8-21EA-4161-83F1-DFBF2387F327}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1299FEC8-21EA-4161-83F1-DFBF2387F327}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1299FEC8-21EA-4161-83F1-DFBF2387F327}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

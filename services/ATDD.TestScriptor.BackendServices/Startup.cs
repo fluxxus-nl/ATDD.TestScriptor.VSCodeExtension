@@ -26,12 +26,17 @@ namespace ATDD.TestScriptor.BackendServices
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
             services.AddSignalR(options =>
             {
+                options.ClientTimeoutInterval = new TimeSpan(0, 1, 0);
                 options.EnableDetailedErrors = true;
                 options.MaximumReceiveMessageSize = 65000000;
+            })
+            .AddJsonProtocol(options =>
+            {
+                options.PayloadSerializerOptions.PropertyNamingPolicy = null;
             });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -49,7 +54,7 @@ namespace ATDD.TestScriptor.BackendServices
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                endpoints.MapHub<ALHub>("/alhub");
+                endpoints.MapHub<ATDDHub>("/atdd");
             });
         }
     }

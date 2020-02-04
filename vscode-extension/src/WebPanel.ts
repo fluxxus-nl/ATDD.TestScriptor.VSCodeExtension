@@ -2,13 +2,10 @@ import { CommandHandlerService } from './Services/CommandHandlerService';
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as utils from './utils';
-import { ATDDMiddleware } from 'middleware';
 import { IMessageBase } from './typings/IMessageBase';
 import { LoadProjectsCommand } from './Commands/LoadProjectsCommand';
 
 export class WebPanel {
-
-    public static middleware = new ATDDMiddleware();
 
     public static instance: WebPanel;
 
@@ -23,8 +20,6 @@ export class WebPanel {
     }
 
     async createPanel() {
-        await WebPanel.middleware.init('http://localhost:51561');
-
         this.panel = vscode.window.createWebviewPanel("attTestScriptor", "Test Scenarios", vscode.ViewColumn.One, {
             // Enable javascript in the webview
             enableScripts: true,
@@ -85,8 +80,6 @@ export class WebPanel {
 
     public dispose() {
         (WebPanel.instance as any) = null;
-
-        WebPanel.middleware.dispose();
 
         // Clean up our resources
         this.panel.dispose();

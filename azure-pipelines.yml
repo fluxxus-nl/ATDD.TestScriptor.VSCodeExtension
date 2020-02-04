@@ -1,0 +1,94 @@
+######
+# ATDD.TestScriptor Build pipeline - Windows x64
+######
+
+trigger:
+- master
+
+pool:
+  vmImage: 'windows-latest'
+  #name: default
+
+variables:
+  solution: '**/*.sln'
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
+  targetPlatform: 'win-x64'
+
+# .NET Server
+
+steps:
+- task: NuGetToolInstaller@1
+
+- task: NuGetCommand@2
+  displayName: '.NET Server restore'
+  inputs:
+    command: 'restore'
+    restoreSolution: '**/*.sln'
+    #feedsToUse: 'config'
+    #nugetConfigPath: './Nuget.config'
+
+- task: VSBuild@1
+  displayName: '.NET Server VS build'
+  inputs:
+    solution: '$(solution)'
+    platform: '$(buildPlatform)'
+    configuration: '$(buildConfiguration)'
+
+- task: DotNetCoreCLI@2
+  displayName: '.NET Server tests'
+  inputs:      
+    command: 'test'
+    projects: '$(solution)'
+
+- task: DotNetCoreCLI@2
+  displayName: '.NET Server release build'
+  inputs:
+    workingDirectory: 'services/ATDD.TestScriptor.BackendServices'
+    command: 'publish'
+    publishWebProjects: false    
+    zipAfterPublish: false
+    arguments: '--configuration $(BuildConfiguration) --output ../../vscode-extension/bin --self-contained -r $(targetPlatform) /p:PublishSingleFile=true /p:PublishTrimmed=true'
+
+# Aurelia App
+
+- script: yarn global add aurelia-cli
+  displayName: 'Aurelia-CLI install'
+  workingDirectory: 'web-ui'
+
+- script: yarn install
+  displayName: 'Aurelia App restore'
+  workingDirectory: 'web-ui'
+
+- script: yarn build
+  displayName: 'Aurelia App build'
+  workingDirectory: 'web-ui'
+
+# VSCode extension
+
+- script: yarn global add vsce
+  displayName: 'VSCE install'
+  workingDirectory: 'vscode-extension'
+
+- script: yarn install
+  displayName: 'VS Ext. restore'
+  workingDirectory: 'vscode-extension'
+
+- script: yarn package
+  displayName: 'VS Ext. package'
+  workingDirectory: 'vscode-extension'
+
+# Finalize
+
+- task: CopyFiles@2
+  displayName: 'VS Ext. publish'
+  inputs:
+    SourceFolder: 'vscode-extension'
+    Contents: '*.vsix'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)'
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Final publish'
+  inputs:
+    pathtoPublish: '$(Build.ArtifactStagingDirectory)' 
+    artifactName: 'ATDD.TestScriptor'
