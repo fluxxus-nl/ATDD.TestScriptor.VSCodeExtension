@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ATDD.TestScriptor.Library",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ALObjectParser.Library", "ALObjectParser\ALObjectParser.Library\ALObjectParser.Library.csproj", "{9EDAF010-4E31-4B86-A664-3DE1F62B8FA8}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ALObjectParser.Tests", "ALObjectParser\ALObjectParser.Tests\ALObjectParser.Tests.csproj", "{70E8A961-F577-4C94-9322-255D94994149}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{9EDAF010-4E31-4B86-A664-3DE1F62B8FA8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9EDAF010-4E31-4B86-A664-3DE1F62B8FA8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9EDAF010-4E31-4B86-A664-3DE1F62B8FA8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{70E8A961-F577-4C94-9322-255D94994149}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{70E8A961-F577-4C94-9322-255D94994149}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{70E8A961-F577-4C94-9322-255D94994149}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{70E8A961-F577-4C94-9322-255D94994149}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
