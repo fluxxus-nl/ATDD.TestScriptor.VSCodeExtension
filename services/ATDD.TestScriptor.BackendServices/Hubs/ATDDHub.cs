@@ -33,6 +33,14 @@ namespace ATDD.TestScriptor.BackendServices.Hubs
                                   msg.Codeunit = s.Name;
                                   msg.Feature = x.Name;
                                   msg.Scenario = sc.Name;
+                                  msg.Details = new MessageDetails()
+                                  {
+                                      feature = msg.Feature,
+                                      name = msg.Scenario,
+                                      given = sc.Elements.Where(w => w.Type == ScenarioElementType.GIVEN).Select(e => e.Value).ToList(),
+                                      when = sc.Elements.Where(w => w.Type == ScenarioElementType.WHEN).Select(e => e.Value).ToList(),
+                                      then = sc.Elements.Where(w => w.Type == ScenarioElementType.THEN).Select(e => e.Value).ToList(),
+                                  };
                                   return msg;
 
                               });

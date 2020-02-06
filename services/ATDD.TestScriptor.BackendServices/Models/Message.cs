@@ -11,5 +11,15 @@ namespace ATDD.TestScriptor.BackendServices.Models
         public string Feature { get; set; }
         public string Scenario { get; set; }
         public string Codeunit { get; set; }
+        public MessageDetails Details { get; set; }
+    }
+
+    public class MessageDetails
+    {
+        public string feature { get; set; }
+        public string name { get; set; }
+        public IEnumerable<string> given { get; set; }
+        public IEnumerable<string> when { get; set; }
+        public IEnumerable<string> then { get; set; }
     }
 }
