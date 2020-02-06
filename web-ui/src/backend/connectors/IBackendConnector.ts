@@ -1,3 +1,3 @@
 export interface IBackendConnector {
-    send(payload: any): Promise<boolean>;
+    send(payload: any): Promise<any>;
 }

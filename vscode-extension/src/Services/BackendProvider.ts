@@ -13,7 +13,7 @@ export class BackendProvider {
     public static async start(extensionPath: string, wkspacePaths: Array<string>) {
         BackendProvider.workspaces = wkspacePaths || [];
         return new Promise(async (resolve, reject) => {
-            let debug = false;
+            let debug = true;
             if (!debug) {
                 BackendProvider.port = await getPort({ port: getPort.makeRange(42000, 42010) });
                 let exePath = path.join(extensionPath, 'bin', 'ATDD.TestScriptor.BackendServices');
@@ -33,7 +33,7 @@ export class BackendProvider {
                     resolve(true);
                 }
             } else {
-                BackendProvider.port = 49289;
+                BackendProvider.port = 51561;
                 resolve(true);
             }
         });

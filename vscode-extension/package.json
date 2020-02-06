@@ -24,7 +24,7 @@
         "Other"
     ],
     "activationEvents": [
-        "onCommand:atddTestScriptor.open"
+        "*"
     ],
     "main": "./out/extension",
     "contributes": {

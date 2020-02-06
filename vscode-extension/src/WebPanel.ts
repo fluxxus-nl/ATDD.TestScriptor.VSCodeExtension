@@ -3,11 +3,11 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import * as utils from './utils';
 import { IMessageBase } from './typings/IMessageBase';
-import { LoadProjectsCommand } from './Commands/LoadProjectsCommand';
 
 export class WebPanel {
 
     public static instance: WebPanel;
+    protected options: any = {};
 
     protected panel!: vscode.WebviewPanel;
 
@@ -38,16 +38,18 @@ export class WebPanel {
         this.panel.onDidDispose(() => this.dispose(), null, this._disposables);
 
         // Handle messages from the webview
-        this.panel.webview.onDidReceiveMessage(async (messages: Array<IMessageBase>) => {
+        this.panel.webview.onDidReceiveMessage((async (messages: Array<IMessageBase>) => {
             let handler: CommandHandlerService = new CommandHandlerService(this.extensionPath);
 
             for (let message of messages) {
-                await handler.dispatch(message);
+                try {
+                    await handler.dispatch(message);
+                } catch (e) {
+                    vscode.window.showErrorMessage(`Failed to execute command: ${message.Command}. Check console for details.`);
+                    console.log(`Failed to execute command: ${message.Command}`, e);
+                }
             }
-        }, null, this._disposables);
-
-        let command = new LoadProjectsCommand();
-        await command.execute({Command: 'LoadProjects'});
+        }).bind(this), null, this._disposables);
     }
 
     public static async open(extensionPath: string) {
@@ -70,10 +72,17 @@ export class WebPanel {
     }
 
     private async _getHtmlForWebview() {
+        let startupOptions: any = {
+            start: 'home',
+            options: this.options
+        };
+
         let content: string = await utils.read(path.join(this.extensionPath, 'WebView', 'index.html'));
-        let appOnDiskPath = vscode.Uri.file(path.join(this.extensionPath, 'WebView', 'scripts', 'vendor-bundle.js'));
+        let appOnDiskPath = vscode.Uri.file(path.join(this.extensionPath, 'WebView', 'scripts', 'bundle.js'));
         let appJsSrc: any = appOnDiskPath.with({ scheme: 'vscode-resource' });
-        content = content.replace('scripts/vendor-bundle.js', appJsSrc);
+        content = content.replace('//${vscodeApi}', 'window.vscode = acquireVsCodeApi();');
+        content = content.replace('//${startupOptions}', `window.startupOptions = '${JSON.stringify(startupOptions)}';`);
+        content = content.replace('scripts/bundle.js', appJsSrc);
 
         return content;
     }

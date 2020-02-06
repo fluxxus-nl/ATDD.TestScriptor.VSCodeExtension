@@ -9,12 +9,12 @@ namespace ATDD.TestScriptor.Library
     {
         public bool Equals(CollectorItem x, CollectorItem y)
         {
-            return x.TypeId == y.TypeId && x.Id == y.Id && x.Name == y.Name && x.IsEvent == y.IsEvent && x.EventName == y.EventName;
+            return x.TypeId == y.TypeId && x.Id == y.Id && x.Name == y.Name;
         }
 
         public int GetHashCode(CollectorItem obj)
         {
-            return ($"{obj.TypeId}{obj.Id}{obj.Name}{obj.IsEvent}{obj.EventName}").GetHashCode();
+            return ($"{obj.TypeId}{obj.Id}{obj.Name}").GetHashCode();
         }
     }
 }

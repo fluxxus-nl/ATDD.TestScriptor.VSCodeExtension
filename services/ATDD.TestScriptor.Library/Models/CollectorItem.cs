@@ -9,7 +9,6 @@ namespace ATDD.TestScriptor.Library
     {
         public CollectorItem()
         {
-            Extensions = new List<CollectorItem>();
         }
 
         public ALObjectParser.ALObjectType TypeId { get; set; }
@@ -20,20 +19,10 @@ namespace ATDD.TestScriptor.Library
         public string Application { get; set; }
         public string Publisher { get; set; }
         public string Version { get; set; }
-        public bool CanExecute { get; set; }
-        public bool CanDesign { get; set; }
-        public bool CanCreatePage { get; set; }
         public string FsPath { get; set; }
-        public string EventName { get; set; }
-        public string EventType { get; set; }
-        public IEnumerable<dynamic> Events { get; set; }
-        public IEnumerable<ALParameter> EventParameters { get; set; }
         public SymbolData SymbolData { get; set; }
         public IALObject Symbol { get; set; }
-        public string SubType { get; set; }
-        public string Scope { get; set; }
-        public bool IsEvent { get; set; }
         public bool IsLocal { get; set; }
-        public IEnumerable<CollectorItem> Extensions { get; set; }
+        public string ProjectPath { get; set; }
     }
 }

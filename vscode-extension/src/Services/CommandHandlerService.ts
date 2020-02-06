@@ -13,12 +13,12 @@ export class CommandHandlerService {
 
     public async dispatch(message: IMessageBase) {
         let className = `${message.Command}Command`;
-        let handlerClass = require(`./Commands/${className}Command`);
+        let handlerClass = require(`../Commands/${className}`);
 
         if (handlerClass) {
             let handler: ICommandBase = new handlerClass[className](this.extensionPath);
             await handler.execute(message);
-            await handler.showMessage(message);
+            //await handler.showMessage(message);
         } else {
             await vscode.window.showInformationMessage(`'${message.Command}' command was not found.`);
         }

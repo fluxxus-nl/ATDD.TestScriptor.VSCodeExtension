@@ -21,8 +21,24 @@ namespace ATDD.TestScriptor.BackendServices.Hubs
         {
             using (var collector = new ALObjectCollector())
             {
-                var projects = collector.DiscoverLocalFiles(msg.ToList());
-                await Clients.All.GetObjects(projects);
+                var objects = collector.DiscoverLocalFiles(msg.ToList());
+                var result = objects
+                    .SelectMany(s => {
+                        return (s.Symbol as TestALCodeunit).Features.SelectMany(x =>
+                          {
+                              return x.Scenarios.Select(sc =>
+                              {
+                                  var msg = new Message();
+                                  msg.Project = s.Application;
+                                  msg.Codeunit = s.Name;
+                                  msg.Feature = x.Name;
+                                  msg.Scenario = sc.Name;
+                                  return msg;
+
+                              });
+                          });
+                   });
+                await Clients.All.GetObjects(result);
             }
         }
 

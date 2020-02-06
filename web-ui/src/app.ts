@@ -1,4 +1,4 @@
-import { BackendService } from './backend/BackendService';
+import { BackendService } from 'services/backend-service';
 import { autoinject, observable, Disposable, BindingEngine } from 'aurelia-framework';
 import { EventAggregator } from 'aurelia-event-aggregator';
 
@@ -16,24 +16,28 @@ export class App {
   subscriptions: Array<Disposable> = [];
 
   @observable()
-  entries: Array<any>;
+  entries: Array<any> = [];
 
   @observable()
   currEntry: any;
 
-  constructor(private backendService: BackendService, private eventAggregator: EventAggregator, private bindingEngine: BindingEngine) {
+  options: any;
+
+  constructor(private backendService: BackendService) {
     this.backendService.determineType();
+    this.options = this.backendService.startup.options;
+
     let scenarioBase = JSON.stringify(this.scenario);
-    this.entries = [
+    /*this.entries = [
       { Project: 'My app', Feature: 'Test 1', Scenario: 'Scenario 1', Codeunit: 'Test 1 Codeunit', Details: JSON.parse(scenarioBase) },
       { Project: 'My app', Feature: 'Test 1', Scenario: 'Scenario 2', Codeunit: 'Test 1 Codeunit', Details: JSON.parse(scenarioBase) },
       { Project: 'My other app', Feature: 'Test 2', Scenario: 'Scenario 1', Codeunit: 'Test 2 Codeunit', Details: JSON.parse(scenarioBase) }
-    ];
+    ];*/
 
   }
 
-  attached() {
-
+  async attached() {
+    this.entries = await this.backendService.send({ Command: 'LoadTests' });
   }
 
   detached() {

@@ -64,7 +64,7 @@
     },
     "bundles": [
       {
-        "name": "vendor-bundle.js",
+        "name": "bundle.js",
         "source": [
           "**/*.{js,json,css,html}"
         ],
@@ -105,7 +105,7 @@
     },
     "loader": {
       "type": "require",
-      "configTarget": "vendor-bundle.js",
+      "configTarget": "bundle.js",
       "includeBundleMetadataInConfig": "auto",
       "plugins": [
         {

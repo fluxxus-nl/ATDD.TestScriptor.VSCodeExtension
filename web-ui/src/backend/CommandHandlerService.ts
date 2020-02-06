@@ -1,12 +1,10 @@
-import { BackendService } from './BackendService';
+import { BackendService } from 'services/backend-service';
 import { autoinject, NewInstance, Container } from "aurelia-framework";
 
 @autoinject()
 export class CommandHandlerService implements ICommandHandlerService {
 
-    backendService: BackendService;
-
-    constructor(backendService: BackendService) {
+    constructor(protected backendService: BackendService) {
 
     }
 

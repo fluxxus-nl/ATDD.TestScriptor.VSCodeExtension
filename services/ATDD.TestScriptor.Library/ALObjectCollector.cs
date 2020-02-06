@@ -83,35 +83,43 @@ namespace ATDD.TestScriptor.Library
             }
 
             var collectorItems = new List<CollectorItem>();
-            var alobjects = ALParser.ReadObjectInfos(itemPath);
+            var alobjects = ALParser.Read(itemPath);
             foreach (var alobject in alobjects)
-            {
-
-                collectorItems.Add(new CollectorItem
+            {               
+                if (alobject.Type == ALObjectType.codeunit)
                 {
-                    TypeId = alobject.Type,
-                    Id = alobject.Id,
-                    Type = $"{alobject.Type}",
-                    Publisher = project.publisher,
-                    Version = project.version.ToString(),
-                    //Symbol = item,
-                    FsPath = itemPath,
-                    Name = alobject.Name,
-                    Application = project.name,
-                    CanExecute = (new string[] { "Table", "Page", "PageExtension", "TableExtension", "PageCustomization", "Report" }).Contains($"{alobject.Type}"),
-                    CanDesign = (new string[] { "Table", "Page" }).Contains($"{alobject.Type}"),
-                    CanCreatePage = (new string[] { "Table", "TableExtension" }).Contains($"{alobject.Type}"),
-                    EventName = String.Empty,
-                    IsEvent = false,
-                    IsLocal = true,
-                    SymbolData = new SymbolData
+                    bool isTestCodeunit = alobject
+                   .Properties
+                   .Any(p => p.Name.ToLower() == "subtype" && p.Value.ToLower() == "test");
+
+                    if (isTestCodeunit)
                     {
-                        Index = alobject.Id,
-                        Path = itemPath,
-                        Type = alobject.Type,
-                        Name = alobject.Name
+
+                        var testCodeunit = ALParser.Read<ALTestCodeunitReader>(itemPath).FirstOrDefault();
+
+                        collectorItems.Add(new CollectorItem
+                        {
+                            TypeId = alobject.Type,
+                            Id = alobject.Id,
+                            Type = $"{alobject.Type}",
+                            Publisher = project.publisher,
+                            Version = project.version.ToString(),
+                            Symbol = testCodeunit,
+                            FsPath = itemPath,
+                            Name = alobject.Name,
+                            Application = project.name,
+                            IsLocal = true,
+                            ProjectPath = project.FilePath,
+                            SymbolData = new SymbolData
+                            {
+                                Index = alobject.Id,
+                                Path = itemPath,
+                                Type = alobject.Type,
+                                Name = alobject.Name
+                            }
+                        });
                     }
-                }); ;
+                }
             }
 
             alobjects.ToList().Clear();
