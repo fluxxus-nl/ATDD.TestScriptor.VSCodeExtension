@@ -9,7 +9,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\ALObjectParser\ALObjectParser.Library\ALObjectParser.Library.csproj" />
     <ProjectReference Include="..\ATDD.TestScriptor.Library\ATDD.TestScriptor.Library.csproj" />
   </ItemGroup>
 

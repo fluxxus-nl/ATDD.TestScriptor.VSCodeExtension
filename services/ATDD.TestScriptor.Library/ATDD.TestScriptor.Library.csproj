@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\ALObjectParser\ALObjectParser.Library\ALObjectParser.Library.csproj" />
+    <ProjectReference Include="..\ALObjectParser\ALObjectParser.Library\ALObjectParser.Library.csproj" />
   </ItemGroup>
 
 </Project>
