@@ -7,17 +7,20 @@ trigger:
 
 pool:
   vmImage: 'windows-latest'
-  #name: default
 
 variables:
   solution: '**/*.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
   targetPlatform: 'win-x64'
+  RunVersion: "0.1.$(Build.BuildId)"
 
 # .NET Server
 
 steps:
+- checkout: self
+  submodules: true
+
 - task: NuGetToolInstaller@1
 
 - task: NuGetCommand@2
@@ -72,6 +75,10 @@ steps:
 
 - script: yarn install
   displayName: 'VS Ext. restore'
+  workingDirectory: 'vscode-extension'
+
+- script: yarn version --no-git-tag-version --new-version $(RunVersion)
+  displayName: 'VS Ext. set version'
   workingDirectory: 'vscode-extension'
 
 - script: yarn package
