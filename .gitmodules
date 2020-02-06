@@ -1,0 +1,3 @@
+[submodule "services/ALObjectParser"]
+	path = services/ALObjectParser
+	url = https://github.com/dynasist/ALObjectParser.git
