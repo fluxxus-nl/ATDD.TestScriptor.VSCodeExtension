@@ -16,8 +16,9 @@
     "aurelia-resize": "^1.1.2",
     "aurelia-store": "^1.4.0",
     "bootstrap": "^4.4.1",
+    "jquery": "^3.4.1",
     "lodash": "^4.17.15",
-    "middleware": "../services/middleware",
+    "popper.js": "^1.16.0",
     "requirejs": "^2.3.6"
   },
   "devDependencies": {
@@ -65,7 +66,7 @@
     "defaults"
   ],
   "scripts": {
-    "build": "au build",
+    "build": "au build --env prod && au copy-files",
     "start": "au run",
     "test": "au test",
     "docker:build": "docker build -t atdd-web-ui:0.1.0 -t atdd-web-ui:latest .",

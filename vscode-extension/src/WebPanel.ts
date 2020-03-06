@@ -3,10 +3,14 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import * as utils from './utils';
 import { IMessageBase } from './typings/IMessageBase';
+import { LogService } from './Services/LogService';
 
 export class WebPanel {
 
     public static instance: WebPanel;
+
+    public static testList: Array<any> = [];
+
     protected options: any = {};
 
     protected panel!: vscode.WebviewPanel;
@@ -39,14 +43,14 @@ export class WebPanel {
 
         // Handle messages from the webview
         this.panel.webview.onDidReceiveMessage((async (messages: Array<IMessageBase>) => {
-            let handler: CommandHandlerService = new CommandHandlerService(this.extensionPath);
+            let handler: CommandHandlerService = new CommandHandlerService(this.extensionPath, this);
 
             for (let message of messages) {
                 try {
                     await handler.dispatch(message);
                 } catch (e) {
-                    vscode.window.showErrorMessage(`Failed to execute command: ${message.Command}. Check console for details.`);
-                    console.log(`Failed to execute command: ${message.Command}`, e);
+                    vscode.window.showErrorMessage(`${e?.message ? `${e.message}` : 'ATDD Server error. Check "Help / Toggle Developer Tools" for details.'}`);
+                    LogService.instance.error(`Failed to execute command: ${message.Command}`, e);
                 }
             }
         }).bind(this), null, this._disposables);

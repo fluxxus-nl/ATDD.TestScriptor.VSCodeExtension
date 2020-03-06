@@ -6,10 +6,14 @@
     "author": {
         "name": "fluxxus-nl"
     },
+    "repository": {
+        "type": "github",
+        "url": "https://github.com/fluxxus-nl/ATDD.TestScriptor.VSCodeExtension.git"
+    },
     "description": "Acceptance Test-Driven Development with Business Central",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "engines": {
-        "vscode": "^1.40.0"
+        "vscode": "^1.42.0"
     },
     "keywords": [
         "Microsoft Dynamics 365 Business Central",
@@ -24,7 +28,8 @@
         "Other"
     ],
     "activationEvents": [
-        "*"
+        "onLanguage:al",
+        "workspaceContains:app.json"
     ],
     "main": "./out/extension",
     "contributes": {
@@ -35,27 +40,42 @@
             }
         ]
     },
+    "atddDebug": true,
     "extensionKind": [
         "workspace"
     ],
     "scripts": {
-        "vscode:prepublish": "yarn run compile",
+        "vscode:prepublish": "yarn run compile && yarn run dist",
         "package": "vsce package",
+        "dist": "yarn webpack --mode production",
+        "dev": "yarn webpack --mode none",
         "compile": "tsc -p ./",
-        "watch": "tsc -watch -p ./",
-        "postinstall": "node ./node_modules/vscode/bin/install",
-        "test": "yarn run compile && node ./node_modules/vscode/bin/test"
+        "lint": "tslint -p ./",
+        "watch": "yarn run dev && tsc -watch -p ./",
+        "pretest": "yarn run compile",
+        "test": "node ./out/test/runTest.js"
     },
     "devDependencies": {
+        "@types/glob": "^7.1.1",
         "@types/mocha": "^2.2.42",
         "@types/node": "^8.10.25",
+        "@types/request": "^2.48.4",
+        "@types/vscode": "^1.42.0",
+        "fs-plus": "^3.1.1",
+        "glob": "^7.1.4",
+        "mocha": "^6.1.4",
+        "source-map-support": "^0.5.12",
+        "ts-loader": "^6.2.1",
         "tslint": "^5.8.0",
-        "typescript": "^3.1.4",
-        "vscode": "^1.1.25"
+        "typescript": "3.7.5",
+        "vscode-test": "^1.3.0",
+        "webpack": "^4.42.0",
+        "webpack-cli": "^3.3.11"
     },
     "dependencies": {
-        "fs-extra": "^8.1.0",
         "@microsoft/signalr": "^3.1.0",
-        "get-port": "^5.1.0"
+        "clipboardy": "^2.2.0",
+        "fs-extra": "^8.1.0",
+        "portfinder": "^1.0.25"
     }
 }

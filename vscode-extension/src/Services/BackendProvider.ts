@@ -1,7 +1,11 @@
 import { ChildProcess } from "child_process";
 import * as path from 'path';
+import * as os from 'os';
 import { execFile } from 'child_process';
-import * as getPort from 'get-port';
+import * as fs from 'fs';
+import * as portFinder from 'portfinder';
+import { LogService } from "./LogService";
+const packageConfig: any = require('../../package.json');
 
 export class BackendProvider {
     public static process: ChildProcess | null;
@@ -13,16 +17,41 @@ export class BackendProvider {
     public static async start(extensionPath: string, wkspacePaths: Array<string>) {
         BackendProvider.workspaces = wkspacePaths || [];
         return new Promise(async (resolve, reject) => {
-            let debug = true;
+            let debug = packageConfig.atddDebug === true;
             if (!debug) {
-                BackendProvider.port = await getPort({ port: getPort.makeRange(42000, 42010) });
-                let exePath = path.join(extensionPath, 'bin', 'ATDD.TestScriptor.BackendServices');
+                BackendProvider.port = await BackendProvider.getPort();
+
+                let osFolder = '';
+                let osPlatform: string = os.platform();
+                switch (osPlatform) {
+                    default:
+                        osFolder = 'linux';
+                        break;
+                    case "win32":
+                        osFolder = 'windows';
+                        break;
+                    case 'darwin':
+                        osFolder = 'macos';
+                        break;                    
+                }
+
+                let exePath = path.join(extensionPath, 'bin', osFolder, 'ATDD.TestScriptor.BackendServices');
+
+                // set executable chmod on linux/osx platforms
+                if (osPlatform != 'win32') {
+                    try {
+                        fs.chmodSync(exePath, 0o755);
+                    } catch (e) {
+                        LogService.instance.error(`Setting Chmod 755 for ATDD.TestScriptor.BackendServices executable failed. Platform ${osPlatform}\n`, e);
+                    }
+                }
                 if (!BackendProvider.process) {
-                    BackendProvider.process = execFile(exePath, ['--urls', `http://0.0.0.0:${BackendProvider.port}`, '--workspaces', `${BackendProvider.workspaces.join(';')}`], { windowsHide: false }, (error, stdout, stderr) => {
+                    //BackendProvider.process = execFile(exePath, ['--urls', `http://0.0.0.0:${BackendProvider.port}`, '--workspaces', `${BackendProvider.workspaces.join(';')}`], { windowsHide: false }, (error, stdout, stderr) => {
+                    BackendProvider.process = execFile(exePath, ['--urls', `http://0.0.0.0:${BackendProvider.port}`], { windowsHide: false }, (error, stdout, stderr) => {
                         if (error) {
                             throw error;
                         }
-                        console.log(stdout);
+                        LogService.instance.debug(stdout);
                     });
                     BackendProvider.process.stdout.on('data', (data) => {
                         let line = data.toString();
@@ -33,10 +62,15 @@ export class BackendProvider {
                     resolve(true);
                 }
             } else {
-                BackendProvider.port = 51561;
+                BackendProvider.port = 5000;
                 resolve(true);
             }
         });
+    }
+
+    private static async getPort() {
+        let newPort = await portFinder.getPortPromise({ port: 42000, stopPort: 42150 });
+        return newPort;
     }
 
     public static async stop() {

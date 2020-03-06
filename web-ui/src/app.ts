@@ -1,6 +1,7 @@
 import { BackendService } from 'services/backend-service';
-import { autoinject, observable, Disposable, BindingEngine } from 'aurelia-framework';
+import { autoinject, observable, Disposable, BindingEngine, PLATFORM } from 'aurelia-framework';
 import { EventAggregator } from 'aurelia-event-aggregator';
+(<any>PLATFORM.global).process = { env: { NODE_ENV: 'production' } };
 
 @autoinject()
 export class App {

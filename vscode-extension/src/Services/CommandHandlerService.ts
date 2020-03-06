@@ -1,3 +1,4 @@
+import { WebPanel } from './../WebPanel';
 import { ICommandBase } from '../typings/ICommandBase';
 import * as vscode from 'vscode';
 import { IMessageBase } from '../typings/IMessageBase';
@@ -7,8 +8,11 @@ export class CommandHandlerService {
 
     protected extensionPath: string = '';
 
-    public constructor(lExtensionPath: string) {
+    protected webPanel: WebPanel;
+
+    public constructor(lExtensionPath: string, lWebPanel: WebPanel) {
         this.extensionPath = lExtensionPath;
+        this.webPanel = lWebPanel;
     }
 
     public async dispatch(message: IMessageBase) {
@@ -16,7 +20,7 @@ export class CommandHandlerService {
         let handlerClass = require(`../Commands/${className}`);
 
         if (handlerClass) {
-            let handler: ICommandBase = new handlerClass[className](this.extensionPath);
+            let handler: ICommandBase = new handlerClass[className](this.extensionPath, this.webPanel);
             await handler.execute(message);
             //await handler.showMessage(message);
         } else {

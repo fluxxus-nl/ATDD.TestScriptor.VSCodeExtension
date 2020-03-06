@@ -59,7 +59,7 @@
     "options": {
       "minify": "stage & prod",
       "sourcemaps": "dev & stage",
-      "rev": "prod",
+      "rev": "none",
       "cache": "dev & stage"
     },
     "bundles": [
@@ -82,6 +82,7 @@
             "env": "dev"
           },
           "text",
+          "bootstrap",
           {
             "name": "ag-grid-community",
             "path": "../node_modules/ag-grid-community",

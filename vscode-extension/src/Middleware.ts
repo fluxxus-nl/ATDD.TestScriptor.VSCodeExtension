@@ -1,6 +1,7 @@
 import { WebPanel } from './WebPanel';
 import * as vscode from 'vscode';
 import { HubConnectionState, HubConnectionBuilder, LogLevel, HubConnection } from "@microsoft/signalr";
+import { LogService } from './Services/LogService';
 
 export class Middleware {
     private static _instance: Middleware | undefined;
@@ -44,13 +45,13 @@ export class Middleware {
 
         this._connection.onreconnecting(error => {
             let msg = `ATDD: backend connection lost due to error "${error}". Reconnecting.`;
-            console.log(msg);
+            LogService.instance.warn(msg);
             vscode.window.showWarningMessage(msg);
         });
 
         this._connection.onreconnected(id => {
             let msg = `ATDD: backend connection has beed restored.`;
-            console.log(msg);
+            LogService.instance.info(msg);
             vscode.window.showInformationMessage(msg);
         });
 
@@ -93,6 +94,7 @@ export class Middleware {
         return new Promise((resolve, reject) => {
             this.check().then(() => {
                 this._connection.on('GetObjects', (objects: any) => {
+                    LogService.instance.debug(`GetObjects result done.`);
                     resolve(objects);
                 });
                 this._connection.invoke('QueryObjects', paths).catch((err: any) => reject(err));
@@ -103,7 +105,7 @@ export class Middleware {
     async getPing(): Promise<any> {
         return new Promise(async (resolve, reject) => {
             this._connection.on('GetPing', (result: any) => {
-                console.log(`ATDD backend ping ${result === true ? 'successful' : 'failed'}.`);
+                LogService.instance.debug(`Backend ping ${result === true ? 'successful' : 'failed'}.`);
                 resolve(result);
             });
 

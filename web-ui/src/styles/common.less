@@ -1,27 +1,33 @@
-@base-font-size: 0.875rem;
+@base-font-size  : 0.875rem;
+@bc-green-darker : #005e63;
+@bc-green-dark   : #008089;
+@bc-green        : #00B7C3;
+@bc-green-light  : rgb(178, 233, 237);
+@bc-green-lighter: lighten(@bc-green-light, 10%);
+@bc-grey-light   : #eeeeee;
+@bc-grey         : #dddddd;
+@bc-grey-darker  : darken(@bc-grey, 20%);
+@bc-black        : rgb(80, 92, 109);
 
 body {
-    font-family     : 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family     : "Segoe UI", "Segoe WP", Segoe, device-segoe, Tahoma, Helvetica, Arial, sans-serif !important;
     background-color: rgb(246, 247, 248) !important;
 }
+
 
 #menubar {
     box-shadow: 0 5px 10px 0px #ccc;
 }
 
 #main-content {
-    margin-top: 100px;
+    margin-top: 50px;
 }
 
 /* ag-grid custom styles */
 
-@bc-green-dark: #008089;
-@bc-green-light: rgb(178, 233, 237);
-@bc-green-lighter: lighten(@bc-green-light, 10%);
-
 .ag-theme-material {
     background-color: transparent;
-    font-size: @base-font-size;
+    font-size       : @base-font-size;
 
     .ag-header {
         background    : none;
@@ -47,7 +53,7 @@ body {
         input[type="tel"]:focus,
         input[type="date"]:focus,
         input[type="datetime-local"]:focus {
-            border-color: @bc-green-dark !important;
+            border-color: @bc-green-dark  !important;
         }
     }
 
@@ -57,24 +63,104 @@ body {
         input[type="tel"]:focus,
         input[type="date"]:focus,
         input[type="datetime-local"]:focus {
-            border-color: @bc-green-dark !important;
+            border-color: @bc-green-dark  !important;
         }
     }
 
     .ag-row-hover {
-        background: @bc-green-lighter !important;
+        background: @bc-green-lighter  !important;
     }
 
     .ag-row-selected {
-        background: @bc-green-light !important;
+        background: @bc-green-light  !important;
 
         .ag-row-hover {
-            background: @bc-green-light !important;
+            background: @bc-green-light  !important;
         }
     }
 }
 
 .ag-cell.ag-cell-with-height.ag-cell-value.ag-cell-focus.ag-cell-inline-editing,
 .ag-has-focus .ag-cell-focus {
-    border-color: @bc-green-dark !important;
+    border-color: @bc-green-dark  !important;
+
+}
+
+body.vscode-dark {
+    color           : var(--vscode-editor-foreground);
+    background-color: inherit !important;
+
+    .card {
+        color           : var(--vscode-editor-foreground);
+        background-color: var(--vscode-tab-inactiveBackground);
+    }
+
+    #topbar {
+        color           : var(--vscode-editor-foreground) !important;
+        background-color:  @bc-green-darker !important;
+    }
+    
+    #menubar {
+        box-shadow      : 0 5px 10px 0px rgba(0,0,0,0.2);
+        background-color: var(--vscode-tab-activeBackground) !important;
+    }
+
+    .form-control {
+        color           : var(--vscode-editor-foreground);
+        background-color: var(--vscode-input-background);
+        border-color    : var(--vscode-input-border) !important;
+    }
+
+    .btn-outline-primary,
+    .btn-outline-secondary,
+    .btn-outline-success {
+        color: var(--vscode-editor-foreground);
+    }
+
+    .ag-theme-material {
+        background-color: inherit;
+
+        .ag-header {
+            background: inherit;
+            color     : var(--vscode-editor-foreground);
+        }
+
+        .ag-cell-inline-editing {
+
+            input[type="text"]:focus,
+            input[type="tel"]:focus,
+            input[type="date"]:focus,
+            input[type="datetime-local"]:focus {
+                border-color: var(--vscode-input-border) !important;
+            }
+        }
+
+        .ag-popup-editor {
+
+            input[type="text"]:focus,
+            input[type="tel"]:focus,
+            input[type="date"]:focus,
+            input[type="datetime-local"]:focus {
+                border-color: var(--vscode-input-border) !important;
+            }
+        }
+
+        .ag-row-hover {
+            background: var(--vscode-button-hoverBackground) !important;
+        }
+
+        .ag-row-selected {
+            background: var(--vscode-button-background) !important;
+
+            .ag-row-hover {
+                background: var(--vscode-button-hoverBackground) !important;
+            }
+        }
+    }
+
+    .ag-cell.ag-cell-with-height.ag-cell-value.ag-cell-focus.ag-cell-inline-editing,
+    .ag-has-focus .ag-cell-focus {
+        border-color: var(--vscode-input-border) !important;
+    }
+
 }
