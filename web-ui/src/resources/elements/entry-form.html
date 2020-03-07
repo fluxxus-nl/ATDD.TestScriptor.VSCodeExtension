@@ -1,7 +1,7 @@
 <template>
-    <div class="card" style="height: 750px; overflow: auto">
+    <div id="test-entry-form" class="card">
         <div class="card-body">
-            <h5 class="card-title">${scenario !== null ? 'Edit Scenario:' : 'Select a Scenario to edit.'}</h5>
+            <h5 class="card-title"><i class="fas fa-edit"></i> ${scenario !== null ? 'Edit Scenario:' : 'Select a Scenario to edit.'}</h5>
             <div show.bind="scenario !== null" class="form-group mb-2">
                 <label for="formGroupExampleInput">Feature</label>
                 <input type="text" class="form-control" value.bind="scenario.Feature" placeholder="...">

@@ -55,11 +55,6 @@ export async function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(watcher.onDidChange(localObjectWatcher));
     context.subscriptions.push(watcher.onDidDelete(localObjectWatcher));
 
-
-    if (paths.length > 0) {
-        vscode.commands.executeCommand('atddTestScriptor.discover');
-    }
-
     LogService.instance.info('Extension "fluxxus-nl.atdd-testscriptor" is now activated.');
 }
 

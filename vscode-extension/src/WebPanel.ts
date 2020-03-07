@@ -61,7 +61,7 @@ export class WebPanel {
             WebPanel.instance.panel.reveal(vscode.ViewColumn.One);
             return;
         }
-
+        
         let instance = new WebPanel(extensionPath);
         WebPanel.instance = instance;
         await instance.createPanel();        

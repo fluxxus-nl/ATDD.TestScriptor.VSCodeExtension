@@ -21,7 +21,7 @@ namespace ATDD.TestScriptor.BackendServices.Hubs
         {
             using (var collector = new ALObjectCollector())
             {
-                var objects = collector.DiscoverLocalFiles(msg.ToList());
+                var objects = await collector.DiscoverLocalFiles(msg.ToList());
                 var result = objects
                     .SelectMany(s => {
                         return (s.Symbol as TestALCodeunit).Features.SelectMany(x =>
@@ -45,7 +45,8 @@ namespace ATDD.TestScriptor.BackendServices.Hubs
 
                               });
                           });
-                   });
+                   })
+                    .ToList();
                 await Clients.All.GetObjects(result);
             }
         }

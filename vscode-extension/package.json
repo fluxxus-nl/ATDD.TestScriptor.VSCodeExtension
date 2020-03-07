@@ -28,8 +28,7 @@
         "Other"
     ],
     "activationEvents": [
-        "onLanguage:al",
-        "workspaceContains:app.json"
+        "onCommand:atddTestScriptor.open"
     ],
     "main": "./out/extension",
     "contributes": {

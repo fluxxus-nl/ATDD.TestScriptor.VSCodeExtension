@@ -1,6 +1,7 @@
 import { BackendService } from 'services/backend-service';
 import { autoinject, observable, Disposable, BindingEngine, PLATFORM } from 'aurelia-framework';
 import { EventAggregator } from 'aurelia-event-aggregator';
+import Split from 'split.js'
 (<any>PLATFORM.global).process = { env: { NODE_ENV: 'production' } };
 
 @autoinject()
@@ -39,6 +40,10 @@ export class App {
 
   async attached() {
     this.entries = await this.backendService.send({ Command: 'LoadTests' });
+
+    Split(['#test-col-1', '#test-col-2'], {
+      sizes: [70, 30]
+    });
   }
 
   detached() {

@@ -48,18 +48,19 @@ namespace ATDD.TestScriptor.Library
             WorkspacePath = wkspcePaths;
         }
 
-        public ICollection<CollectorItem> Discover()
+        public async Task<List<CollectorItem>> Discover()
         {
-            var result = DiscoverLocalFiles(WorkspacePath);
+            var result = await DiscoverLocalFiles(WorkspacePath);
 
             return result;
         }
 
-        public ICollection<CollectorItem> DiscoverLocalFiles(List<string> wkspcePaths)
+        public async Task<List<CollectorItem>> DiscoverLocalFiles(List<string> wkspcePaths)
         {
             var projects = ALProjectCollector.Discover(wkspcePaths);
             var srcDirs = projects.Select(s => Directory.GetParent(s.FilePath).FullName).ToArray();
-            var result = new List<CollectorItem>().AsQueryable();
+            var result = new List<CollectorItem>();
+            var tasks = new List<Task<List<CollectorItem>>>();
 
             foreach (var project in projects)
             {
@@ -67,12 +68,20 @@ namespace ATDD.TestScriptor.Library
                 var localSymbols = Directory
                     .GetDirectories(path)
                     .SelectMany(s => Directory.GetFiles(s, "*.al", SearchOption.AllDirectories))
+                    .Select(item => Task.Run(() => DiscoverLocalFile(item, project)));
+
+                tasks.AddRange(localSymbols);
+
+                /*var tasks = new List<Task<CollectorItem>>();
                     .SelectMany(item => DiscoverLocalFile(item));
 
-                result = result.Concat(localSymbols);
+                result = result.Concat(localSymbols);*/
             }
 
-            return result.ToList();
+            var subResult = await Task.WhenAll(tasks);
+            result = subResult.SelectMany(s => s).ToList();
+
+            return result;
         }
 
         public List<CollectorItem> DiscoverLocalFile(string itemPath, ALProject project = null)
@@ -122,7 +131,7 @@ namespace ATDD.TestScriptor.Library
                 }
             }
 
-            alobjects.ToList().Clear();
+            //alobjects.ToList().Clear();
 
             return collectorItems;
         }
@@ -148,7 +157,7 @@ namespace ATDD.TestScriptor.Library
             return symbolPaths;
         }
 
-        public SymbolReference GetSymbolReference(string symbolPath, bool mapSourcePath = true)
+        public async Task<SymbolReference> GetSymbolReference(string symbolPath, bool mapSourcePath = true)
         {
             var symbolRef = new SymbolReference();
 
@@ -170,7 +179,7 @@ namespace ATDD.TestScriptor.Library
 
                                 symbolRef.Symbols.AddRange(symbolRef.Codeunits);
 
-                                GC.Collect();
+                                //GC.Collect();
 
                                 symbolRef.Path = symbolPath;
                             }
@@ -179,9 +188,12 @@ namespace ATDD.TestScriptor.Library
 
                     if (mapSourcePath)
                     {
-                        List<ALObject> objHeaders = new List<ALObject>();
+                        IEnumerable<ALObject> objHeaders = new List<ALObject>();
+                        List<Task<ALObject>> tasks = new List<Task<ALObject>>();
                         foreach (ZipEntry item in zf)
                         {
+                            tasks.Add(Task.Run(() =>
+                            {
                             if (item.IsFile && item.Name.EndsWith(".al"))
                             {
                                 using (var xstr = zf.GetInputStream(item))
@@ -194,13 +206,26 @@ namespace ATDD.TestScriptor.Library
                                         var infoItem = info.FirstOrDefault() as ALObject;
                                         if (infoItem != null)
                                         {
-                                            infoItem.SymbolZipName = item.Name;
-                                            objHeaders.Add(infoItem);
+                                                infoItem.SymbolZipName = item.ZipFileIndex.ToString();
+                                                return infoItem;
+                                            }
                                         }
                                     }
                                 }
-                            }
+
+                                return null;
+                            }));
                         }
+
+                        objHeaders = await Task.WhenAll(tasks);
+                        objHeaders = objHeaders.Where(x => x != null);
+
+                        /*symbolRef.Symbols.Where(w => objHeaders.Any(a => a.Type == w.Type && a.Name == w.Name)).Select(x =>
+                        {
+                            x.SymbolZipName = objHeaders.FirstOrDefault(f => f.Type == x.Type && f.Name == x.Name)?.SymbolZipName;
+                            return x;
+                        })
+                        .ToList();*/
 
                         symbolRef.Symbols = symbolRef.Symbols
                             .Select(x =>
@@ -213,7 +238,7 @@ namespace ATDD.TestScriptor.Library
                 }
             }
 
-            GC.Collect();
+            //GC.Collect();
 
             return symbolRef;
         }
@@ -230,7 +255,7 @@ namespace ATDD.TestScriptor.Library
                 return alobject;
             }
 
-            var symbols = GetSymbolReference(data.Path, mapSourcePath);
+            var symbols = await GetSymbolReference(data.Path, mapSourcePath);
             var result = symbols.Symbols.Where(w =>w.Type == data.Type && w.Name == data.Name).FirstOrDefault();
 
             return await Task.FromResult(result);
@@ -250,7 +275,9 @@ namespace ATDD.TestScriptor.Library
             {
                 using (var zf = new ZipFile(fs))
                 {
-                    var zipEntry = zf.GetEntry(data.SymbolZipName);
+                    int i;
+                    int.TryParse(data.SymbolZipName, out i);
+                    var zipEntry = zf[i];
 
                     using (var entryStream = zf.GetInputStream(zipEntry))
                     {
