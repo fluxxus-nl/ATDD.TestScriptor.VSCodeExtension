@@ -11,6 +11,7 @@ namespace ATDD.TestScriptor.BackendServices.Models
         public string Feature { get; set; }
         public string Scenario { get; set; }
         public string Codeunit { get; set; }
+        public string FsPath { get; set; }
         public MessageDetails Details { get; set; }
     }
 

@@ -39,7 +39,7 @@
             }
         ]
     },
-    "atddDebug": false,
+    "atddDebug": true,
     "extensionKind": [
         "workspace"
     ],

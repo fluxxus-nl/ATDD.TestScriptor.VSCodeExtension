@@ -11,7 +11,7 @@
                 <ag-grid-column header-name="Codeunit" field="Codeunit" filter="agTextColumnFilter">
                     <ag-cell-template>
                         <a href="#click"
-                            click.delegate="params.context.sendCommand(params.data, 'OpenFile')">${params.data.Codeunit}</a>
+                            click.delegate="params.context.sendCommand(params.data, 'ViewSource')">${params.data.Codeunit}</a>
                     </ag-cell-template>
                 </ag-grid-column>
                 <ag-grid-column header-name="Local Result" field="LocalResult"></ag-grid-column>

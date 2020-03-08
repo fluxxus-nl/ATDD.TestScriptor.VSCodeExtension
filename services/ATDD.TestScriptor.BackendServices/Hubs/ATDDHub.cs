@@ -30,6 +30,7 @@ namespace ATDD.TestScriptor.BackendServices.Hubs
                               {
                                   var msg = new Message();
                                   msg.Project = s.Application;
+                                  msg.FsPath = s.FsPath;
                                   msg.Codeunit = s.Name;
                                   msg.Feature = x.Name;
                                   msg.Scenario = sc.Name;

@@ -1,6 +1,7 @@
 import { autoinject, bindable, observable, BindingEngine, Disposable, ICollectionObserverSplice } from 'aurelia-framework';
 import { ColumnApi, GridApi, GridOptions } from 'ag-grid-community';
 import { Subscription, EventAggregator } from 'aurelia-event-aggregator';
+import { BackendService } from 'services/backend-service';
 
 @autoinject()
 export class TestList {
@@ -16,7 +17,10 @@ export class TestList {
     @bindable()
     currEntry: any;
 
-    constructor(private eventAggregator: EventAggregator, private bindingEngine: BindingEngine) {
+    @bindable()
+    searchValue: string;
+
+    constructor(private eventAggregator: EventAggregator, private bindingEngine: BindingEngine, private backendService: BackendService) {
         this.gridOptions = <GridOptions>{
             defaultColDef: {
                 resizable: true,
@@ -61,7 +65,12 @@ export class TestList {
         console.log('Selection changed', this.currEntry);
     }
 
-    sendCommand(entry: any, type: string) {
-
+    async sendCommand(entry: any, type: string) {
+        await this.backendService.send({ Command: type, Data: entry });
     }
+
+    searchValueChanged() {
+        this.api.setQuickFilter(this.searchValue);
+    }
+
 }

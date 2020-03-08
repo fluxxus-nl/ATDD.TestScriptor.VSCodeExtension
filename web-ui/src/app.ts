@@ -23,6 +23,9 @@ export class App {
   @observable()
   currEntry: any;
 
+  @observable()
+  searchValue: string = '';
+
   options: any;
 
   constructor(private backendService: BackendService) {

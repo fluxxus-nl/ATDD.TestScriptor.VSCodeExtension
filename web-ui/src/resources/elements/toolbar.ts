@@ -1,11 +1,14 @@
+import { EventAggregator } from 'aurelia-event-aggregator';
 import { CommandHandlerService } from "backend/CommandHandlerService";
-import { autoinject } from "aurelia-framework";
+import { autoinject, bindable } from "aurelia-framework";
 
 @autoinject()
 export class Toolbar {
 
-    constructor(private commandHandlerService: CommandHandlerService) {
+    @bindable()
+    searchValue: string;
 
+    constructor(private commandHandlerService: CommandHandlerService) {
     }
 
     async sendCommand(command: string, data?: any) {
