@@ -12,6 +12,8 @@ namespace ATDD.TestScriptor.BackendServices.Models
         public string Scenario { get; set; }
         public string Codeunit { get; set; }
         public string FsPath { get; set; }
+        public string MethodName { get; set; }
+        public ALTestRunnerResult TestRunnerResult { get; set; }
         public MessageDetails Details { get; set; }
     }
 
@@ -22,5 +24,12 @@ namespace ATDD.TestScriptor.BackendServices.Models
         public IEnumerable<string> given { get; set; }
         public IEnumerable<string> when { get; set; }
         public IEnumerable<string> then { get; set; }
+    }
+
+    public enum ALTestRunnerResult
+    {
+        NoInfo,
+        Success,
+        Failure
     }
 }

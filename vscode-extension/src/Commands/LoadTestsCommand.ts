@@ -5,8 +5,8 @@ import { WebPanel } from '../WebPanel';
 
 export class LoadTestsCommand extends CommandBase {
 
-    async execute(message: IMessageBase) {
+    async execute(message?: IMessageBase) {
         await vscode.commands.executeCommand('atddTestScriptor.discover');
-        WebPanel.postMessage(WebPanel.testList);
+        WebPanel.postMessage({ Command: 'LoadTests', Data: WebPanel.testList });
     }
 }

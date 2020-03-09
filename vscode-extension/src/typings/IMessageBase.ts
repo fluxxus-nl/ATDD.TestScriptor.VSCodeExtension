@@ -1,4 +1,4 @@
 export interface IMessageBase {
-    Command: string;
+    Command?: string;
     Data?: any;
 }

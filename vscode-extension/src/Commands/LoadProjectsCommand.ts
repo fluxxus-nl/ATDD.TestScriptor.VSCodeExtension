@@ -10,6 +10,6 @@ export class LoadProjectsCommand extends CommandBase {
         let paths = (vscode.workspace.workspaceFolders as Array<vscode.WorkspaceFolder>).map(m => m.uri.fsPath);
 
         let projects = await Middleware.instance.getProjects(paths);
-        WebPanel.postMessage(projects);
+        WebPanel.postMessage({Command: 'LoadProjects', Data: projects});
     }
 }

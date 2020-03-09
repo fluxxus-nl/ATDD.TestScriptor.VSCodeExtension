@@ -16,8 +16,16 @@ export class VSCodeConnector implements IBackendConnector {
         return new Promise((resolve, reject) => {
             let receiver = (event) => {
                 console.log('vscodeconnector received', event);
-                window.removeEventListener('message', receiver);
-                resolve(event.data);
+
+                if (!event.data) {
+                    window.removeEventListener('message', receiver);
+                    resolve(null);
+                }
+
+                if (event.data && event.data.Command == payload.Command) {
+                    window.removeEventListener('message', receiver);
+                    resolve(event.data);
+                }
             };
             window.addEventListener('message', receiver);
 

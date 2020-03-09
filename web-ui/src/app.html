@@ -14,13 +14,14 @@
 
       <div id="test-col-1" class="test-col">
 
-        <test-list entries.two-way="entries" curr-entry.two-way="currEntry" search-value.two-way="searchValue"></test-list>
+        <test-list entries.two-way="entries" curr-entry.two-way="currEntry" search-value.bind="searchValue">
+        </test-list>
 
       </div>
 
       <div id="test-col-2" class="test-col">
 
-        <entry-form scenario.two-way="currEntry"></entry-form>
+        <entry-form scenario.bind="currEntry" sidebar-links.bind="sidebarLinks"></entry-form>
 
       </div>
 

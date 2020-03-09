@@ -1,5 +1,5 @@
 import { autoinject, bindable, observable, BindingEngine, Disposable, ICollectionObserverSplice } from 'aurelia-framework';
-import { ColumnApi, GridApi, GridOptions } from 'ag-grid-community';
+import { ColumnApi, GridApi, GridOptions, RowNode } from 'ag-grid-community';
 import { Subscription, EventAggregator } from 'aurelia-event-aggregator';
 import { BackendService } from 'services/backend-service';
 
@@ -15,7 +15,7 @@ export class TestList {
     entries: Array<any> = [];
 
     @bindable()
-    currEntry: any;
+    currEntry: any = false;
 
     @bindable()
     searchValue: string;
@@ -36,6 +36,21 @@ export class TestList {
             console.log(response, this.entries);
         }));
 
+        this.subscriptions.push(this.eventAggregator.subscribe('appMainColumnsResized', response => {
+            this.api.sizeColumnsToFit();
+        }));
+
+        this.subscriptions.push(this.eventAggregator.subscribe('selectedEntryEdited', entry => {
+            console.log('test-list selectedEntryEdited', entry, this.entries);
+            if (entry) {
+                let currNode = this.api.getSelectedNodes()[0];
+                if (currNode) {
+                    currNode.setData(entry);
+                    this.api.refreshCells({rowNodes: [currNode]});
+                }
+            }
+        }));
+
         this.subscriptions.push(this.bindingEngine.collectionObserver(this.entries).subscribe(this.listChanged.bind(this)));
     }
 
@@ -47,7 +62,9 @@ export class TestList {
         //this.gridOptions.rowHeight = 40; TODO
         this.gridOptions.onGridReady = () => {
             this.api = this.gridOptions.api;
+            this.api.sizeColumnsToFit();
             this.columnApi = this.gridOptions.columnApi;
+            this.columnApi.setColumnVisible('Project', false);
         };
     }
 
@@ -57,6 +74,8 @@ export class TestList {
 
     listChanged(splices: Array<ICollectionObserverSplice<any>>) {
         this.api.setRowData(this.entries);
+        let projects = [...new Set(this.entries.map(item => item.Project))];
+        this.columnApi.setColumnVisible('Project', projects.length > 1);
     }
 
     selectionChanged() {

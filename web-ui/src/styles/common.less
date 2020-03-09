@@ -50,15 +50,61 @@ body,
     }
 }
 
-.gutter-horizontal  {
+ul#sidebar-list {
+    margin    : 20px 0 0;
+    padding   : 0;
+    list-style: none;
+
+    li {
+        list-style: none;
+        margin    : 0;
+
+        div {
+            padding: 7px;
+            cursor: pointer;
+
+            &:not(.active) {
+                background-color: transparent;
+            }
+
+            &:hover:not(.active) {
+                background-color: var(--vscode-button-hoverBackground);
+            }
+
+            &.active {
+                background-color: var(--vscode-button-background);
+            }
+        }
+
+        ul {
+            list-style: none;
+            margin    : 0;
+            padding   : 0;
+
+            li {
+                margin: 0;
+
+                div {
+                    padding: 7px 7px 7px 15px;
+                }
+            }
+        }
+    }
+}
+
+.gutter-horizontal {
     background-color: var(--vscode-scrollbarSlider-background);
-    cursor: col-resize;
+    cursor          : col-resize;
 }
 
 #test-entry-form,
 #test-list-container {
     overflow           : auto;
     border-bottom-width: 0px !important;
+}
+
+.custom-select {
+    background-image: none;
 }
 
 .card {
@@ -106,7 +152,8 @@ body,
     .ag-cell {
         padding-left       : 5px;
         padding-right      : 5px;
-        border-bottom-color: none !important; /*var(--vscode-panel-border) !important;*/
+        border-bottom-color: none !important;
+        /*var(--vscode-panel-border) !important;*/
     }
 
     .ag-cell-inline-editing {
@@ -151,6 +198,22 @@ body,
 
 body.vscode-light {
 
+
+    ul#sidebar-list li div {
+
+        &:not(.active) {
+            background-color: transparent;
+        }
+
+        &:hover:not(.active) {
+            background: @bc-green-lighter  !important;
+        }
+
+        &.active {
+            background: @bc-green-light  !important;
+        }
+    }
+
     .btn-outline-primary,
     .btn-outline-secondary,
     .btn-outline-success {
@@ -184,7 +247,7 @@ body.vscode-dark {
         a:link,
         a:hover,
         a:focus {
-            color: var(--vscode-editor-foreground) !important;
+            color          : var(--vscode-editor-foreground) !important;
             text-decoration: underline;
         }
     }

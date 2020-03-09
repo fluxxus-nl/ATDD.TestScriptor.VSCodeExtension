@@ -19,6 +19,7 @@ namespace ATDD.TestScriptor.Library
 
         public int ID { get; set; }
         public string Name { get; set; }
+        public string MethodName { get; set; }
         public ITestFeature Feature { get; set; }
         public ICollection<ITestScenarioElement> Elements { get; set; }
     }
@@ -27,6 +28,7 @@ namespace ATDD.TestScriptor.Library
     {
         int ID { get; set; }
         string Name { get; set; }
+        string MethodName { get; set; }
         ITestFeature Feature { get; set; }
         ICollection<ITestScenarioElement> Elements { get; set; }
     }

@@ -5,6 +5,7 @@ import * as vscode from 'vscode';
 import { WebPanel } from './WebPanel';
 import { BackendProvider } from './Services/BackendProvider';
 import { LogService } from './Services/LogService';
+import { LoadTestsCommand } from './Commands/LoadTestsCommand';
 
 export async function activate(context: vscode.ExtensionContext) {
     let paths = vscode.workspace.workspaceFolders?.map((m: vscode.WorkspaceFolder) => m.uri.fsPath) as Array<string>;
@@ -47,8 +48,8 @@ export async function activate(context: vscode.ExtensionContext) {
 
     let watcher = vscode.workspace.createFileSystemWatcher('**/*.al');
     let localObjectWatcher = async (e: vscode.Uri) => {
-        let localObjs = await Middleware.instance.getObjects(paths);
-        WebPanel.testList = localObjs;
+        let command = new LoadTestsCommand();
+        await command.execute();
     };
 
     context.subscriptions.push(watcher.onDidCreate(localObjectWatcher));

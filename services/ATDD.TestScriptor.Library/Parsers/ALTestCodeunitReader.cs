@@ -91,6 +91,7 @@ namespace ATDD.TestScriptor.Library
                                 scenario = new TestScenario();
                                 scenario.ID = int.Parse(elem.Id);
                                 scenario.Name = elem.Name;
+                                scenario.MethodName = method.Name;
                                 scenario.Feature = feature;
                                 feature.Scenarios.Add(scenario);
                                 break;

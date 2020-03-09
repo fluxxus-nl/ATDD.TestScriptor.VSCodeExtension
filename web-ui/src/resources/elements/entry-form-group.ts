@@ -1,3 +1,4 @@
+import { EventAggregator } from 'aurelia-event-aggregator';
 import { autoinject, bindable, PassThroughSlot } from 'aurelia-framework';
 
 @autoinject()
@@ -12,7 +13,7 @@ export class EntryFormGroup {
     @bindable()
     singleEntry: boolean;
 
-    constructor() {
+    constructor(private eventAggregator: EventAggregator) {
 
     }
 
@@ -26,14 +27,28 @@ export class EntryFormGroup {
 
     add() {
         if (this.entries) {
-            this.entries.push('');
+            this.entries.splice(this.entries.length, 0, '');
         } else {
             this.entries = [''];
         }
+
+        this.eventAggregator.publish('entryFormEdited');
+    }
+
+    update(index: number, newValue: any) {
+        if (index !== -1)
+            this.entries.splice(index, 1, newValue);
+
+        console.log('entry-form-group changed', index, newValue, this.entries);
+
+        this.eventAggregator.publish('entryFormEdited');
     }
 
     remove(index: number, e: MouseEvent) {
         if (index !== -1)
             this.entries.splice(index, 1);
+
+        this.eventAggregator.publish('entryFormEdited');
     }
+
 }
