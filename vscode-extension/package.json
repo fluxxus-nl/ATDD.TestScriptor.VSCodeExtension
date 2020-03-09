@@ -11,7 +11,7 @@
         "url": "https://github.com/fluxxus-nl/ATDD.TestScriptor.VSCodeExtension.git"
     },
     "description": "Acceptance Test-Driven Development with Business Central",
-    "version": "0.0.4",
+    "version": "0.0.5",
     "engines": {
         "vscode": "^1.42.0"
     },
@@ -39,7 +39,7 @@
             }
         ]
     },
-    "atddDebug": true,
+    "atddDebug": false,
     "extensionKind": [
         "workspace"
     ],
