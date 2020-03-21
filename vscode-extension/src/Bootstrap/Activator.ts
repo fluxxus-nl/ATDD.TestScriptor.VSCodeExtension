@@ -4,12 +4,31 @@ import { LogService } from '../Services/LogService';
 import { Middleware } from '../Middleware';
 import { BackendProvider } from '../Services/BackendProvider';
 import { LocalObjectWatcher, VSCommandType, Open, Discover } from './VSCommands';
+const packageConfig: any = require('../../package.json');
 
 export class Activator {
     private _context!: ExtensionContext;
+    private _extensionName: string;
+    private _displayName: string;
+    private _debugMode: boolean;
     private static _instance: Activator;
 
     private constructor() {
+        this._extensionName = `${packageConfig.author.name}.${packageConfig.name}`;
+        this._displayName = packageConfig.displayName;
+        this._debugMode = packageConfig.debugMode === true;
+    }
+
+    public static get debugMode() {
+        return Activator._instance._debugMode;
+    }
+
+    public static get displayName() {
+        return Activator._instance._displayName;
+    }
+
+    public static get extensionName() {
+        return Activator._instance._extensionName;
     }
 
     public static get instance() {

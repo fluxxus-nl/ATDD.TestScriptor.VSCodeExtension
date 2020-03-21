@@ -1,4 +1,4 @@
-const packageConfig: any = require('../../package.json');
+import { Activator } from "../Bootstrap/Activator";
 
 export class LogService {
 
@@ -44,7 +44,7 @@ export class LogService {
                     console.info(msg);
                 break;
             case LogLevel.Debug:
-                let debug = packageConfig.atddDebug === true;
+                let debug = Activator.debugMode === true;
                 if (debug !== true) {
                     return;
                 }
@@ -86,7 +86,7 @@ export class LogService {
     }
 
     public get template() {
-        return `[ATDD.TestScriptor][${(new Date()).toISOString()}][level]: [msg]`;
+        return `[${Activator.displayName}][${(new Date()).toISOString()}][level]: [msg]`;
     }
 }
 

@@ -8,11 +8,11 @@ export async function activate(context: ExtensionContext) {
     Activator.context = context;
     await Activator.activate();
 
-    LogService.info('Extension "fluxxus-nl.atdd-testscriptor" is now activated.');
+    LogService.info(`Extension "${Activator.extensionName}" is now activated.`);
 }
 
 export async function deactivate() {
     await Activator.deactivate();
 					
-    LogService.debug('Extension "fluxxus-nl.atdd-testscriptor" has been deactivated.');
+    LogService.debug(`Extension "${Activator.extensionName}" has been deactivated.`);
 }

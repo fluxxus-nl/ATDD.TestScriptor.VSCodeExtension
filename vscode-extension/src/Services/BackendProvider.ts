@@ -5,7 +5,7 @@ import { execFile } from 'child_process';
 import * as fs from 'fs';
 import * as portFinder from 'portfinder';
 import { LogService } from "./LogService";
-const packageConfig: any = require('../../package.json');
+import { Activator } from "../Bootstrap/Activator";
 
 export class BackendProvider {
     public static process: ChildProcess | null;
@@ -14,7 +14,7 @@ export class BackendProvider {
 
     public static async start(extensionPath: string) {
         return new Promise(async (resolve, reject) => {
-            let debug = packageConfig.atddDebug === true;
+            let debug = Activator.debugMode === true;
             if (!debug) {
                 BackendProvider.port = await BackendProvider.getPort();
 
