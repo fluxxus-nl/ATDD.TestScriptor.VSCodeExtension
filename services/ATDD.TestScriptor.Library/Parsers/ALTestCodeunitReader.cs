@@ -52,7 +52,7 @@ namespace ATDD.TestScriptor.Library
                 return;
 
             var testMethods = TestTarget.Methods.Where(w => w.TestMethod == true).ToList();
-            var pattern = @"\[([aA-zZ]+)(.*)\]\s+(.*)";
+            var pattern = @"\[(\w+)(.*?)\]\s+(.*)";
             var features = new List<ITestFeature>();
 
             foreach (var method in testMethods)
