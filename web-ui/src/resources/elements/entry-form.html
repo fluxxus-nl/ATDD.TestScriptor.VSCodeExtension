@@ -13,6 +13,8 @@
                         <option repeat.for="sublink of link.children" value.bind="sublink">${sublink}</option>
                     </optgroup>
                 </select>
+                <label for="formGroupExampleInput">&num; ID</label>
+                <input type="text" class="form-control" value.bind="scenario.Id" placeholder="Scenario ID...">
                 <label for="formGroupExampleInput">Scenario</label>
                 <input type="text" class="form-control" value.bind="scenario.Scenario" placeholder="Scenario Name...">
             </div>

@@ -9,6 +9,7 @@ namespace ATDD.TestScriptor.BackendServices.Models
     {
         public string Project { get; set; }
         public string Feature { get; set; }
+        public int? Id { get; set; }
         public string Scenario { get; set; }
         public string Codeunit { get; set; }
         public string FsPath { get; set; }

@@ -39,7 +39,7 @@
             }
         ]
     },
-    "debugMode": false,
+    "debugMode": true,
     "extensionKind": [
         "workspace"
     ],
@@ -50,7 +50,7 @@
         "dev": "yarn webpack --mode none",
         "compile": "tsc -p ./",
         "lint": "tslint -p ./",
-        "watch": "yarn run dev && tsc -watch -p ./",
+        "watch": "tsc -watch -p ./ && yarn run dev",
         "pretest": "yarn run compile",
         "test": "node ./out/test/runTest.js"
     },

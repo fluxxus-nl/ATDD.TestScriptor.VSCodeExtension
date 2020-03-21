@@ -41,6 +41,7 @@ namespace ATDD.TestScriptor.BackendServices.Services
                             msg.Codeunit = s.Name;
                             msg.Feature = x.Name;
                             msg.Scenario = sc.Name;
+                            msg.Id = sc.ID;
                             msg.MethodName = sc.MethodName;
                             msg.Details = new MessageDetails()
                             {

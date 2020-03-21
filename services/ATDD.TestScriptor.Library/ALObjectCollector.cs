@@ -71,11 +71,6 @@ namespace ATDD.TestScriptor.Library
                     .Select(item => Task.Run(() => DiscoverLocalFile(item, project)));
 
                 tasks.AddRange(localSymbols);
-
-                /*var tasks = new List<Task<CollectorItem>>();
-                    .SelectMany(item => DiscoverLocalFile(item));
-
-                result = result.Concat(localSymbols);*/
             }
 
             var subResult = await Task.WhenAll(tasks);
