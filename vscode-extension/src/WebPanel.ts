@@ -1,7 +1,7 @@
 import { CommandHandlerService } from './Services/CommandHandlerService';
-import * as vscode from 'vscode';
+import { Disposable, WebviewPanel, ViewColumn, window, Uri } from 'vscode';
 import * as path from 'path';
-import * as utils from './utils';
+import {read} from './utils';
 import { IMessageBase } from './typings/IMessageBase';
 import { LogService } from './Services/LogService';
 
@@ -13,26 +13,26 @@ export class WebPanel {
 
     protected options: any = {};
 
-    protected panel!: vscode.WebviewPanel;
+    protected panel!: WebviewPanel;
 
     protected extensionPath: string = '';
 
-    private _disposables: vscode.Disposable[] = [];
+    private _disposables: Disposable[] = [];
 
     constructor(extensionPath: string) {
         this.extensionPath = extensionPath;
     }
 
     async createPanel() {
-        this.panel = vscode.window.createWebviewPanel("attTestScriptor", "Test Scenarios", vscode.ViewColumn.One, {
+        this.panel = window.createWebviewPanel("attTestScriptor", "Test Scenarios", ViewColumn.One, {
             // Enable javascript in the webview
             enableScripts: true,
             enableFindWidget: true,
             retainContextWhenHidden: true,
 
             localResourceRoots: [
-                vscode.Uri.file(path.join(this.extensionPath, 'WebView')),
-                vscode.Uri.file(path.join(this.extensionPath, 'WebView', 'scripts'))
+                Uri.file(path.join(this.extensionPath, 'WebView')),
+                Uri.file(path.join(this.extensionPath, 'WebView', 'scripts'))
             ]
         });
 
@@ -49,8 +49,8 @@ export class WebPanel {
                 try {
                     await handler.dispatch(message);
                 } catch (e) {
-                    vscode.window.showErrorMessage(`${e?.message ? `${e.message}` : 'ATDD Server error. Check "Help / Toggle Developer Tools" for details.'}`);
-                    LogService.instance.error(`Failed to execute command: ${message.Command}`, e);
+                    window.showErrorMessage(`${e?.message ? `${e.message}` : 'ATDD Server error. Check "Help / Toggle Developer Tools" for details.'}`);
+                    LogService.error(`Failed to execute command: ${message.Command}`, e);
                 }
             }
         }).bind(this), null, this._disposables);
@@ -58,7 +58,7 @@ export class WebPanel {
 
     public static async open(extensionPath: string) {
         if (WebPanel.instance) {
-            WebPanel.instance.panel.reveal(vscode.ViewColumn.One);
+            WebPanel.instance.panel.reveal(ViewColumn.One);
             return;
         }
         
@@ -81,8 +81,8 @@ export class WebPanel {
             options: this.options
         };
 
-        let content: string = await utils.read(path.join(this.extensionPath, 'WebView', 'index.html'));
-        let appOnDiskPath = vscode.Uri.file(path.join(this.extensionPath, 'WebView', 'scripts', 'bundle.js'));
+        let content: string = await read(path.join(this.extensionPath, 'WebView', 'index.html'));
+        let appOnDiskPath = Uri.file(path.join(this.extensionPath, 'WebView', 'scripts', 'bundle.js'));
         let appJsSrc: any = appOnDiskPath.with({ scheme: 'vscode-resource' });
         content = content.replace('//${vscodeApi}', 'window.vscode = acquireVsCodeApi();');
         content = content.replace('//${startupOptions}', `window.startupOptions = '${JSON.stringify(startupOptions)}';`);

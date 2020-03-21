@@ -12,7 +12,27 @@ export class LogService {
         return LogService._instance;
     }
 
-    public log(message: string, logLevel: LogLevel, optionalParams?: any) {
+    public static log(message: string, logLevel: LogLevel, optionalParams?: any) {
+        LogService.instance._log(message, logLevel, optionalParams);
+    }
+
+    public static debug(message: string, optionalParams?: any) {
+        LogService.instance._debug(message, optionalParams);
+    }
+
+    public static info(message: string, optionalParams?: any) {
+        LogService.instance._info(message, optionalParams);
+    }
+
+    public static warn(message: string, optionalParams?: any) {
+        LogService.instance._warn(message, optionalParams);
+    }
+
+    public static error(message: string, optionalParams?: any) {
+        LogService.instance._error(message, optionalParams);
+    }
+
+    private _log(message: string, logLevel: LogLevel, optionalParams?: any) {
         let msg = this.template.replace('[level]', `[${LogLevel[logLevel]}]`).replace('[msg]', message);
 
         switch (logLevel) {
@@ -49,20 +69,20 @@ export class LogService {
         }
     }
 
-    public debug(message: string, optionalParams?: any) {
-        this.log(message, LogLevel.Debug, optionalParams);
+    private _debug(message: string, optionalParams?: any) {
+        this._log(message, LogLevel.Debug, optionalParams);
     }
 
-    public info(message: string, optionalParams?: any) {
-        this.log(message, LogLevel.Info, optionalParams);
+    private _info(message: string, optionalParams?: any) {
+        this._log(message, LogLevel.Info, optionalParams);
     }
 
-    public warn(message: string, optionalParams?: any) {
-        this.log(message, LogLevel.Warning, optionalParams);
+    private _warn(message: string, optionalParams?: any) {
+        this._log(message, LogLevel.Warning, optionalParams);
     }
 
-    public error(message: string, optionalParams?: any) {
-        this.log(message, LogLevel.Error, optionalParams);
+    private _error(message: string, optionalParams?: any) {
+        this._log(message, LogLevel.Error, optionalParams);
     }
 
     public get template() {

@@ -12,10 +12,7 @@ export class BackendProvider {
 
     public static port: number;
 
-    public static workspaces: Array<string>;
-
-    public static async start(extensionPath: string, wkspacePaths: Array<string>) {
-        BackendProvider.workspaces = wkspacePaths || [];
+    public static async start(extensionPath: string) {
         return new Promise(async (resolve, reject) => {
             let debug = packageConfig.atddDebug === true;
             if (!debug) {
@@ -42,16 +39,15 @@ export class BackendProvider {
                     try {
                         fs.chmodSync(exePath, 0o755);
                     } catch (e) {
-                        LogService.instance.error(`Setting Chmod 755 for ATDD.TestScriptor.BackendServices executable failed. Platform ${osPlatform}\n`, e);
+                        LogService.error(`Setting Chmod 755 for ATDD.TestScriptor.BackendServices executable failed. Platform ${osPlatform}\n`, e);
                     }
                 }
                 if (!BackendProvider.process) {
-                    //BackendProvider.process = execFile(exePath, ['--urls', `http://0.0.0.0:${BackendProvider.port}`, '--workspaces', `${BackendProvider.workspaces.join(';')}`], { windowsHide: false }, (error, stdout, stderr) => {
                     BackendProvider.process = execFile(exePath, ['--urls', `http://0.0.0.0:${BackendProvider.port}`], { windowsHide: false }, (error, stdout, stderr) => {
                         if (error) {
                             throw error;
                         }
-                        LogService.instance.debug(stdout);
+                        LogService.debug(stdout);
                     });
                     BackendProvider.process.stdout.on('data', (data) => {
                         let line = data.toString();
@@ -94,6 +90,6 @@ export class BackendProvider {
             await BackendProvider.stop();
         }
 
-        await BackendProvider.start(extensionPath, BackendProvider.workspaces);
+        await BackendProvider.start(extensionPath);
     }
 }

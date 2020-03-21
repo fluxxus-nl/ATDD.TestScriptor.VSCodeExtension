@@ -55,6 +55,7 @@
         "test": "node ./out/test/runTest.js"
     },
     "devDependencies": {
+        "@types/fs-extra": "^8.1.0",
         "@types/glob": "^7.1.1",
         "@types/mocha": "^2.2.42",
         "@types/node": "^8.10.25",
