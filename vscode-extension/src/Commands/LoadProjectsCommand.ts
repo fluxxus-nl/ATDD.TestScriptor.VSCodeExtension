@@ -8,7 +8,7 @@ export class LoadProjectsCommand extends CommandBase {
     
     async execute(message: IMessageBase) {
         let paths = getWorkspacePaths();
-        let projects = await Middleware.instance.getProjects(paths);
+        let projects = await Middleware.getProjects(paths);
         WebPanel.postMessage({Command: 'LoadProjects', Data: projects});
     }
 }

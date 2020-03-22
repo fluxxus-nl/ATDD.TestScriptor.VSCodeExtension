@@ -22,7 +22,23 @@ export class Middleware {
 
         return Middleware._instance;
     }
+    
+    static async send(requestMethod: string, responseMethod: string, checkConnection: boolean, ...args: Array<any>) {
+        return await Middleware.instance._send(requestMethod, responseMethod, checkConnection, ...args);
+    }
 
+    static async getProjects(msg: Array<string>): Promise<any> {
+        return Middleware.send(MiddlewareRequestMethod.QueryProjects, MiddlewareResponseMethod.GetProjects, false, msg);
+    }
+
+    static async getObjects(paths: Array<string>): Promise<any> {
+        return Middleware.send(MiddlewareRequestMethod.QueryObjects, MiddlewareResponseMethod.GetObjects, false, paths);
+    }
+
+    static async saveChanges(items: Array<any>): Promise<any> {
+        return Middleware.send(MiddlewareRequestMethod.SaveChanges, MiddlewareResponseMethod.SaveChangesResponse, false, items);
+    }
+    
     async check() {
         if (this._connection.state == HubConnectionState.Connected) {
             return;
@@ -44,18 +60,18 @@ export class Middleware {
             .build();
 
         this._connection.onreconnecting(error => {
-            let msg = `ATDD: backend connection lost due to error "${error}". Reconnecting.`;
+            let msg = `Backend connection lost due to error "${error}". Reconnecting.`;
             LogService.warn(msg);
             UIService.warn(msg);
         });
 
         this._connection.onreconnected(id => {
-            let msg = `ATDD: backend connection has beed restored.`;
+            let msg = `Backend connection has beed restored.`;
             LogService.info(msg);
             UIService.info(msg);
         });
 
-        this._connection.on('UpdateObjects', async () => {
+        this._connection.on(MiddlewareResponseMethod.UpdateObjects, async () => {
             let panel = WebPanel.instance;
             if (panel) {
                 await panel.postMessage({ Command: 'UpdateObjects' });
@@ -69,6 +85,22 @@ export class Middleware {
         await this._connection.start();
         return true;
     }
+    
+    private async _send(requestMethod: string, responseMethod: string, checkConnection: boolean, ...args: Array<any>) {
+        if (checkConnection === true) {
+            await this.check();
+        }
+
+        return new Promise((resolve, reject) => {            
+            this._connection.on(responseMethod, (msg: any) => {
+                LogService.debug(`${responseMethod}: ${responseMethod} response received.`);
+                resolve(msg);
+            });
+
+            LogService.debug(`${requestMethod}: request sent.`);
+            this._connection.invoke(requestMethod, ...args).catch((err: any) => reject(err));
+        });
+    }
 
     async dispose() {
         if (this._connection) {
@@ -80,36 +112,17 @@ export class Middleware {
         }
     }
 
-    async getProjects(msg: Array<string>): Promise<any> {
-        return new Promise((resolve, reject) => {
-            this._connection.on('GetProjects', (msg: any) => {
-                resolve(msg);
-            });
+}
 
-            this._connection.invoke('QueryProjects', msg).catch((err: any) => reject(err));
-        });
-    }
+export enum MiddlewareRequestMethod {
+    QueryProjects = 'QueryProjects',
+    QueryObjects = 'QueryObjects',
+    SaveChanges = 'SaveChanges'
+}
 
-    async getObjects(paths: Array<string>): Promise<any> {
-        return new Promise((resolve, reject) => {
-            this.check().then(() => {
-                this._connection.on('GetObjects', (objects: any) => {
-                    LogService.debug(`GetObjects result done.`);
-                    resolve(objects);
-                });
-                this._connection.invoke('QueryObjects', paths).catch((err: any) => reject(err));
-            });
-        });
-    }
-
-    async getPing(): Promise<any> {
-        return new Promise(async (resolve, reject) => {
-            this._connection.on('GetPing', (result: any) => {
-                LogService.debug(`Backend ping ${result === true ? 'successful' : 'failed'}.`);
-                resolve(result);
-            });
-
-            this._connection.invoke('QueryPing').catch((err: any) => reject(err));
-        });
-    }
+export enum MiddlewareResponseMethod {
+    GetProjects = 'GetProjects',
+    GetObjects = 'GetObjects',
+    SaveChangesResponse = 'SaveChangesResponse',
+    UpdateObjects = 'UpdateObjects'
 }

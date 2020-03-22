@@ -1,4 +1,4 @@
-import { CancellationToken, Progress } from 'vscode';
+import { CancellationToken, Progress, commands } from 'vscode';
 import { UIService } from './../Services/UIService';
 import { WebPanel } from "../WebPanel";
 import { LogService } from "../Services/LogService";
@@ -7,17 +7,28 @@ import { Middleware } from '../Middleware';
 import { getWorkspacePaths } from '../utils';
 import { LoadTestsCommand } from '../Commands/LoadTestsCommand';
 
+export enum VSDependency {
+    ALTestRunner = 'jamespearson.al-test-runner'
+}
+
 export enum VSCommandType {
     Open = 'atddTestScriptor.open',
-    Discover = 'atddTestScriptor.discover'
+    Discover = 'atddTestScriptor.discover',
+    RunAllTests = 'altestrunner.runAllTests',
+    RunTest = 'altestrunner.runTest'
+}
+
+export async function ExecuteCommand(command: string, ...rest: Array<any>): Promise<any> {
+    LogService.debug(`${command} executed`, rest);
+    return await commands.executeCommand(command, rest);
 }
 
 export async function Open() {
     try {
         await WebPanel.open(Activator.context.extensionPath);
     } catch (e) {
-        LogService.error(`ATDD TestScriptor could not be opened.`, e);
-        UIService.error(`ATDD TestScriptor could not be opened. Error: '${e.message}'`);
+        LogService.error(`${Activator.displayName} could not be opened.`, e);
+        UIService.error(`${Activator.displayName} could not be opened. Error: '${e.message}'`);
     }
 }
 
@@ -31,7 +42,7 @@ async function DiscoverProgressTask(progress: Progress<{ message?: string; incre
     });
 
     let start = Date.now();
-    WebPanel.testList = await Middleware.instance.getObjects(getWorkspacePaths());
+    WebPanel.testList = await Middleware.getObjects(getWorkspacePaths());
     let end = Date.now();
     LogService.info(`Workspace processed in ${end-start}ms`);
 

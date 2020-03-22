@@ -1,9 +1,9 @@
-import { commands, ExtensionContext, workspace } from 'vscode';
+import { commands, ExtensionContext, workspace, extensions } from 'vscode';
 import { WebPanel } from '../WebPanel';
 import { LogService } from '../Services/LogService';
 import { Middleware } from '../Middleware';
 import { BackendProvider } from '../Services/BackendProvider';
-import { LocalObjectWatcher, VSCommandType, Open, Discover } from './VSCommands';
+import { LocalObjectWatcher, VSCommandType, Open, Discover, ExecuteCommand } from './VSCommands';
 const packageConfig: any = require('../../package.json');
 
 export class Activator {
@@ -55,6 +55,11 @@ export class Activator {
         await Activator.instance._deactivate();
     }
 
+    static checkExtension(name: string): boolean {
+        let checkExt = extensions.getExtension(name);
+        return checkExt ? true : false;
+    }
+
     registerCommand(name: string, commandFunc: any) {
         this._context.subscriptions.push(commands.registerCommand(name, commandFunc));
     }
@@ -77,7 +82,7 @@ export class Activator {
         this.registerCommand(VSCommandType.Discover, Discover);
 
         workspace.onDidChangeWorkspaceFolders(async () => {
-            await commands.executeCommand(VSCommandType.Discover);
+            await ExecuteCommand(VSCommandType.Discover);
         });
 
         this.registerFileWatcher();
