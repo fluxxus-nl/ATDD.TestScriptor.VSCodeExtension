@@ -24,8 +24,6 @@ export class BackendService implements IBackendService {
 
     determineType() {
         this._type = typeof (<any>PLATFORM.global).vscode == "object" ? BackendType.VSCode : BackendType.Standalone;
-        //@ts-ignore
-        console.log((<any>PLATFORM.global).vscode);
 
         switch (this._type) {
             case BackendType.VSCode:

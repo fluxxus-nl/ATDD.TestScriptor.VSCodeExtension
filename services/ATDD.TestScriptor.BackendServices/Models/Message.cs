@@ -14,7 +14,9 @@ namespace ATDD.TestScriptor.BackendServices.Models
         public string Codeunit { get; set; }
         public string FsPath { get; set; }
         public string MethodName { get; set; }
+        public bool IsDirty { get; set; }
         public ALTestRunnerResult TestRunnerResult { get; set; }
+        public MessageState State { get; set; }
         public MessageDetails Details { get; set; }
     }
 
@@ -32,5 +34,13 @@ namespace ATDD.TestScriptor.BackendServices.Models
         NoInfo,
         Success,
         Failure
+    }
+
+    public enum MessageState
+    {
+        Unchanged,
+        New,
+        Modified,
+        Deleted        
     }
 }

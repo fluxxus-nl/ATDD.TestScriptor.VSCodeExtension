@@ -1,7 +1,9 @@
 import { autoinject, bindable, observable, BindingEngine, Disposable, ICollectionObserverSplice } from 'aurelia-framework';
 import { ColumnApi, GridApi, GridOptions, RowNode } from 'ag-grid-community';
-import { Subscription, EventAggregator } from 'aurelia-event-aggregator';
+import { EventAggregator } from 'aurelia-event-aggregator';
 import { BackendService } from 'services/backend-service';
+import { Message, AppEventPublisher, AppEditMode } from 'types';
+import { AppService } from 'services/app-service';
 
 @autoinject()
 export class TestList {
@@ -12,15 +14,15 @@ export class TestList {
     private columnApi: ColumnApi;
 
     @bindable()
-    entries: Array<any> = [];
+    entries: Array<Message> = [];
 
     @bindable()
-    currEntry: any = false;
+    currEntry: Message;
 
     @bindable()
     searchValue: string;
 
-    constructor(private eventAggregator: EventAggregator, private bindingEngine: BindingEngine, private backendService: BackendService) {
+    constructor(private eventAggregator: EventAggregator, private bindingEngine: BindingEngine, private appService: AppService, private backendService: BackendService) {
         this.gridOptions = <GridOptions>{
             defaultColDef: {
                 resizable: true,
@@ -31,22 +33,22 @@ export class TestList {
     }
 
     bind() {
-        this.subscriptions.push(this.eventAggregator.subscribe('onNewScenario', response => {
-            this.entries.push(response);
-            console.log(response, this.entries);
+        this.subscriptions.push(this.eventAggregator.subscribe(AppEventPublisher.onNewScenario, response => {
+            this.entries.splice(this.entries.length, 0, response);
+            this.listChanged();
         }));
 
-        this.subscriptions.push(this.eventAggregator.subscribe('appMainColumnsResized', response => {
+        this.subscriptions.push(this.eventAggregator.subscribe(AppEventPublisher.appMainColumnsResized, response => {
             this.api.sizeColumnsToFit();
         }));
 
-        this.subscriptions.push(this.eventAggregator.subscribe('selectedEntryEdited', entry => {
+        this.subscriptions.push(this.eventAggregator.subscribe(AppEventPublisher.selectedEntryEdited, entry => {
             console.log('test-list selectedEntryEdited', entry, this.entries);
             if (entry) {
                 let currNode = this.api.getSelectedNodes()[0];
                 if (currNode) {
                     currNode.setData(entry);
-                    this.api.refreshCells({rowNodes: [currNode]});
+                    this.api.refreshCells({ rowNodes: [currNode] });
                 }
             }
         }));
@@ -62,9 +64,9 @@ export class TestList {
         //this.gridOptions.rowHeight = 40; TODO
         this.gridOptions.onGridReady = () => {
             this.api = this.gridOptions.api;
-            this.api.sizeColumnsToFit();
             this.columnApi = this.gridOptions.columnApi;
             this.columnApi.setColumnVisible('Project', false);
+            this.api.sizeColumnsToFit();
         };
     }
 
@@ -72,15 +74,16 @@ export class TestList {
 
     }
 
-    listChanged(splices: Array<ICollectionObserverSplice<any>>) {
+    listChanged(splices?: Array<ICollectionObserverSplice<any>>) {
         this.api.setRowData(this.entries);
         let projects = [...new Set(this.entries.map(item => item.Project))];
         this.columnApi.setColumnVisible('Project', projects.length > 1);
+        this.appService.updateSidebarLinks(this.entries);
     }
 
     selectionChanged() {
         let data = this.api.getSelectedRows();
-        this.currEntry = data[0];
+        this.currEntry = data[0];        
         console.log('Selection changed', this.currEntry);
     }
 

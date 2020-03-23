@@ -2,14 +2,14 @@ import { CommandHandlerService } from './Services/CommandHandlerService';
 import { Disposable, WebviewPanel, ViewColumn, window, Uri } from 'vscode';
 import * as path from 'path';
 import {read} from './utils';
-import { IMessageBase } from './typings/IMessageBase';
+import { IMessageBase, Message } from './typings/IMessageBase';
 import { LogService } from './Services/LogService';
 
 export class WebPanel {
 
     public static instance: WebPanel;
 
-    public static testList: Array<any> = [];
+    public static testList: Array<Message> = [];
 
     protected options: any = {};
 

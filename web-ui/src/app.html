@@ -21,7 +21,9 @@
 
       <div id="test-col-2" class="test-col">
 
-        <entry-form scenario.bind="currEntry" sidebar-links.bind="sidebarLinks"></entry-form>
+        <entry-form if.bind="appService.editMode == 'Scenario'" scenario.bind="currEntry" sidebar-links.bind="sidebarLinks"></entry-form>
+
+        <feature-list if.bind="appService.editMode == 'Feature'"></feature-list>
 
       </div>
 

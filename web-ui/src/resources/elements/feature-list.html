@@ -1,0 +1,34 @@
+<template>
+    <div id="test-entry-form" class="card">
+        <div class="card-body">
+            <h5 class="card-title clearfix">
+                <span class="float-left">
+                    <i class="fas fa-list"></i> Features:
+                </span>
+                <span class="float-right">
+                    <button class="btn btn-success" type="button" click.delegate="save()" title="Save"><i
+                        class="fas fa-save"></i></button>
+                    <button class="btn btn-danger" type="button" click.delegate="cancel()" title="Cancel"><i
+                        class="fas fa-ban"></i></button>
+                </span>
+            </h5>
+            <div class="form-group mb-2">
+                <div repeat.for="link of entries" label="${link.name}" if.bind="link.name != 'All'"
+                    class="form-group mb-2">
+                    <h6>${link.name}</h6>
+                    <div class="input-group mb-2" repeat.for="sublink of link.children">
+                        <input type="text" class="form-control" placeholder="" aria-label=""
+                            aria-describedby="button-addon2" value.bind="sublink"
+                            change.delegate="update($index, sublink)">
+                        <div hidden.bind="singleEntry" class="input-group-append">
+                            <button class="btn btn-outline-danger" type="button"
+                                click.delegate="remove($index, $event)"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                    <button class="btn btn-outline-success" type="button" click.delegate="add($parent)"><i
+                            class="fas fa-plus"></i> Feature</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

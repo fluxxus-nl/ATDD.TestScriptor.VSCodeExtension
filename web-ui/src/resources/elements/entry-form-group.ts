@@ -1,5 +1,6 @@
 import { EventAggregator } from 'aurelia-event-aggregator';
 import { autoinject, bindable, PassThroughSlot } from 'aurelia-framework';
+import { AppEventPublisher } from 'types';
 
 @autoinject()
 export class EntryFormGroup {
@@ -8,7 +9,7 @@ export class EntryFormGroup {
     title: any;
 
     @bindable()
-    entries: Array<any>;
+    entries: Array<string>;
 
     @bindable()
     singleEntry: boolean;
@@ -32,7 +33,7 @@ export class EntryFormGroup {
             this.entries = [''];
         }
 
-        this.eventAggregator.publish('entryFormEdited');
+        this.eventAggregator.publish(AppEventPublisher.entryFormEdited);
     }
 
     update(index: number, newValue: any) {
@@ -41,14 +42,14 @@ export class EntryFormGroup {
 
         console.log('entry-form-group changed', index, newValue, this.entries);
 
-        this.eventAggregator.publish('entryFormEdited');
+        this.eventAggregator.publish(AppEventPublisher.entryFormEdited);
     }
 
     remove(index: number, e: MouseEvent) {
         if (index !== -1)
             this.entries.splice(index, 1);
 
-        this.eventAggregator.publish('entryFormEdited');
+        this.eventAggregator.publish(AppEventPublisher.entryFormEdited);
     }
 
 }

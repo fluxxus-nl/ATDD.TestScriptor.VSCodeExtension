@@ -2,6 +2,7 @@ import { UIService } from './Services/UIService';
 import { WebPanel } from './WebPanel';
 import { HubConnectionState, HubConnectionBuilder, LogLevel, HubConnection } from "@microsoft/signalr";
 import { LogService } from './Services/LogService';
+import { Message } from './typings/IMessageBase';
 
 export class Middleware {
     private static _instance: Middleware | undefined;
@@ -27,16 +28,16 @@ export class Middleware {
         return await Middleware.instance._send(requestMethod, responseMethod, checkConnection, ...args);
     }
 
-    static async getProjects(msg: Array<string>): Promise<any> {
-        return Middleware.send(MiddlewareRequestMethod.QueryProjects, MiddlewareResponseMethod.GetProjects, false, msg);
+    static async getProjects(msg: Array<string>): Promise<Array<string>> {
+        return Middleware.send(MiddlewareRequestMethod.QueryProjects, MiddlewareResponseMethod.GetProjects, false, msg) as Promise<Array<string>>;
     }
 
-    static async getObjects(paths: Array<string>): Promise<any> {
-        return Middleware.send(MiddlewareRequestMethod.QueryObjects, MiddlewareResponseMethod.GetObjects, false, paths);
+    static async getObjects(paths: Array<string>): Promise<Array<Message>> {
+        return Middleware.send(MiddlewareRequestMethod.QueryObjects, MiddlewareResponseMethod.GetObjects, false, paths) as Promise<Array<Message>>;
     }
 
-    static async saveChanges(items: Array<any>): Promise<any> {
-        return Middleware.send(MiddlewareRequestMethod.SaveChanges, MiddlewareResponseMethod.SaveChangesResponse, false, items);
+    static async saveChanges(items: Array<Message>): Promise<Array<Message>> {
+        return Middleware.send(MiddlewareRequestMethod.SaveChanges, MiddlewareResponseMethod.SaveChangesResponse, false, items) as Promise<Array<Message>>;
     }
     
     async check() {
