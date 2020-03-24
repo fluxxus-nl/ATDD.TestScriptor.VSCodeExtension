@@ -1,9 +1,12 @@
 import { TextDocument, workspace, ViewColumn, window, TextEditorRevealType, Selection, Range } from 'vscode';
 import { IMessageBase, Message } from '../typings/IMessageBase';
-import { CommandBase } from './CommandBase';
 import { WebPanel } from '../WebPanel';
+import { ICommandBase } from '../typings/ICommandBase';
 
-export class ViewSourceCommand extends CommandBase {
+export class ViewSourceCommand implements ICommandBase {
+
+    constructor() {
+    }
 
     async execute(message: IMessageBase) {
         let entry: Message = message.Data;

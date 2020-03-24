@@ -1,9 +1,9 @@
+import { Application } from './Application';
 import { CommandHandlerService } from './Services/CommandHandlerService';
 import { Disposable, WebviewPanel, ViewColumn, window, Uri } from 'vscode';
 import * as path from 'path';
 import {read} from './utils';
 import { IMessageBase, Message } from './typings/IMessageBase';
-import { LogService } from './Services/LogService';
 
 export class WebPanel {
 
@@ -43,14 +43,14 @@ export class WebPanel {
 
         // Handle messages from the webview
         this.panel.webview.onDidReceiveMessage((async (messages: Array<IMessageBase>) => {
-            let handler: CommandHandlerService = new CommandHandlerService(this.extensionPath, this);
+            let handler: CommandHandlerService = new CommandHandlerService();
 
             for (let message of messages) {
                 try {
                     await handler.dispatch(message);
                 } catch (e) {
                     window.showErrorMessage(`${e?.message ? `${e.message}` : 'ATDD Server error. Check "Help / Toggle Developer Tools" for details.'}`);
-                    LogService.error(`Failed to execute command: ${message.Command}`, e);
+                    Application.logService.error(`Failed to execute command: ${message.Command}`, e);
                 }
             }
         }).bind(this), null, this._disposables);

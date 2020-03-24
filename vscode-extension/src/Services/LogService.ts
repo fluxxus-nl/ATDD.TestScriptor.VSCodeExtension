@@ -1,38 +1,9 @@
-import { Activator } from "../Bootstrap/Activator";
+import { Application } from "../Application";
+import { singleton } from "aurelia-dependency-injection";
 
+@singleton()
 export class LogService {
-
-    private static _instance: LogService | undefined;
-
-    public static get instance() {
-        if (!LogService._instance) {
-            LogService._instance = new LogService();
-        }
-
-        return LogService._instance;
-    }
-
-    public static log(message: string, logLevel: LogLevel, optionalParams?: any) {
-        LogService.instance._log(message, logLevel, optionalParams);
-    }
-
-    public static debug(message: string, optionalParams?: any) {
-        LogService.instance._debug(message, optionalParams);
-    }
-
-    public static info(message: string, optionalParams?: any) {
-        LogService.instance._info(message, optionalParams);
-    }
-
-    public static warn(message: string, optionalParams?: any) {
-        LogService.instance._warn(message, optionalParams);
-    }
-
-    public static error(message: string, optionalParams?: any) {
-        LogService.instance._error(message, optionalParams);
-    }
-
-    private _log(message: string, logLevel: LogLevel, optionalParams?: any) {
+    log(message: string, logLevel: LogLevel, optionalParams?: any) {
         let msg = this.template.replace('[level]', `[${LogLevel[logLevel]}]`).replace('[msg]', message);
 
         switch (logLevel) {
@@ -44,7 +15,7 @@ export class LogService {
                     console.info(msg);
                 break;
             case LogLevel.Debug:
-                let debug = Activator.debugMode === true;
+                let debug = Application.debugMode === true;
                 if (debug !== true) {
                     return;
                 }
@@ -69,24 +40,24 @@ export class LogService {
         }
     }
 
-    private _debug(message: string, optionalParams?: any) {
-        this._log(message, LogLevel.Debug, optionalParams);
+    debug(message: string, optionalParams?: any) {
+        this.log(message, LogLevel.Debug, optionalParams);
     }
 
-    private _info(message: string, optionalParams?: any) {
-        this._log(message, LogLevel.Info, optionalParams);
+    info(message: string, optionalParams?: any) {
+        this.log(message, LogLevel.Info, optionalParams);
     }
 
-    private _warn(message: string, optionalParams?: any) {
-        this._log(message, LogLevel.Warning, optionalParams);
+    warn(message: string, optionalParams?: any) {
+        this.log(message, LogLevel.Warning, optionalParams);
     }
 
-    private _error(message: string, optionalParams?: any) {
-        this._log(message, LogLevel.Error, optionalParams);
+    error(message: string, optionalParams?: any) {
+        this.log(message, LogLevel.Error, optionalParams);
     }
 
     public get template() {
-        return `[${Activator.displayName}][${(new Date()).toISOString()}][level]: [msg]`;
+        return `[${Application.displayName}][${(new Date()).toISOString()}][level]: [msg]`;
     }
 }
 

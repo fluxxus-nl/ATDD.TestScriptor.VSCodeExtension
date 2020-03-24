@@ -1,18 +1,17 @@
 'use strict';
 
-import { LogService } from './Services/LogService';
-import { Activator } from './Bootstrap/Activator';
+import { Application } from './Application';
 import { ExtensionContext } from 'vscode';
 
 export async function activate(context: ExtensionContext) {
-    Activator.context = context;
-    await Activator.activate();
+    Application.context = context;
+    await Application.activate();
 
-    LogService.info(`Extension "${Activator.extensionName}" is now activated.`);
+    Application.logService.info(`Extension "${Application.extensionName}" is now activated.`);
 }
 
 export async function deactivate() {
-    await Activator.deactivate();
+    await Application.deactivate();
 					
-    LogService.debug(`Extension "${Activator.extensionName}" has been deactivated.`);
+    Application.logService.debug(`Extension "${Application.extensionName}" has been deactivated.`);
 }

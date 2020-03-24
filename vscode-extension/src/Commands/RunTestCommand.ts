@@ -1,15 +1,19 @@
-import { VSDependency, ExecuteCommand, VSCommandType } from './../Bootstrap/VSCommands';
-import { Activator } from './../Bootstrap/Activator';
-import { UIService } from './../Services/UIService';
+import { VSDependency, VSCommandType, VSCommandService } from '../Services/VSCommandService';
+import { Application } from '../Application';
 import { IMessageBase, Message } from '../typings/IMessageBase';
-import { CommandBase } from './CommandBase';
 import { WebPanel } from '../WebPanel';
+import { ICommandBase } from '../typings/ICommandBase';
 
-export class RunTestsCommand extends CommandBase {
+export class RunTestsCommand  implements ICommandBase {
+    private vsCommandService: VSCommandService;
+
+    constructor() {
+        this.vsCommandService = Application.container.get(VSCommandService);
+    }
 
     async execute(message?: IMessageBase) {
-        if (!Activator.checkExtension(VSDependency.ALTestRunner)) {
-            await UIService.error(`"${VSDependency.ALTestRunner}" extension is not installed or disabled.`);
+        if (!Application.checkExtension(VSDependency.ALTestRunner)) {
+            await Application.uiService.error(`"${VSDependency.ALTestRunner}" extension is not installed or disabled.`);
             return;
         }        
 
@@ -20,9 +24,9 @@ export class RunTestsCommand extends CommandBase {
         let functionName = entry.MethodName;
 
         if (allTests === true) {
-            ExecuteCommand(VSCommandType.RunAllTests, '', entry.Project);
+            await this.vsCommandService.executeCommand(VSCommandType.RunAllTests, '', entry.Project);
         } else {
-            ExecuteCommand(VSCommandType.RunTest, fileName, functionName);
+            await this.vsCommandService.executeCommand(VSCommandType.RunTest, fileName, functionName);
         }
         
         WebPanel.postMessage({ Command: 'LoadTests', Data: WebPanel.testList });

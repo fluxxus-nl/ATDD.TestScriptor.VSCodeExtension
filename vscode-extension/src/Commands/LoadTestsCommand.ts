@@ -1,12 +1,18 @@
-import { VSCommandType, ExecuteCommand } from './../Bootstrap/VSCommands';
+import { Application } from './../Application';
+import { VSCommandType, VSCommandService } from '../Services/VSCommandService';
 import { IMessageBase } from './../typings/IMessageBase';
-import { CommandBase } from './CommandBase';
 import { WebPanel } from '../WebPanel';
+import { ICommandBase } from '../typings/ICommandBase';
 
-export class LoadTestsCommand extends CommandBase {
+export class LoadTestsCommand implements ICommandBase {
+    private vsCommandService: VSCommandService;
+    
+    public constructor() {
+        this.vsCommandService = Application.container.get(VSCommandService);
+    }
 
     async execute(message?: IMessageBase) {
-        await ExecuteCommand(VSCommandType.Discover);
+        await this.vsCommandService.executeCommand(VSCommandType.Discover);
         WebPanel.postMessage({ Command: 'LoadTests', Data: WebPanel.testList });
     }
 }

@@ -53,6 +53,11 @@ export class TestList {
             }
         }));
 
+
+        this.subscriptions.push(this.eventAggregator.subscribe(AppEventPublisher.export, response => {
+            this.backendService.send({ Command: 'Export', Data: this.entries });
+        }));
+
         this.subscriptions.push(this.bindingEngine.collectionObserver(this.entries).subscribe(this.listChanged.bind(this)));
     }
 
@@ -83,7 +88,7 @@ export class TestList {
 
     selectionChanged() {
         let data = this.api.getSelectedRows();
-        this.currEntry = data[0];        
+        this.currEntry = data[0];
         console.log('Selection changed', this.currEntry);
     }
 

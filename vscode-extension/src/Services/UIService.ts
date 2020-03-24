@@ -1,23 +1,30 @@
+import { singleton } from 'aurelia-dependency-injection';
 import { window, Progress, CancellationToken, ProgressLocation } from 'vscode';
 
+@singleton()
 export class UIService {
-    public static async info(message: string) {
+    public async info(message: string) {
         return await window.showInformationMessage(message);
     }
 
-    public static async warn(message: string) {
+    public async warn(message: string) {
         return await window.showWarningMessage(message);
     }
 
-    public static async error(message: string) {
+    public async error(message: string) {
         return await window.showErrorMessage(message);
     }
 
-    public static async progress(message: string, task: (progress: Progress<{ message?: string; increment?: number }>, token: CancellationToken) => Promise<boolean>): Promise<boolean> {
+    public async progress(message: string, task: (progress: Progress<{ message?: string; increment?: number }>, token: CancellationToken) => Promise<boolean>): Promise<boolean> {
         return await window.withProgress({
             location: ProgressLocation.Notification,
             title: message,
             cancellable: true
         }, task);
+    }
+
+    public async filepicker(filters?: { [name: string]: string[] }, label?: string): Promise<string> {
+        let uri = await window.showSaveDialog({ filters: filters, saveLabel: label });
+        return <string>uri?.fsPath;
     }
 }

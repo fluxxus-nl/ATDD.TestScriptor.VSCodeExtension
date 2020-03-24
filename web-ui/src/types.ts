@@ -6,6 +6,7 @@ export enum AppEditMode {
 export enum AppEventPublisher {
     appMainColumnsResized = 'appMainColumnsResized',
     entryFormEdited = 'entryFormEdited',
+    export = 'export',
     onNewScenario = 'onNewScenario',
     selectedEntryEdited = 'selectedEntryEdited',
     sidebarLinksUpdated = 'sidebarLinksUpdated'
