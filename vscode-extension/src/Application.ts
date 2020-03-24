@@ -1,9 +1,3 @@
-/*import { ExportCommand } from './Commands/ExportCommand';
-import { ViewSourceCommand } from './Commands/ViewSourceCommand';
-import { SaveChangesCommand } from './Commands/SaveChangesCommand';
-import { RunTestsCommand } from './Commands/RunTestCommand';
-import { LoadTestsCommand } from './Commands/LoadTestsCommand';
-import { LoadProjectsCommand } from './Commands/LoadProjectsCommand';*/
 import { ExcelService } from './Services/ExcelService';
 import { Container } from 'aurelia-dependency-injection';
 import { commands, ExtensionContext, workspace, extensions } from 'vscode';
@@ -104,15 +98,6 @@ export class Application {
         this._container.registerSingleton(VSCommandService);
         this._container.registerTransient(CommandHandlerService);
         this._container.registerTransient(ExcelService);
-
-        // Commands
-        /*this._container.registerTransient(LoadProjectsCommand);
-        this._container.registerTransient(LoadTestsCommand);
-        this._container.registerTransient(RunTestsCommand);
-        this._container.registerTransient(SaveChangesCommand);
-        this._container.registerTransient(ViewSourceCommand);
-        this._container.registerTransient(ExportCommand);*/
-
     }
 
     registerCommand(name: string, commandFunc: any) {
