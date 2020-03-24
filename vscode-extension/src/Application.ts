@@ -20,7 +20,6 @@ export class Application {
     private _vsCommandService!: VSCommandService;
     private _backendService!: BackendService;
     private _middlewareService!: MiddlewareService;
-    //private _framework: Aurelia;
     private static _instance: Application;
 
     private constructor() {
