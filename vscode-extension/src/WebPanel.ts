@@ -1,7 +1,7 @@
 import { Application } from './Application';
 import { WebPanelCommandService } from './Services/WebPanelCommandService';
 import { Disposable, WebviewPanel, ViewColumn, window, Uri } from 'vscode';
-import * as path from 'path';
+import { join } from 'path';
 import { IMessageBase, Message } from './typings/IMessageBase';
 
 export class WebPanel {
@@ -30,8 +30,8 @@ export class WebPanel {
             retainContextWhenHidden: true,
 
             localResourceRoots: [
-                Uri.file(path.join(this.extensionPath, 'WebView')),
-                Uri.file(path.join(this.extensionPath, 'WebView', 'scripts'))
+                Uri.file(join(this.extensionPath, 'WebView')),
+                Uri.file(join(this.extensionPath, 'WebView', 'scripts'))
             ]
         });
 
@@ -80,8 +80,8 @@ export class WebPanel {
             options: this.options
         };
 
-        let content: string = await Application.readFile(path.join(this.extensionPath, 'WebView', 'index.html'));
-        let appOnDiskPath = Uri.file(path.join(this.extensionPath, 'WebView', 'scripts', 'bundle.js'));
+        let content: string = await Application.readFile(join(this.extensionPath, 'WebView', 'index.html'));
+        let appOnDiskPath = Uri.file(join(this.extensionPath, 'WebView', 'scripts', 'bundle.js'));
         let appJsSrc: any = appOnDiskPath.with({ scheme: 'vscode-resource' });
         content = content.replace('//${vscodeApi}', 'window.vscode = acquireVsCodeApi();');
         content = content.replace('//${startupOptions}', `window.startupOptions = '${JSON.stringify(startupOptions)}';`);
