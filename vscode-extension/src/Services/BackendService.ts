@@ -1,12 +1,12 @@
-import { ChildProcess, execFile } from "child_process";
-import * as path from 'path';
-import * as os from 'os';
-import * as fs from 'fs';
-import * as portFinder from 'portfinder';
 import { Application } from "../Application";
 import { singleton } from "aurelia-dependency-injection";
+import { ChildProcess, execFile } from "child_process";
+import { join } from 'path';
+import { platform } from 'os';
+import { chmodSync } from 'fs';
+import { getPortPromise } from 'portfinder';
 
-@singleton()
+@singleton(true)
 export class BackendService {
 
     constructor() {
@@ -23,7 +23,7 @@ export class BackendService {
                 this.port = await this.getPort();
 
                 let osFolder = '';
-                let osPlatform: string = os.platform();
+                let osPlatform: string = platform();
                 switch (osPlatform) {
                     default:
                         osFolder = 'linux';
@@ -36,14 +36,14 @@ export class BackendService {
                         break;                    
                 }
 
-                let exePath = path.join(extensionPath, 'bin', osFolder, 'ATDD.TestScriptor.BackendServices');
+                let exePath = join(extensionPath, 'bin', osFolder, 'ATDD.TestScriptor.BackendServices');
 
                 // set executable chmod on linux/osx platforms
                 if (osPlatform != 'win32') {
                     try {
-                        fs.chmodSync(exePath, 0o755);
+                        chmodSync(exePath, 0o755);
                     } catch (e) {
-                        Application.logService.error(`Setting Chmod 755 for ATDD.TestScriptor.BackendServices executable failed. Platform ${osPlatform}\n`, e);
+                        Application.log.error(`Setting Chmod 755 for ATDD.TestScriptor.BackendServices executable failed. Platform ${osPlatform}\n`, e);
                     }
                 }
                 if (!this.process) {
@@ -51,7 +51,7 @@ export class BackendService {
                         if (error) {
                             throw error;
                         }
-                        Application.logService.debug(stdout);
+                        Application.log.debug(stdout);
                     });
                     this.process.stdout!.on('data', (data) => {
                         let line = data.toString();
@@ -69,7 +69,7 @@ export class BackendService {
     }
 
     private async getPort() {
-        let newPort = await portFinder.getPortPromise({ port: 42000, stopPort: 42150 });
+        let newPort = await getPortPromise({ port: 42000, stopPort: 42150 });
         return newPort;
     }
 

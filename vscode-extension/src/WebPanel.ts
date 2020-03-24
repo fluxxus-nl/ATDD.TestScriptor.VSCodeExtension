@@ -1,8 +1,7 @@
 import { Application } from './Application';
-import { CommandHandlerService } from './Services/CommandHandlerService';
+import { WebPanelCommandService } from './Services/WebPanelCommandService';
 import { Disposable, WebviewPanel, ViewColumn, window, Uri } from 'vscode';
 import * as path from 'path';
-import {read} from './utils';
 import { IMessageBase, Message } from './typings/IMessageBase';
 
 export class WebPanel {
@@ -24,7 +23,7 @@ export class WebPanel {
     }
 
     async createPanel() {
-        this.panel = window.createWebviewPanel("attTestScriptor", "Test Scenarios", ViewColumn.One, {
+        this.panel = window.createWebviewPanel("atddTestScriptor", "Test Scenarios", ViewColumn.One, {
             // Enable javascript in the webview
             enableScripts: true,
             enableFindWidget: true,
@@ -43,14 +42,14 @@ export class WebPanel {
 
         // Handle messages from the webview
         this.panel.webview.onDidReceiveMessage((async (messages: Array<IMessageBase>) => {
-            let handler: CommandHandlerService = new CommandHandlerService();
+            let handler: WebPanelCommandService = Application.container.get(WebPanelCommandService);
 
             for (let message of messages) {
                 try {
                     await handler.dispatch(message);
                 } catch (e) {
                     window.showErrorMessage(`${e?.message ? `${e.message}` : 'ATDD Server error. Check "Help / Toggle Developer Tools" for details.'}`);
-                    Application.logService.error(`Failed to execute command: ${message.Command}`, e);
+                    Application.log.error(`Failed to execute command: ${message.Command}`, e);
                 }
             }
         }).bind(this), null, this._disposables);
@@ -81,7 +80,7 @@ export class WebPanel {
             options: this.options
         };
 
-        let content: string = await read(path.join(this.extensionPath, 'WebView', 'index.html'));
+        let content: string = await Application.readFile(path.join(this.extensionPath, 'WebView', 'index.html'));
         let appOnDiskPath = Uri.file(path.join(this.extensionPath, 'WebView', 'scripts', 'bundle.js'));
         let appJsSrc: any = appOnDiskPath.with({ scheme: 'vscode-resource' });
         content = content.replace('//${vscodeApi}', 'window.vscode = acquireVsCodeApi();');

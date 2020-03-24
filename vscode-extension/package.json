@@ -47,7 +47,7 @@
         "vscode:prepublish": "yarn run compile && yarn run dist",
         "package": "vsce package",
         "dist": "yarn webpack --mode production",
-        "dev": "yarn webpack --mode none",
+        "dev": "yarn compile && yarn webpack --mode none",
         "compile": "tsc -p ./",
         "lint": "tslint -p ./",
         "watch": "tsc -watch -p ./",
@@ -55,6 +55,7 @@
         "test": "node ./out/test/runTest.js"
     },
     "devDependencies": {
+        "@types/exceljs": "^1.3.0",
         "@types/fs-extra": "^8.1.0",
         "@types/glob": "^7.1.1",
         "@types/mocha": "^2.2.42",
@@ -75,9 +76,9 @@
     "dependencies": {
         "@microsoft/signalr": "^3.1.0",
         "aurelia-dependency-injection": "^1.5.2",
-        "aurelia-framework": "^1.3.1",
+        "aurelia-loader-nodejs": "^1.1.0",
         "clipboardy": "^2.2.0",
-        "exceljs": "^3.8.1",
+        "exceljs": "3.8.1",
         "fs-extra": "^8.1.0",
         "portfinder": "^1.0.25"
     }

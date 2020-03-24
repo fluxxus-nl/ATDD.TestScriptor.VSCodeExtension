@@ -1,10 +1,10 @@
 import { Application } from './../Application';
-import { WebPanel } from '../WebPanel';
-import { HubConnectionState, HubConnectionBuilder, LogLevel, HubConnection } from "@microsoft/signalr";
-import { Message } from '../typings/IMessageBase';
 import { singleton } from 'aurelia-dependency-injection';
+import { WebPanel } from '../WebPanel';
+import { Message } from '../typings/IMessageBase';
+import { HubConnectionState, HubConnectionBuilder, LogLevel, HubConnection } from "@microsoft/signalr";
 
-@singleton()
+@singleton(true)
 export class MiddlewareService {
     private _connection!: HubConnection;
     private _url: string = '';
@@ -50,14 +50,14 @@ export class MiddlewareService {
 
         this._connection.onreconnecting(error => {
             let msg = `Backend connection lost due to error "${error}". Reconnecting.`;
-            Application.logService.warn(msg);
-            Application.uiService.warn(msg);
+            Application.log.warn(msg);
+            Application.ui.warn(msg);
         });
 
         this._connection.onreconnected(id => {
             let msg = `Backend connection has beed restored.`;
-            Application.logService.info(msg);
-            Application.uiService.info(msg);
+            Application.log.info(msg);
+            Application.ui.info(msg);
         });
 
         this._connection.on(MiddlewareResponseMethod.UpdateObjects, async () => {
@@ -82,11 +82,11 @@ export class MiddlewareService {
 
         return new Promise((resolve, reject) => {            
             this._connection.on(responseMethod, (msg: any) => {
-                Application.logService.debug(`${responseMethod}: ${responseMethod} response received.`);
+                Application.log.debug(`${responseMethod}: ${responseMethod} response received.`);
                 resolve(msg);
             });
 
-            Application.logService.debug(`${requestMethod}: request sent.`);
+            Application.log.debug(`${requestMethod}: request sent.`);
             this._connection.invoke(requestMethod, ...args).catch((err: any) => reject(err));
         });
     }

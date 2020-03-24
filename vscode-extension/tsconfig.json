@@ -9,6 +9,7 @@
         ],
         "types": ["node"],
         "sourceMap": true,
+        "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
         "rootDir": "src",
         /* Strict Type-Checking Option */

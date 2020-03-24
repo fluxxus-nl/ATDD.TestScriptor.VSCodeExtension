@@ -1,16 +1,18 @@
 import { Application } from './../Application';
-import { Workbook } from 'exceljs';
+import { singleton } from 'aurelia-dependency-injection';
 import { Message } from '../typings/IMessageBase';
+import { Workbook } from 'exceljs';
 
+@singleton(true)
 export class ExcelService {
 
     async export(entries: Array<Message>) {
 
-        let filename = await Application.uiService.filepicker({
+        let filename = await Application.ui.filepicker({
             'Excel': ['xlsx']
         });
 
-        if (filename == '') {
+        if (!filename) {
             return;
         }
 

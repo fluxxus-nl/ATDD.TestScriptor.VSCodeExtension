@@ -1,19 +1,15 @@
-import { commands } from 'vscode';
-import { WebPanel } from "../WebPanel";
 import { Application } from "../Application";
-import { MiddlewareService } from './MiddlewareService';
-import { getWorkspacePaths } from '../utils';
-import { LoadTestsCommand } from '../Commands/LoadTestsCommand';
 import { singleton } from 'aurelia-dependency-injection';
+import { WebPanel } from "../WebPanel";
+import { WebPanelCommandService } from './WebPanelCommandService';
+import { MiddlewareService } from './MiddlewareService';
+import { commands } from 'vscode';
 
-@singleton()
+@singleton(true)
 export class VSCommandService {
 
-    constructor() {
-    }
-
     async executeCommand(command: string, ...rest: Array<any>): Promise<any> {
-        Application.logService.debug(`${command} executed`, rest);
+        Application.log.debug(`${command} executed`, rest);
         return await commands.executeCommand(command, rest);
     }
 
@@ -21,22 +17,22 @@ export class VSCommandService {
         try {
             await WebPanel.open(Application.context.extensionPath);
         } catch (e) {
-            Application.logService.error(`${Application.displayName} could not be opened.`, e);
-            Application.uiService.error(`${Application.displayName} could not be opened. Error: '${e.message}'`);
+            Application.log.error(`${Application.displayName} could not be opened.`, e);
+            Application.ui.error(`${Application.displayName} could not be opened. Error: '${e.message}'`);
         }
     }
 
     async discover() {
-        await Application.uiService.progress('Processing Workspace: discovering AL Unit Tests...', async (progress, token) => {
+        await Application.ui.progress('Processing Workspace: discovering AL Unit Tests...', async (progress, token) => {
             token.onCancellationRequested(() => {
-                Application.logService.warn("User canceled the AL Unit Test Discovery.");
+                Application.log.warn("User canceled the AL Unit Test Discovery.");
             });
     
             let middlewareService = Application.container.get(MiddlewareService);
             let start = Date.now();
-            WebPanel.testList = await middlewareService.getObjects(getWorkspacePaths());
+            WebPanel.testList = await middlewareService.getObjects(Application.getWorkspacePaths());
             let end = Date.now();
-            Application.logService.info(`Workspace processed in ${end - start}ms`);
+            Application.log.info(`Workspace processed in ${end - start}ms`);
     
             return true;
         });
@@ -44,8 +40,8 @@ export class VSCommandService {
 }
 
 export async function localObjectWatcher() {
-    let command = Application.container.get(LoadTestsCommand);
-    await command.execute();
+    let webPanelService = Application.container.get(WebPanelCommandService);
+    await webPanelService.LoadTestsCommand();
 }
 
 export enum VSDependency {
@@ -58,3 +54,4 @@ export enum VSCommandType {
     RunAllTests = 'altestrunner.runAllTests',
     RunTest = 'altestrunner.runTest'
 }
+

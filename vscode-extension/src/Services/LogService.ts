@@ -1,7 +1,7 @@
 import { Application } from "../Application";
 import { singleton } from "aurelia-dependency-injection";
 
-@singleton()
+@singleton(true)
 export class LogService {
     log(message: string, logLevel: LogLevel, optionalParams?: any) {
         let msg = this.template.replace('[level]', `[${LogLevel[logLevel]}]`).replace('[msg]', message);

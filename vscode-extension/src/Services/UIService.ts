@@ -1,7 +1,7 @@
 import { singleton } from 'aurelia-dependency-injection';
 import { window, Progress, CancellationToken, ProgressLocation } from 'vscode';
 
-@singleton()
+@singleton(true)
 export class UIService {
     public async info(message: string) {
         return await window.showInformationMessage(message);
