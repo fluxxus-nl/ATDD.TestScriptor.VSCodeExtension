@@ -12,14 +12,15 @@ variables:
   solution: '**/*.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
-  targetPlatform: 'win-x64'
+  targetPlatformWin: 'win-x64'
+  targetPlatformLinux: 'linux-x64'
   RunVersion: "0.1.$(Build.BuildId)"
 
 # .NET Server
 
 steps:
 - checkout: self
-  submodules: true
+  submodules: recursive
 
 - task: NuGetToolInstaller@1
 
@@ -45,13 +46,23 @@ steps:
     projects: '$(solution)'
 
 - task: DotNetCoreCLI@2
-  displayName: '.NET Server release build'
+  displayName: '.NET Server Windows build'
   inputs:
     workingDirectory: 'services/ATDD.TestScriptor.BackendServices'
     command: 'publish'
     publishWebProjects: false    
     zipAfterPublish: false
-    arguments: '--configuration $(BuildConfiguration) --output ../../vscode-extension/bin --self-contained -r $(targetPlatform) /p:PublishSingleFile=true /p:PublishTrimmed=true'
+    arguments: '--configuration $(BuildConfiguration) --output ../../vscode-extension/bin --self-contained -r $(targetPlatformWin) /p:PublishSingleFile=true /p:PublishTrimmed=true'
+
+- task: DotNetCoreCLI@2
+  displayName: '.NET Server Linux build'
+  inputs:
+    workingDirectory: 'services/ATDD.TestScriptor.BackendServices'
+    command: 'publish'
+    publishWebProjects: false    
+    zipAfterPublish: false
+    arguments: '--configuration $(BuildConfiguration) --output ../../vscode-extension/bin --self-contained -r $(targetPlatformLinux) /p:PublishSingleFile=true /p:PublishTrimmed=true'
+  
 
 # Aurelia App
 
@@ -76,6 +87,13 @@ steps:
 - script: yarn install
   displayName: 'VS Ext. restore'
   workingDirectory: 'vscode-extension'
+  
+- task: PowerShell@2
+  displayName: 'VS Ext. Update package.json'
+  inputs:
+    targetType: 'inline'
+    script: '((Get-Content -path ./package.json -Raw) -replace ''"debugMode": true'',''"debugMode": false'') | Set-Content -Path ./package.json'
+    workingDirectory: 'vscode-extension'
 
 - script: yarn version --no-git-tag-version --new-version $(RunVersion)
   displayName: 'VS Ext. set version'

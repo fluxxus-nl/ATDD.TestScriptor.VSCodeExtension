@@ -75,7 +75,7 @@ export class WebPanelCommandService {
         editor.selection = new Selection(x, x);
         editor.revealRange(new Range(x, x), TextEditorRevealType.InCenter);
 
-        await WebPanel.postMessage(null);
+        WebPanel.postMessage(null);
     }
 
     async ExportCommand(message: IMessageBase) {
