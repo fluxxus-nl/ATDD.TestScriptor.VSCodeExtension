@@ -52,7 +52,7 @@ steps:
     command: 'publish'
     publishWebProjects: false    
     zipAfterPublish: false
-    arguments: '--configuration $(BuildConfiguration) --output ../../vscode-extension/bin --self-contained -r $(targetPlatformWin) /p:PublishSingleFile=true /p:PublishTrimmed=true'
+    arguments: '--configuration $(BuildConfiguration) --output ../../vscode-extension/bin/windows --self-contained -r $(targetPlatformWin) /p:PublishSingleFile=true /p:PublishTrimmed=true'
 
 - task: DotNetCoreCLI@2
   displayName: '.NET Server Linux build'
@@ -61,7 +61,7 @@ steps:
     command: 'publish'
     publishWebProjects: false    
     zipAfterPublish: false
-    arguments: '--configuration $(BuildConfiguration) --output ../../vscode-extension/bin --self-contained -r $(targetPlatformLinux) /p:PublishSingleFile=true /p:PublishTrimmed=true'
+    arguments: '--configuration $(BuildConfiguration) --output ../../vscode-extension/bin/linux --self-contained -r $(targetPlatformLinux) /p:PublishSingleFile=true /p:PublishTrimmed=true'
   
 
 # Aurelia App
