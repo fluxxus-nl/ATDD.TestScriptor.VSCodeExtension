@@ -25,7 +25,7 @@ export class VSCommandService {
     async discover() {
         await Application.ui.progress('Processing Workspace: discovering AL Unit Tests...', async (progress, token) => {
             token.onCancellationRequested(() => {
-                Application.log.warn("User canceled the AL Unit Test Discovery.");
+                Application.log.warn("User cancelled the AL Unit Test Discovery.");
             });
     
             let middlewareService = Application.container.get(MiddlewareService);

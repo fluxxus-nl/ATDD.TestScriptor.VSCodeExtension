@@ -1,5 +1,6 @@
 'use strict';
 
+import 'reflect-metadata';
 import { Application } from './Application';
 import { ExtensionContext } from 'vscode';
 
