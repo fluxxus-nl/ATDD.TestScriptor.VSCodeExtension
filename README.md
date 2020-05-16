@@ -13,4 +13,4 @@ The ATDD pattern is defined by so called tags:
 
 This projct is at this moment WIP. Have a look at how we think it is going to look like:
 
-![ATTD.TestScriptor.VSCode 20200516](demo/ATTD.TestScriptor.VSCode 20200516.jpg)
+![ATTD.TestScriptor.VSCode 20200516](https://github.com/fluxxus-nl/ATDD.TestScriptor.VSCodeExtension/blob/master/demo/ATTD.TestScriptor.VSCode%2020200516.jpg)
