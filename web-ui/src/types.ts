@@ -9,7 +9,8 @@ export enum AppEventPublisher {
     export = 'export',
     onNewScenario = 'onNewScenario',
     selectedEntryEdited = 'selectedEntryEdited',
-    sidebarLinksUpdated = 'sidebarLinksUpdated'
+    sidebarLinksUpdated = 'sidebarLinksUpdated',
+    saveChanges = 'saveChanges'
 }
 
 export class Message {
