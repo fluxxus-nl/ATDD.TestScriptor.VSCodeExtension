@@ -36,6 +36,7 @@ export class TestList {
         this.subscriptions.push(this.eventAggregator.subscribe(AppEventPublisher.onNewScenario, response => {
             this.entries.splice(this.entries.length, 0, response);
             this.listChanged();
+            this.focusRow(this.entries.length - 1);
         }));
 
         this.subscriptions.push(this.eventAggregator.subscribe(AppEventPublisher.appMainColumnsResized, response => {
@@ -77,6 +78,15 @@ export class TestList {
 
     detached() {
 
+    }
+
+    focusRow(rowIndex: number) {
+        if (this.api.getInfiniteRowCount() < rowIndex) {
+            this.api.setInfiniteRowCount(rowIndex, false);
+        }
+        this.api.ensureIndexVisible(rowIndex);
+        this.api.selectIndex(rowIndex, false, false);
+        this.selectionChanged();
     }
 
     listChanged(splices?: Array<ICollectionObserverSplice<any>>) {
