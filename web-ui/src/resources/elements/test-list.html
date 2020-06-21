@@ -5,10 +5,17 @@
                 row-data.bind="entries" row-selection.bind="'single'"
                 selection-changed.call="selectionChanged($event.node.data, $event)" grid-options.bind="gridOptions">
 
-                <ag-grid-column header-name="Project" field="Project"></ag-grid-column>
+                <ag-grid-column header-name="Project" field="Project">
+                    <ag-cell-template>
+                        <span class="d-inline-block" tabindex="0" data-toggle="tooltip" data-placement="bottom"
+                            title.bind="params.data.Project">
+                            ${params.data.Project}
+                        </span>
+                    </ag-cell-template>
+                </ag-grid-column>
                 <ag-grid-column header-name="Feature" field="Feature">
                     <ag-cell-template>
-                        <span class="d-inline-block" tabindex="0" data-toggle="tooltip"
+                        <span class="d-inline-block" tabindex="0" data-toggle="tooltip" data-placement="bottom"
                             title.bind="params.data.Feature">
                             ${params.data.Feature}
                         </span>
