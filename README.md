@@ -10,3 +10,7 @@ The ATDD pattern is defined by so called tags:
 *	GIVEN: defines what data setup is needed; a test case can have multiple GIVEN tags when data setup is more complex
 *	WHEN: defines the action under test; each test case should have only one WHEN tag
 *	THEN: defines the result of the action, or more specifically the verification of the result; if multiple results apply, multiple THEN tags will be needed
+
+This projct is at this moment WIP. Have a look at how we think it is going to look like:
+
+![ATTD.TestScriptor.VSCode 20200516](https://github.com/fluxxus-nl/ATDD.TestScriptor.VSCodeExtension/blob/master/demo/ATTD.TestScriptor.VSCode%2020200516.jpg)

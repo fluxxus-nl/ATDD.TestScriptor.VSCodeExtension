@@ -38,6 +38,11 @@ export class App {
     this.subscriptions.push(this.eventAggregator.subscribe(AppEventPublisher.sidebarLinksUpdated, response => {
       this.sidebarLinks = this.appService.sidebarLinks;
     }));
+
+    this.subscriptions.push(this.eventAggregator.subscribe(AppEventPublisher.saveChanges, async (response) => {
+      await this.backendService.send({ Command: 'SaveChanges', Data: this.entries });
+    }));
+
   }
 
   async attached() {

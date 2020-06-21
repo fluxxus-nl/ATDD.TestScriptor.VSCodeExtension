@@ -82,7 +82,7 @@ export class WebPanel {
 
         let content: string = await Application.readFile(join(this.extensionPath, 'WebView', 'index.html'));
         let appOnDiskPath = Uri.file(join(this.extensionPath, 'WebView', 'scripts', 'bundle.js'));
-        let appJsSrc: any = appOnDiskPath.with({ scheme: 'vscode-resource' });
+        let appJsSrc: any = this.panel.webview.asWebviewUri(appOnDiskPath);
         content = content.replace('//${vscodeApi}', 'window.vscode = acquireVsCodeApi();');
         content = content.replace('//${startupOptions}', `window.startupOptions = '${JSON.stringify(startupOptions)}';`);
         content = content.replace('scripts/bundle.js', appJsSrc);

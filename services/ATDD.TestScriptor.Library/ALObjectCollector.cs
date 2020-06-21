@@ -89,7 +89,7 @@ namespace ATDD.TestScriptor.Library
             var collectorItems = new List<CollectorItem>();
             var alobjects = ALParser.Read(itemPath);
             foreach (var alobject in alobjects)
-            {               
+            {
                 if (alobject.Type == ALObjectType.codeunit)
                 {
                     bool isTestCodeunit = alobject
@@ -189,18 +189,18 @@ namespace ATDD.TestScriptor.Library
                         {
                             tasks.Add(Task.Run(() =>
                             {
-                            if (item.IsFile && item.Name.EndsWith(".al"))
-                            {
-                                using (var xstr = zf.GetInputStream(item))
+                                if (item.IsFile && item.Name.EndsWith(".al"))
                                 {
-                                    using (var txtrdr = new StreamReader(xstr))
+                                    using (var xstr = zf.GetInputStream(item))
                                     {
-                                        var objStr = txtrdr.ReadToEnd();
-                                        var parser = new ALObjectReaderBase();
-                                        var info = parser.ReadObjectInfosFromString(objStr);
-                                        var infoItem = info.FirstOrDefault() as ALObject;
-                                        if (infoItem != null)
+                                        using (var txtrdr = new StreamReader(xstr))
                                         {
+                                            var objStr = txtrdr.ReadToEnd();
+                                            var parser = new ALObjectReaderBase();
+                                            var info = parser.ReadObjectInfosFromString(objStr);
+                                            var infoItem = info.FirstOrDefault() as ALObject;
+                                            if (infoItem != null)
+                                            {
                                                 infoItem.SymbolZipName = item.ZipFileIndex.ToString();
                                                 return infoItem;
                                             }
@@ -246,12 +246,12 @@ namespace ATDD.TestScriptor.Library
                 var alobjects = ALParser.Read(data.Path);
                 var alobject = alobjects.FirstOrDefault(f => f.Type == data.Type && f.Name == data.Name);
                 var project = ALProjectCollector.Discover(data.Path);
-                
+
                 return alobject;
             }
 
             var symbols = await GetSymbolReference(data.Path, mapSourcePath);
-            var result = symbols.Symbols.Where(w =>w.Type == data.Type && w.Name == data.Name).FirstOrDefault();
+            var result = symbols.Symbols.Where(w => w.Type == data.Type && w.Name == data.Name).FirstOrDefault();
 
             return await Task.FromResult(result);
         }
@@ -265,7 +265,7 @@ namespace ATDD.TestScriptor.Library
                 result = ALParser.Write(alobj);
                 return await Task.FromResult(result);
             }
-            
+
             using (Stream fs = File.OpenRead(data.Path))
             {
                 using (var zf = new ZipFile(fs))
