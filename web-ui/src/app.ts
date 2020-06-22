@@ -3,6 +3,8 @@ import { AppService } from './services/app-service';
 import { BackendService } from 'services/backend-service';
 import { autoinject, observable, Disposable, PLATFORM } from 'aurelia-framework';
 import { EventAggregator } from 'aurelia-event-aggregator';
+import "jquery";
+import "bootstrap";
 import Split from 'split.js'
 import { Message, AppEventPublisher } from 'types';
 (<any>PLATFORM.global).process = { env: { NODE_ENV: 'production' } };

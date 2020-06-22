@@ -5,24 +5,23 @@
                 row-data.bind="entries" row-selection.bind="'single'"
                 selection-changed.call="selectionChanged($event.node.data, $event)" grid-options.bind="gridOptions">
 
-                <ag-grid-column header-name="Project" field="Project"></ag-grid-column>
-                <ag-grid-column header-name="Feature" field="Feature">
-                    <ag-cell-template>
-                        ${params.data.Feature}
-                    </ag-cell-template>
+                <ag-grid-column header-name="Project" field="Project" tooltip-field="Project"></ag-grid-column>
+                <ag-grid-column header-name="Feature" field="Feature" tooltip-field="Feature">
                 </ag-grid-column>
                 <ag-grid-column header-name="Id" field="ID" width.bind="100">
                     <ag-cell-template>
                         ${params.data.Id}
                     </ag-cell-template>
                 </ag-grid-column>
-                <ag-grid-column header-name="Scenario" field="Scenario" width.bind="250">
+                <ag-grid-column header-name="Scenario" field="Scenario" width.bind="250" tooltip-field="Scenario">
                     <ag-cell-template>
-                        <a href="#"
-                            click.delegate="params.context.sendCommand(params.data, 'ViewSource')">${params.data.Scenario}</a>
+                        <a href="#" click.delegate="params.context.sendCommand(params.data, 'ViewSource')">
+                            ${params.data.Scenario}
+                        </a>
                     </ag-cell-template>
                 </ag-grid-column>
-                <ag-grid-column header-name="Result" field="TestRunnerResult" width.bind="80" style="text-align: center">
+                <ag-grid-column header-name="Result" field="TestRunnerResult" width.bind="80"
+                    style="text-align: center">
                     <ag-cell-template>
                         <div class="text-center">
                             <i class="text-info fas fa-question-circle" if.bind="params.data.TestRunnerResult == 0"></i>
