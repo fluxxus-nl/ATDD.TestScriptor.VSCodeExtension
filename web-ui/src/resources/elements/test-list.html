@@ -5,31 +5,17 @@
                 row-data.bind="entries" row-selection.bind="'single'"
                 selection-changed.call="selectionChanged($event.node.data, $event)" grid-options.bind="gridOptions">
 
-                <ag-grid-column header-name="Project" field="Project">
-                    <ag-cell-template>
-                        <span class="d-inline-block" tabindex="0" data-toggle="tooltip" data-placement="bottom"
-                            title.bind="params.data.Project">
-                            ${params.data.Project}
-                        </span>
-                    </ag-cell-template>
-                </ag-grid-column>
-                <ag-grid-column header-name="Feature" field="Feature">
-                    <ag-cell-template>
-                        <span class="d-inline-block" tabindex="0" data-toggle="tooltip" data-placement="bottom"
-                            title.bind="params.data.Feature">
-                            ${params.data.Feature}
-                        </span>
-                    </ag-cell-template>
+                <ag-grid-column header-name="Project" field="Project" tooltip-field="Project"></ag-grid-column>
+                <ag-grid-column header-name="Feature" field="Feature" tooltip-field="Feature">
                 </ag-grid-column>
                 <ag-grid-column header-name="Id" field="ID" width.bind="100">
                     <ag-cell-template>
                         ${params.data.Id}
                     </ag-cell-template>
                 </ag-grid-column>
-                <ag-grid-column header-name="Scenario" field="Scenario" width.bind="250">
+                <ag-grid-column header-name="Scenario" field="Scenario" width.bind="250" tooltip-field="Scenario">
                     <ag-cell-template>
-                        <a href="#" click.delegate="params.context.sendCommand(params.data, 'ViewSource')"
-                            data-toggle="tooltip" data-placement="bottom" title.bind="params.data.Scenario">
+                        <a href="#" click.delegate="params.context.sendCommand(params.data, 'ViewSource')">
                             ${params.data.Scenario}
                         </a>
                     </ag-cell-template>
