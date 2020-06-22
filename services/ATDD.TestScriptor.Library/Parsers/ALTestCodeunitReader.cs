@@ -52,12 +52,12 @@ namespace ATDD.TestScriptor.Library
                 return;
 
             var testMethods = TestTarget.Methods.Where(w => w.TestMethod == true).ToList();
-            var pattern = @"\[(\w+)(.*?)\]\s+(.*)";
+            var pattern = @"\[(FEATURE|SCENARIO|GIVEN|WHEN|THEN)(.*?)\]\s+(.*)";
             var features = new List<ITestFeature>();
 
             foreach (var method in testMethods)
             {
-                var matches = Regex.Matches(method.Content, pattern);
+                var matches = Regex.Matches(method.Content, pattern, RegexOptions.IgnoreCase);
                 if (matches.Count > 0)
                 {
                     var matchList = matches.ToList();
@@ -89,7 +89,7 @@ namespace ATDD.TestScriptor.Library
                                 break;
                             case ScenarioElementType.SCENARIO:
                                 scenario = new TestScenario();
-                                scenario.ID = int.Parse(elem.Id);
+                                // scenario.ID = int.Parse(elem.Id);
                                 scenario.Name = elem.Name;
                                 scenario.MethodName = method.Name;
                                 scenario.Feature = feature;
