@@ -28,8 +28,7 @@ export class TestList {
                 resizable: true,
                 sortable: true,
                 editable: true
-            },
-            enableBrowserTooltips: true
+            }
         };
     }
 
