@@ -1,8 +1,9 @@
-import { Application } from './../Application';
+import { HubConnection, HubConnectionBuilder, HubConnectionState, LogLevel } from "@microsoft/signalr";
 import { singleton } from 'aurelia-dependency-injection';
+import { Message, MessageUpdate } from '../typings/types';
 import { WebPanel } from '../WebPanel';
-import { Message } from '../typings/IMessageBase';
-import { HubConnectionState, HubConnectionBuilder, LogLevel, HubConnection } from "@microsoft/signalr";
+import { Application } from './../Application';
+import { ObjectService } from "../App logic/Services/ObjectService";
 
 @singleton(true)
 export class MiddlewareService {
@@ -17,17 +18,27 @@ export class MiddlewareService {
     }
 
     async getProjects(msg: Array<string>): Promise<Array<string>> {
-        return this.send(MiddlewareRequestMethod.QueryProjects, MiddlewareResponseMethod.GetProjects, false, msg) as Promise<Array<string>>;
+        return new ObjectService().getProjects();
+        // return this.send(MiddlewareRequestMethod.QueryProjects, MiddlewareResponseMethod.GetProjects, false, msg) as Promise<Array<string>>;
     }
 
     async getObjects(paths: Array<string>): Promise<Array<Message>> {
-        return this.send(MiddlewareRequestMethod.QueryObjects, MiddlewareResponseMethod.GetObjects, false, paths) as Promise<Array<Message>>;
+        return new ObjectService().getObjects(paths);
+        // return this.send(MiddlewareRequestMethod.QueryObjects, MiddlewareResponseMethod.GetObjects, false, paths) as Promise<Array<Message>>;
+    }
+    async isChangeValid(item: MessageUpdate, config: any): Promise<{ valid: boolean, reason: string }> {
+        return new ObjectService().isChangeValid(item, config);
+    }
+    async getProceduresWhichCouldBeDeletedAfterwards(item: MessageUpdate, config: any): Promise<Array<{ procedureName: string, parameterTypes: string[] }>> {
+        return new ObjectService().getProceduresWhichCouldBeDeletedAfterwards(item, config);
+        // return this.send(MiddlewareRequestMethod.CheckSaveChanges, MiddlewareResponseMethod.CheckSaveChangesResponse, false, item, config) as Promise<boolean>;
     }
 
-    async saveChanges(items: Array<Message>): Promise<Array<Message>> {
-        return this.send(MiddlewareRequestMethod.SaveChanges, MiddlewareResponseMethod.SaveChangesResponse, false, items) as Promise<Array<Message>>;
+    async saveChanges(item: MessageUpdate, config: any): Promise<boolean> {
+        return new ObjectService().saveChanges(item, config);
+        // return this.send(MiddlewareRequestMethod.SaveChanges, MiddlewareResponseMethod.SaveChangesResponse, false, item, config) as Promise<boolean>;
     }
-    
+
     async check() {
         if (this._connection.state == HubConnectionState.Connected) {
             return;
@@ -74,13 +85,13 @@ export class MiddlewareService {
         await this._connection.start();
         return true;
     }
-    
+
     private async _send(requestMethod: string, responseMethod: string, checkConnection: boolean, ...args: Array<any>) {
         if (checkConnection === true) {
             await this.check();
         }
 
-        return new Promise((resolve, reject) => {            
+        return new Promise((resolve, reject) => {
             this._connection.on(responseMethod, (msg: any) => {
                 Application.log.debug(`${responseMethod}: ${responseMethod} response received.`);
                 resolve(msg);
@@ -105,12 +116,14 @@ export class MiddlewareService {
 export enum MiddlewareRequestMethod {
     QueryProjects = 'QueryProjects',
     QueryObjects = 'QueryObjects',
-    SaveChanges = 'SaveChanges'
+    SaveChanges = 'SaveChanges',
+    CheckSaveChanges = 'CheckSaveChanges'
 }
 
 export enum MiddlewareResponseMethod {
     GetProjects = 'GetProjects',
     GetObjects = 'GetObjects',
     SaveChangesResponse = 'SaveChangesResponse',
-    UpdateObjects = 'UpdateObjects'
+    UpdateObjects = 'UpdateObjects',
+    CheckSaveChangesResponse = 'CheckSaveChangesResponse'
 }

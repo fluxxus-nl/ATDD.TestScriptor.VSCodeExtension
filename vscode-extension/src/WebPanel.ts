@@ -2,7 +2,7 @@ import { Application } from './Application';
 import { WebPanelCommandService } from './Services/WebPanelCommandService';
 import { Disposable, WebviewPanel, ViewColumn, window, Uri } from 'vscode';
 import { join } from 'path';
-import { IMessageBase, Message } from './typings/IMessageBase';
+import { IMessageBase, Message } from './typings/types';
 
 export class WebPanel {
 

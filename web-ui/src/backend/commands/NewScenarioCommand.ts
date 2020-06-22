@@ -1,6 +1,6 @@
-import { MessageState, AppEventPublisher } from './../../types';
+import { MessageState, AppEventPublisher } from 'types';
 import { ICommand } from "backend/CommandHandlerService";
-import { transient, autoinject } from "aurelia-framework";
+import { autoinject } from "aurelia-framework";
 import { EventAggregator } from 'aurelia-event-aggregator';
 import { Message, ALTestRunnerResult } from "types";
 import { AppService } from 'services/app-service';
@@ -13,11 +13,14 @@ export class NewScenarioCommand implements ICommand {
 
     async execute(payload: any): Promise<void> {
         let project = this.appService.projects[0];
+        let featureName = this.appService.getLastFeatureName();
+        let newID = this.appService.getNextScenarioID(featureName);
         let newRec: Message = {
+            Uid: this.appService.uuidv4(),
             Project: project,
-            Feature: '',
-            Scenario: 'New Scenario',
-            Id: 0,
+            Feature: featureName,
+            Scenario: `New Scenario (${newID})`,
+            Id: newID,
             MethodName: '',
             Codeunit: '',
             FsPath: '',

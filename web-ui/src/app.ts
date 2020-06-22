@@ -1,4 +1,3 @@
-import { AppEditMode } from './types';
 import { AppService } from './services/app-service';
 import { BackendService } from 'services/backend-service';
 import { autoinject, observable, Disposable, PLATFORM } from 'aurelia-framework';
@@ -6,7 +5,7 @@ import { EventAggregator } from 'aurelia-event-aggregator';
 import "jquery";
 import "bootstrap";
 import Split from 'split.js'
-import { Message, AppEventPublisher } from 'types';
+import { AppEditMode, MessageUpdate, Message, AppEventPublisher } from 'types';
 (<any>PLATFORM.global).process = { env: { NODE_ENV: 'production' } };
 
 @autoinject()
@@ -23,7 +22,7 @@ export class App {
   selectedLink: string = 'All';
 
   @observable()
-  currEntry: any = false;
+  currEntry: any;
 
   @observable()
   searchValue: string = '';
@@ -41,8 +40,13 @@ export class App {
       this.sidebarLinks = this.appService.sidebarLinks;
     }));
 
-    this.subscriptions.push(this.eventAggregator.subscribe(AppEventPublisher.saveChanges, async (response) => {
-      await this.backendService.send({ Command: 'SaveChanges', Data: this.entries });
+    this.subscriptions.push(this.eventAggregator.subscribe(AppEventPublisher.saveChanges, async (message: MessageUpdate) => {
+      let result = await this.backendService.send({ Command: 'SaveChanges', Data: message });
+
+      if (!result)
+        return;
+
+      this.eventAggregator.publish(AppEventPublisher.saveChangesOK, message);
     }));
 
   }
@@ -51,7 +55,7 @@ export class App {
     let eventData = await this.backendService.send({ Command: 'LoadTests' });
     this.entries = eventData.Data;
 
-    this.appService.updateSidebarLinks(this.entries);    
+    this.appService.updateSidebarLinks(this.entries);
 
     Split(['#test-col-1', '#test-col-2'], {
       sizes: [60, 40],
@@ -72,6 +76,7 @@ export class App {
       if (e.data.Command == 'LoadTests') {
         this.entries = [];
         this.entries = e.data.Data;
+        this.appService.entries = this.entries;
         console.log('entries updated', e.data.Data);
       }
     });

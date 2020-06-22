@@ -1,5 +1,5 @@
 <template>
-    <nav id="menubar" class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav id="menubar" class="navbar navbar-expand-sm navbar-light bg-light">
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -24,15 +24,15 @@
                             class="fas fa-plus"></i> Scenario</button>
                 </li>
                 <li>
-                    <button class="btn btn-outline-primary my-2 my-sm-0" click.delegate="sendCommand('SaveChanges')"><i class="fas fa-save"></i> Save</button>
+                    <button class="btn btn-outline-danger my-2 my-sm-0" click.delegate="sendCommand('DeleteScenario')"><i class="fas fa-minus"></i> Scenario</button>
                 </li>
                 <li>
                     <button class="btn btn-outline-secondary my-2 my-sm-0">
-                        <i class="fas fa-play"></i> RunTests</button>
+                        <i class="fas fa-play"></i> Run Tests</button>
                 </li>
                 <li>
                     <button class="btn btn-outline-secondary my-2 my-sm-0" click.delegate="sendCommand('Export')">
-                        <i class="fas fa-file-excel"></i>Export</button>
+                        <i class="fas fa-file-excel"></i> Export</button>
                 </li>
             </ul>
             <a class="navbar-brand" href="#">ATDD.TestScriptor</a>

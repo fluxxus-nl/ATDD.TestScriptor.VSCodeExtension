@@ -1,6 +1,6 @@
 import { Application } from './../Application';
 import { singleton } from 'aurelia-dependency-injection';
-import { Message } from '../typings/IMessageBase';
+import { Message } from '../typings/types';
 import { Workbook } from 'exceljs';
 
 @singleton(true)

@@ -49,6 +49,11 @@ export class Application {
         return Application._instance._extensionName;
     }
 
+    public static get config() {
+        let config = workspace.getConfiguration('atddTestScriptor');
+        return config;
+    }
+
     public static get instance() {
         if (!Application._instance) {
             Application._instance = new Application();
@@ -100,11 +105,11 @@ export class Application {
     async registerBackend() {
         await this._backendService.start(this._context.extensionPath);
         await this._middlewareService.init(`http://localhost:${this._backendService.port}`);
-        this._vsCommandService = this._container.get(VSCommandService);
     }
-
+    
     private async _activate() {
-        await this.registerBackend();
+        // await this.registerBackend();
+        this._vsCommandService = this._container.get(VSCommandService);
         this.registerCommand(VSCommandType.Open, this._vsCommandService.open);
         this.registerCommand(VSCommandType.Discover, this._vsCommandService.discover);
 
@@ -121,7 +126,7 @@ export class Application {
         WebPanel.instance.dispose();
         this._logService.debug('ATDD Panel disposed.');
         await this._middlewareService.dispose();
-        await this._backendService.stop();
+        // await this._backendService.stop();
 
         this._logService.debug(`Extension "${Application.extensionName}" has been deactivated.`);
     }
@@ -138,5 +143,10 @@ export class Application {
     static getWorkspacePaths() {
         let paths = workspace.workspaceFolders?.map((m: WorkspaceFolder) => m.uri.fsPath) as Array<string>;
         return paths;
+    }
+
+    static clone<T>(obj: T): T {
+        let result = JSON.parse(JSON.stringify(obj));
+        return result;
     }
 }

@@ -2,7 +2,7 @@ import { autoinject, bindable, observable, BindingEngine, Disposable, ICollectio
 import { ColumnApi, GridApi, GridOptions, RowNode } from 'ag-grid-community';
 import { EventAggregator } from 'aurelia-event-aggregator';
 import { BackendService } from 'services/backend-service';
-import { Message, AppEventPublisher, AppEditMode } from 'types';
+import { Message, AppEventPublisher, AppEditMode, TypeChanged, MessageState, MessageUpdate } from 'types';
 import { AppService } from 'services/app-service';
 
 @autoinject()
@@ -17,7 +17,7 @@ export class TestList {
     entries: Array<Message> = [];
 
     @bindable()
-    currEntry: Message;
+    currEntry: Message = null;
 
     @bindable()
     searchValue: string;
@@ -33,11 +33,31 @@ export class TestList {
     }
 
     bind() {
-        this.subscriptions.push(this.eventAggregator.subscribe(AppEventPublisher.onNewScenario, response => {
-            this.entries.splice(this.entries.length, 0, response);
+        this.subscriptions.push(this.eventAggregator.subscribe(AppEventPublisher.onNewScenario, (scenario: Message) => {
+            this.entries.splice(this.entries.length, 0, scenario);
             this.listChanged();
             this.focusRow(this.entries.length - 1);
+
+            this.appService.sendChangeNotification(TypeChanged.ScenarioName, MessageState.New, scenario.Scenario, null, scenario);
         }));
+
+        this.subscriptions.push(this.eventAggregator.subscribe(AppEventPublisher.onDeleteScenario, (scenario: Message) => {
+            scenario.ArrayIndex = this.entries.indexOf(scenario);
+            this.appService.sendChangeNotification(TypeChanged.ScenarioName, MessageState.Deleted, scenario.Scenario, null, scenario);
+        }));
+
+        this.subscriptions.push(this.eventAggregator.subscribe(AppEventPublisher.saveChangesOK, async (message: MessageUpdate) => {
+            if (!message.ArrayIndex) {
+                return;
+            }
+
+            if (message.Type == TypeChanged.ScenarioName && message.State == MessageState.Deleted) {
+                this.entries.splice(message.ArrayIndex, 1);
+                this.listChanged();
+                this.focusRow(message.ArrayIndex - 1);
+            }
+        }));
+
 
         this.subscriptions.push(this.eventAggregator.subscribe(AppEventPublisher.appMainColumnsResized, response => {
             this.api.sizeColumnsToFit();
@@ -73,6 +93,7 @@ export class TestList {
             this.columnApi = this.gridOptions.columnApi;
             this.columnApi.setColumnVisible('Project', false);
             this.api.sizeColumnsToFit();
+            this.appService.gridApi = this.api;
         };
     }
 
@@ -94,11 +115,13 @@ export class TestList {
         let projects = [...new Set(this.entries.map(item => item.Project))];
         this.columnApi.setColumnVisible('Project', projects.length > 1);
         this.appService.updateSidebarLinks(this.entries);
+        this.appService.entries = this.entries;
     }
 
     selectionChanged() {
         let data = this.api.getSelectedRows();
         this.currEntry = data[0];
+        this.appService.selectedEntry = this.currEntry;
         console.log('Selection changed', this.currEntry);
     }
 
