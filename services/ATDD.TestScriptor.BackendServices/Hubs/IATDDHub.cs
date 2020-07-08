@@ -1,5 +1,6 @@
 ﻿using ATDD.TestScriptor.BackendServices.Models;
 using ATDD.TestScriptor.Library;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -9,6 +10,6 @@ namespace ATDD.TestScriptor.BackendServices.Hubs
     {
         Task GetProjects(IEnumerable<ALProject> msg);
         Task GetObjects(IEnumerable<Message> msg);
-        Task SaveChangesResponse(IEnumerable<Message> msg);
+        Task SaveChangesResponse(bool response);
     }
 }

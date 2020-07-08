@@ -43,4 +43,23 @@ namespace ATDD.TestScriptor.BackendServices.Models
         Modified,
         Deleted        
     }
+    public class MessageUpdate
+    {
+        public string Scenario { get; set; }
+        public TypeChanged Type { get; set; }
+        public MessageState State { get; set; }
+        public string OldValue { get; set; }
+        public string NewValue { get; set; }
+        public string FsPath { get; set; }
+    }
+    public enum TypeChanged
+    {
+        Feature,
+        ScenarioId,
+        ScenarioName,
+        Given,
+        When,
+        Then
+    }
 }
+
