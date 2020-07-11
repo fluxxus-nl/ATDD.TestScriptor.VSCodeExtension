@@ -37,7 +37,39 @@
                 "command": "atddTestScriptor.open",
                 "title": "ATDD.TestScriptor"
             }
-        ]
+        ],
+        "configuration": [
+			{
+				"title": "ATDD.TestScriptor",
+				"properties": {
+                    "atddTestScriptor.maxLengthOfDescription": {
+                        "type": "number",
+                        "default": 120,
+                        "description": "Sets the max. length of characters allowed in the Given, When or Then descriptions."
+                    },
+                    "atddTestScriptor.addException": {
+						"type": "boolean",
+						"default": true,
+						"description": "Adds an 'Not yet implemented'-Error to the body of the created helper functions."
+                    },
+					"atddTestScriptor.prefixGiven": {
+						"type": "string",
+						"default": "Create",
+						"description": "Adds a prefix to the created helper functions."
+                    },
+                    "atddTestScriptor.prefixWhen": {
+						"type": "string",
+						"default": "",
+						"description": "Adds a prefix to the created helper functions."
+                    },
+                    "atddTestScriptor.prefixThen": {
+						"type": "string",
+						"default": "Verify",
+						"description": "Adds a prefix to the created helper functions."
+					}
+				}
+			}
+		]
     },
     "debugMode": true,
     "extensionKind": [
