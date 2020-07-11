@@ -32,9 +32,10 @@ namespace ATDD.TestScriptor.BackendServices.Hubs
             await Clients.All.GetObjects(result);
         }
 
-        public async Task SaveChanges(IEnumerable<Message> msg)
+        public async Task SaveChanges(MessageUpdate msg)
         {
-            await Clients.All.SaveChangesResponse(msg);
+            objectService.SaveChanges(msg);
+            await Clients.All.SaveChangesResponse(true);
         }
 
     }

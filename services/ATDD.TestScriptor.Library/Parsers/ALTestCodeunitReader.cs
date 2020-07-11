@@ -52,12 +52,14 @@ namespace ATDD.TestScriptor.Library
                 return;
 
             var testMethods = TestTarget.Methods.Where(w => w.TestMethod == true).ToList();
-            var pattern = @"\[(\w+)(.*?)\]\s+(.*)";
+            var enumNames = Enum.GetNames(typeof(ScenarioElementType));
+            var enumNamesJoined = String.Join('|', enumNames);
+            var pattern = @"\[(" + enumNamesJoined + @")(.*?)\]\s+(.*)";
             var features = new List<ITestFeature>();
 
             foreach (var method in testMethods)
             {
-                var matches = Regex.Matches(method.Content, pattern);
+                var matches = Regex.Matches(method.Content, pattern, RegexOptions.IgnoreCase);
                 if (matches.Count > 0)
                 {
                     var matchList = matches.ToList();
