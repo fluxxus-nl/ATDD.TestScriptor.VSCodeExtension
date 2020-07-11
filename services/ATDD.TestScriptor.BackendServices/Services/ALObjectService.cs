@@ -1,6 +1,7 @@
 ﻿using ALObjectParser.Library;
 using ATDD.TestScriptor.BackendServices.Models;
 using ATDD.TestScriptor.Library;
+using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.Extensions.ObjectPool;
 using Microsoft.VisualBasic;
 using Newtonsoft.Json;
@@ -105,71 +106,155 @@ namespace ATDD.TestScriptor.BackendServices.Services
 
         public void SaveChanges(MessageUpdate msg)
         {
-            //IEnumerable<Message> dirtyMsgs = msg.Where(m => m.IsDirty);
-            //foreach (Message dirtyMsg in dirtyMsgs)
-            //{
-            //    List<string> fileContent = File.ReadAllLines(dirtyMsg.FsPath).ToList();
+            if (msg.State == MessageState.New)
+            {
+                AddNewElementToCode(msg);
+            }
+        }
 
-            //    int scenarioLine = 0;
-            //    for (int i = 0; i < fileContent.Count; i++)
-            //    {
-            //        if (Regex.IsMatch(fileContent[i], @"\s+//\s*\[Scenario.*\]\s*" + dirtyMsg.Scenario, RegexOptions.IgnoreCase))
-            //        {
-            //            scenarioLine = i;
-            //            break;
-            //        }
-            //    }
-            //    if (scenarioLine == 0)
-            //        return;
-            //    int whenLine = 0;
+        private void AddNewElementToCode(MessageUpdate msg)
+        {
+            string scenarioName = msg.Scenario;
+            string fsPath = msg.FsPath;
+            string newValue = msg.NewValue;
+            TypeChanged typeChanged = msg.Type;
+            ALTestCodeunitReader alTestCodeunitReader = new ALTestCodeunitReader();
+            TestALCodeunit testCodeunit = (TestALCodeunit)alTestCodeunitReader.ReadSingle(fsPath);
+            TestALMethod testALMethod = testCodeunit.Methods.First(m => m.Scenario.Name == scenarioName);
 
-            //    for (int i = scenarioLine; i < fileContent.Count; i++)
-            //    {
-            //        if (Regex.IsMatch(fileContent[i], @"\s+//\s*\[When\].*", RegexOptions.IgnoreCase))
-            //        {
-            //            whenLine = i;
-            //            break;
-            //        }
-            //    }
-            //    if (whenLine == 0)
-            //        return;
+            TextInfo info = CultureInfo.CurrentCulture.TextInfo;
+            string newValueTitleCase = info.ToTitleCase(Regex.Replace(newValue, @"[^\w]", ""));
 
+            List<string> fileContent = File.ReadAllLines(fsPath).ToList();
+            int scenarioLine = findScenario(testALMethod.Scenario.Name, fileContent);
+            if (scenarioLine == 0)
+                return;
+            ScenarioElementType scenarioElementType;
+            string prefix;
+            switch (typeChanged)
+            {
+                case TypeChanged.Given:
+                    scenarioElementType = ScenarioElementType.GIVEN;
+                    prefix = "Create";
+                    break;
+                case TypeChanged.When:
+                    scenarioElementType = ScenarioElementType.WHEN;
+                    prefix = "";
+                    break;
+                case TypeChanged.Then:
+                    scenarioElementType = ScenarioElementType.THEN;
+                    prefix = "Verify";
+                    break;
+                default:
+                    throw new Exception("Expected a new value for Given, When or Then.");
+            }
+            string procedureNameToCall = string.Format("{0}{1}", prefix, newValueTitleCase);
+            int lineToInsert = findLineToInsert(testALMethod, fileContent, scenarioLine, scenarioElementType);
+            if (lineToInsert == 0)
+                return;
 
-            //    bool madeChanges = false;
-            //    for (int a = dirtyMsg.Details.given.ToList().Count - 1; a >= 0; a--)
-            //    {
-            //        string given = dirtyMsg.Details.given.ToList()[a];
-            //        bool found = false;
-            //        for (int i = scenarioLine; i < fileContent.Count; i++)
-            //        {
-            //            if (Regex.IsMatch(fileContent[i], @"\s+//\s*\[Given\]\s*" + given, RegexOptions.IgnoreCase))
-            //            {
-            //                found = true;
-            //            }
-            //        }
-            //        if (!found)
-            //        {
-            //            var givenTitleCase = new Regex(@"[^\w]").Replace(given.ToLower(), " ");
-            //            TextInfo info = CultureInfo.CurrentCulture.TextInfo;
-            //            givenTitleCase = info.ToTitleCase(givenTitleCase).Replace(" ", string.Empty);
-            //            fileContent.Insert(whenLine, "");
-            //            fileContent.Insert(whenLine, "\t\tCreate" + givenTitleCase + "();");
-            //            fileContent.Insert(whenLine, "\t\t// [GIVEN] " + given);
-            //            madeChanges = true;
-            //        }
-            //    }
-            //    if (madeChanges)
-            //    {
-            //        File.WriteAllLines(dirtyMsg.FsPath, fileContent, System.Text.Encoding.Unicode);
-            //    }
+            fileContent.Insert(lineToInsert, "");
+            fileContent.Insert(lineToInsert + 1, string.Format("\t\t// [{0}] {1}", scenarioElementType.ToString(), newValue));
+            fileContent.Insert(lineToInsert + 2, string.Format("\t\t{0}();", procedureNameToCall));
+            File.WriteAllLines(fsPath, fileContent, System.Text.Encoding.Unicode);
 
-            //    var newMsgs = msg.Where(m => m.State == MessageState.New && m.FsPath == pathToDirtyFile);
-            //    foreach (Message newMsg in newMsgs)
-            //    {
+            if (!testCodeunit.Methods.Exists(m => m.Name.ToLower() == procedureNameToCall.ToLower()))
+            {
+                int lineToInsertProcedure = findLineToInsertProcedure(testCodeunit, fileContent);
+                if (lineToInsertProcedure != 0)
+                {
+                    fileContent.Insert(lineToInsertProcedure++, "");
+                    fileContent.Insert(lineToInsertProcedure++, string.Format("\tlocal procedure {0}()", procedureNameToCall));
+                    fileContent.Insert(lineToInsertProcedure++, "\tbegin");
+                    fileContent.Insert(lineToInsertProcedure++, string.Format("\t\tError('Procedure {0} not yet implemented.');", procedureNameToCall));
+                    fileContent.Insert(lineToInsertProcedure++, "\tend;");
+                }
+            }
+        }
 
-            //        newMsg.Details.given
-            //    }
-            //}
+        private static int findLineToInsertProcedure(TestALCodeunit testCodeunit, List<string> fileContent)
+        {
+            int lineToInsertProcedure = 0;
+            IEnumerable<TestALMethod> helperFunctions = testCodeunit.Methods.Where(m => m.Attributes.Count == 0);
+            if (helperFunctions.Count() == 0)
+                helperFunctions = testCodeunit.Methods.Where(m => m.Attributes.Where(a => a.Name == "Test").Count() > 0);
+            if (helperFunctions.Count() > 0)
+            {
+                string function = "Function";
+                string end = "End";
+                string searchFor = function;
+                for (int i = 0; i < fileContent.Count; i++)
+                {
+                    if (searchFor == function)
+                    {
+                        if (Regex.IsMatch(fileContent[i], @"\s*(local )?procedure " + helperFunctions.Last().Name, RegexOptions.IgnoreCase))
+                            searchFor = end;
+                    }
+                    else if (searchFor == end)
+                    {
+                        if (Regex.IsMatch(fileContent[i], @"\s{4}end;", RegexOptions.IgnoreCase))
+                            lineToInsertProcedure = i + 1;
+                    }
+                }
+            }
+
+            return lineToInsertProcedure;
+        }
+
+        private static int findLineToInsert(TestALMethod testALMethod, List<string> fileContent, int scenarioLine, ScenarioElementType forType)
+        {
+            int lineToInsert = 0;
+            IEnumerable<ITestScenarioElement> elementsOfType = testALMethod.Scenario.Elements.Where(e => e.Type == forType);
+            if (elementsOfType.Count() == 0)
+            {
+                if (forType == ScenarioElementType.GIVEN)
+                    return scenarioLine + 1;
+                if (forType == ScenarioElementType.WHEN)
+                    return findLineToInsert(testALMethod, fileContent, scenarioLine, ScenarioElementType.GIVEN);
+                if (forType == ScenarioElementType.THEN)
+                    return findLineToInsert(testALMethod, fileContent, scenarioLine, ScenarioElementType.WHEN);
+            }
+            else
+            {
+                int countElementsOfType = elementsOfType.Count();
+                bool searchNextCommentOrEndOfProcedure = false;
+                for (int i = scenarioLine; i < fileContent.Count; i++)
+                {
+                    if (!searchNextCommentOrEndOfProcedure)
+                    {
+                        if (Regex.IsMatch(fileContent[i], @"\s+//\s*\[\s*" + forType.ToString() + @"\s*\].*", RegexOptions.IgnoreCase))
+                        {
+                            countElementsOfType--;
+                            searchNextCommentOrEndOfProcedure = countElementsOfType == 0;
+                        }
+                    }
+                    else
+                    {
+                        if (fileContent[i].TrimStart().StartsWith("//") || Regex.IsMatch(fileContent[i], @"\s{4}end;", RegexOptions.IgnoreCase))
+                        {
+                            lineToInsert = i;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            return lineToInsert;
+        }
+
+        private static int findScenario(string scenario, List<string> fileContent)
+        {
+            int scenarioLine = 0;
+            for (int i = 0; i < fileContent.Count; i++)
+            {
+                if (Regex.IsMatch(fileContent[i], @"\s+//\s*\[Scenario.*\]\s*" + scenario, RegexOptions.IgnoreCase))
+                {
+                    scenarioLine = i;
+                    break;
+                }
+            }
+
+            return scenarioLine;
         }
     }
 }
