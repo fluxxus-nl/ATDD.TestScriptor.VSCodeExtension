@@ -49,6 +49,11 @@ export class Application {
         return Application._instance._extensionName;
     }
 
+    public static get config() {
+        let config = workspace.getConfiguration('atddTestScriptor');
+        return config;
+    }
+
     public static get instance() {
         if (!Application._instance) {
             Application._instance = new Application();
