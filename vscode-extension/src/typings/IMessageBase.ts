@@ -38,3 +38,23 @@ export enum MessageState {
     Modified,
     Deleted
 }
+
+export interface MessageUpdate
+{
+    Scenario: string;
+    Type: TypeChanged;
+    State: MessageState;
+    OldValue: string;
+    NewValue: string;
+    FsPath: string;
+}
+
+export enum TypeChanged
+{
+    Feature,
+    ScenarioId,
+    ScenarioName,
+    Given,
+    When,
+    Then
+}

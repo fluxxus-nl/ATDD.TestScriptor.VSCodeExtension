@@ -1,7 +1,7 @@
 import { Application } from './../Application';
 import { singleton } from 'aurelia-dependency-injection';
 import { WebPanel } from '../WebPanel';
-import { Message } from '../typings/IMessageBase';
+import { Message, MessageUpdate } from '../typings/IMessageBase';
 import { HubConnectionState, HubConnectionBuilder, LogLevel, HubConnection } from "@microsoft/signalr";
 
 @singleton(true)
@@ -24,8 +24,12 @@ export class MiddlewareService {
         return this.send(MiddlewareRequestMethod.QueryObjects, MiddlewareResponseMethod.GetObjects, false, paths) as Promise<Array<Message>>;
     }
 
-    async saveChanges(items: Array<Message>): Promise<Array<Message>> {
-        return this.send(MiddlewareRequestMethod.SaveChanges, MiddlewareResponseMethod.SaveChangesResponse, false, items) as Promise<Array<Message>>;
+    async checkSaveChanges(item: MessageUpdate, config: any): Promise<boolean> {
+        return this.send(MiddlewareRequestMethod.CheckSaveChanges, MiddlewareResponseMethod.CheckSaveChangesResponse, false, item, config) as Promise<boolean>;
+    }
+
+    async saveChanges(item: MessageUpdate, config: any): Promise<boolean> {
+        return this.send(MiddlewareRequestMethod.SaveChanges, MiddlewareResponseMethod.SaveChangesResponse, false, item, config) as Promise<boolean>;
     }
     
     async check() {
@@ -105,12 +109,14 @@ export class MiddlewareService {
 export enum MiddlewareRequestMethod {
     QueryProjects = 'QueryProjects',
     QueryObjects = 'QueryObjects',
-    SaveChanges = 'SaveChanges'
+    SaveChanges = 'SaveChanges',
+    CheckSaveChanges = 'CheckSaveChanges'
 }
 
 export enum MiddlewareResponseMethod {
     GetProjects = 'GetProjects',
     GetObjects = 'GetObjects',
     SaveChangesResponse = 'SaveChangesResponse',
-    UpdateObjects = 'UpdateObjects'
+    UpdateObjects = 'UpdateObjects',
+    CheckSaveChangesResponse = 'CheckSaveChangesResponse'
 }

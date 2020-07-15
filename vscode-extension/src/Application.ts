@@ -144,4 +144,9 @@ export class Application {
         let paths = workspace.workspaceFolders?.map((m: WorkspaceFolder) => m.uri.fsPath) as Array<string>;
         return paths;
     }
+
+    static clone<T>(obj: T): T {
+        let result = JSON.parse(JSON.stringify(obj));
+        return result;
+    }
 }

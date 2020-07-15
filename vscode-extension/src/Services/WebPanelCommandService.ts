@@ -4,7 +4,7 @@ import { ExcelService } from './ExcelService';
 import { MiddlewareService } from './MiddlewareService';
 import { VSCommandService, VSCommandType, VSDependency } from './VSCommandService';
 import { WebPanel } from '../WebPanel';
-import { IMessageBase, Message } from '../typings/IMessageBase';
+import { IMessageBase, Message, MessageUpdate } from '../typings/IMessageBase';
 import { workspace, window, TextDocument, ViewColumn, TextEditorRevealType, Selection, Range } from 'vscode';
 
 @singleton(true)
@@ -57,10 +57,20 @@ export class WebPanelCommandService {
     }
 
     async SaveChangesCommand(message: IMessageBase) {
-        let entries = message.Data as Array<Message>;
-        let result = await this.middlewareService.saveChanges(entries);
-        WebPanel.testList = result;
-        WebPanel.postMessage({ Command: 'LoadTests', Data: WebPanel.testList });
+        let config = Application.clone(Application.config) as any;
+        let entry = message.Data as MessageUpdate;
+
+        let check = await this.middlewareService.checkSaveChanges(entry, config);
+        if (check === true) {
+            //TODO confirmations
+            // or else 
+            //--------
+            // WebPanel.postMessage(null);
+            // return
+        }
+
+        await this.middlewareService.saveChanges(entry, config);
+        WebPanel.postMessage(null);
     }
 
     async ViewSourceCommand(message: IMessageBase) {
