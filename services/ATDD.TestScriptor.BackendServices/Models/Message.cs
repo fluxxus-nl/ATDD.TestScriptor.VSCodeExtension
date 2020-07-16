@@ -60,6 +60,7 @@ namespace ATDD.TestScriptor.BackendServices.Models
         public string prefixGiven { get; set; }
         public string prefixWhen { get; set; }
         public string prefixThen{ get; set; }
+        public string testDirectory { get; set; }
     }
     public enum TypeChanged
     {

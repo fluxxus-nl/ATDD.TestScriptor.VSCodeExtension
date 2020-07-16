@@ -66,7 +66,12 @@
 						"type": "string",
 						"default": "Verify",
 						"description": "Adds a prefix to the created helper functions."
-					}
+                    },
+                    "atddTestScriptor.testDirectory":{
+                        "type": "string",
+                        "default": "src",
+                        "description": "Defines the relative path to the directory in which new test files are saved."
+                    }
 				}
 			}
 		]

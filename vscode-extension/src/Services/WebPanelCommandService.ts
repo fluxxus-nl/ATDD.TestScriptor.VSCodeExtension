@@ -60,26 +60,19 @@ export class WebPanelCommandService {
         let config = Application.clone(Application.config) as any;
         let entry = message.Data as MessageUpdate;
 
-        //TODO: Do you want to remove the given
-        //if remove given then
-        let couldProcedureBeDeleted = await this.middlewareService.checkSaveChanges(entry, config);
-        if (couldProcedureBeDeleted === true) {
-            let deleteProcedure: string | undefined = await window.showInformationMessage('Do you want to delete the helper function', 'Yes', 'No');
-            if (!deleteProcedure || deleteProcedure === 'No') {
-                // WebPanel.postMessage(null);
-                // return;
-                entry.DeleteProcedure = false;
+        if (entry.State === MessageState.Deleted && [TypeChanged.Given, TypeChanged.When, TypeChanged.Then].includes(entry.Type)) {
+            let confirmedDeletionOfElement: string | undefined = await window.showInformationMessage('Do you want to delete this element?', 'Yes', 'No');
+            if (confirmedDeletionOfElement === 'Yes') {
+                let couldHelperFunctionBeDeleted: boolean = await this.middlewareService.checkSaveChanges(entry, config);
+                if (couldHelperFunctionBeDeleted) {
+                    let confirmedDeletionOfProcedure: string | undefined = await window.showInformationMessage('Do you want to delete the helper function?', 'Yes', 'No');
+                    entry.DeleteProcedure = confirmedDeletionOfProcedure === 'Yes';
+                }
             } else {
-                entry.DeleteProcedure = true;
+                WebPanel.postMessage(null);
+                return;
             }
-
-            //TODO confirmations
-            // or else 
-            //--------
-            // WebPanel.postMessage(null);
-            // return
         }
-
         await this.middlewareService.saveChanges(entry, config);
         WebPanel.postMessage(null);
     }
