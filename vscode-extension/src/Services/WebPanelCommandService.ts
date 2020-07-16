@@ -4,7 +4,7 @@ import { ExcelService } from './ExcelService';
 import { MiddlewareService } from './MiddlewareService';
 import { VSCommandService, VSCommandType, VSDependency } from './VSCommandService';
 import { WebPanel } from '../WebPanel';
-import { IMessageBase, Message, MessageUpdate } from '../typings/IMessageBase';
+import { IMessageBase, Message, MessageUpdate, TypeChanged, MessageState } from '../typings/IMessageBase';
 import { workspace, window, TextDocument, ViewColumn, TextEditorRevealType, Selection, Range } from 'vscode';
 
 @singleton(true)
@@ -27,7 +27,7 @@ export class WebPanelCommandService {
     async LoadProjectsCommand(message: IMessageBase) {
         let paths = Application.getWorkspacePaths();
         let projects = await this.middlewareService.getProjects(paths);
-        WebPanel.postMessage({Command: 'LoadProjects', Data: projects});
+        WebPanel.postMessage({ Command: 'LoadProjects', Data: projects });
     }
 
     async LoadTestsCommand(message?: IMessageBase) {
@@ -39,7 +39,7 @@ export class WebPanelCommandService {
         if (!Application.checkExtension(VSDependency.ALTestRunner)) {
             await Application.ui.error(`"${VSDependency.ALTestRunner}" extension is not installed or disabled.`);
             return;
-        }        
+        }
 
         // TODO:        
         let allTests = message?.Params.AllTests === true;
@@ -52,7 +52,7 @@ export class WebPanelCommandService {
         } else {
             await this.vsCommandService.executeCommand(VSCommandType.RunTest, fileName, functionName);
         }
-        
+
         WebPanel.postMessage({ Command: 'LoadTests', Data: WebPanel.testList });
     }
 
@@ -60,8 +60,19 @@ export class WebPanelCommandService {
         let config = Application.clone(Application.config) as any;
         let entry = message.Data as MessageUpdate;
 
-        let check = await this.middlewareService.checkSaveChanges(entry, config);
-        if (check === true) {
+        //TODO: Do you want to remove the given
+        //if remove given then
+        let couldProcedureBeDeleted = await this.middlewareService.checkSaveChanges(entry, config);
+        if (couldProcedureBeDeleted === true) {
+            let deleteProcedure: string | undefined = await window.showInformationMessage('Do you want to delete the helper function', 'Yes', 'No');
+            if (!deleteProcedure || deleteProcedure === 'No') {
+                // WebPanel.postMessage(null);
+                // return;
+                entry.DeleteProcedure = false;
+            } else {
+                entry.DeleteProcedure = true;
+            }
+
             //TODO confirmations
             // or else 
             //--------

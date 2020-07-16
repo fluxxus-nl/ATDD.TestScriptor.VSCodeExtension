@@ -7,6 +7,7 @@ using Microsoft.VisualBasic;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -21,7 +22,7 @@ namespace ATDD.TestScriptor.BackendServices.Services
     public interface IALObjectService
     {
         Task<List<Message>> GetTests(IEnumerable<string> paths);
-        void SaveChanges(MessageUpdate msg);
+        void SaveChanges(MessageUpdate msg, Configurations config);
     }
 
     public class ALObjectService : IALObjectService
@@ -104,63 +105,172 @@ namespace ATDD.TestScriptor.BackendServices.Services
             return result;
         }
 
-        public void SaveChanges(MessageUpdate msg)
+        public void SaveChanges(MessageUpdate msg, Configurations config)
         {
             if (msg.State == MessageState.New)
             {
                 AddNewElementToCode(msg);
+            }
+            else if (msg.State == MessageState.Deleted)
+            {
+                DeleteElementFromCode(msg);
+            }
+            else if (msg.State == MessageState.Modified)
+            {
+                ModifyElementFromCode(msg);
             }
         }
 
         private void AddNewElementToCode(MessageUpdate msg)
         {
             string scenarioName = msg.Scenario;
+            TypeChanged typeChanged = msg.Type;
             string fsPath = msg.FsPath;
-            string newValue = msg.NewValue;
+            string elementValue = msg.NewValue;
+            if (typeChanged == TypeChanged.Feature)
+            {
+                List<string> fileContent = new List<string>();
+                fileContent.AddRange(GetDefaultTestCodeunitText(elementValue));
+                WriteFile(fsPath, fileContent);
+            }
+            else
+            {
+                ALTestCodeunitReader alTestCodeunitReader = new ALTestCodeunitReader();
+                TestALCodeunit testCodeunit = (TestALCodeunit)alTestCodeunitReader.ReadSingle(fsPath);
+                TestALMethod testALMethod = testCodeunit.Methods.First(m => m.Scenario.Name == scenarioName);
+
+                List<string> fileContent = File.ReadAllLines(fsPath).ToList();
+                int scenarioLine = FindScenarioLine(testALMethod.Scenario.Name, fileContent);
+                if (scenarioLine == 0)
+                    return;
+
+                ScenarioElementType scenarioElementType = Library.ALMethodHelper.ToEnum<ScenarioElementType>(typeChanged.ToString().ToUpper());
+                string procedureNameToCall = GetProcedurename(typeChanged, elementValue);
+                int lineToInsert = FindLineToInsertElement(testALMethod, fileContent, scenarioLine, scenarioElementType);
+                if (lineToInsert == 0)
+                    return;
+
+                fileContent.Insert(lineToInsert++, "");
+                AddElement(ref fileContent, elementValue, typeChanged, ref lineToInsert);
+                AddProcedureCall(ref fileContent, procedureNameToCall, ref lineToInsert);
+                AddProcedure(ref fileContent, testCodeunit, procedureNameToCall);
+                WriteFile(fsPath, fileContent);
+            }
+
+            static string[] GetDefaultTestCodeunitText(string elementValue)
+            {
+                string codeunitName = elementValue.Contains(' ') ? '"' + elementValue + '"' : elementValue;
+                return new string[]{
+                "codeunit Id " + codeunitName,
+                "{",
+                "\tSubtype = Test;",
+                "",
+                "\ttrigger OnRun()",
+                "\tbegin",
+                "\t\t// [Feature] " + elementValue,
+                "\tend;",
+                "",
+                "\t[Test]",
+                "\tprocedure NewTestProcedure()",
+                "\tbegin",
+                "\t\t// [Scenario #0001] New Test Procedure",
+                "\tend;"
+                };
+            }
+        }
+
+        private void DeleteElementFromCode(MessageUpdate msg)
+        {
+            string scenarioName = msg.Scenario;
+            string fsPath = msg.FsPath;
+            string elementValue = msg.OldValue;
             TypeChanged typeChanged = msg.Type;
             ALTestCodeunitReader alTestCodeunitReader = new ALTestCodeunitReader();
             TestALCodeunit testCodeunit = (TestALCodeunit)alTestCodeunitReader.ReadSingle(fsPath);
             TestALMethod testALMethod = testCodeunit.Methods.First(m => m.Scenario.Name == scenarioName);
 
-            TextInfo info = CultureInfo.CurrentCulture.TextInfo;
-            string newValueTitleCase = info.ToTitleCase(Regex.Replace(newValue, @"[^\w]", ""));
+            string procedureNameOfElement = GetProcedurename(typeChanged, elementValue);
 
             List<string> fileContent = File.ReadAllLines(fsPath).ToList();
-            int scenarioLine = findScenario(testALMethod.Scenario.Name, fileContent);
+            int scenarioLine = FindScenarioLine(testALMethod.Scenario.Name, fileContent);
             if (scenarioLine == 0)
                 return;
-            ScenarioElementType scenarioElementType;
+
+            ScenarioElementType scenarioElementType = Library.ALMethodHelper.ToEnum<ScenarioElementType>(typeChanged.ToString().ToUpper());
+            int elementLine = FindElementLine(fileContent, scenarioElementType, elementValue, scenarioLine);
+            if (elementLine == 0)
+                return;
+
+            DeleteElementWithProcedureCall(ref fileContent, procedureNameOfElement, elementLine);
+            DeleteProcedure(ref fileContent, procedureNameOfElement);
+            WriteFile(fsPath, fileContent);
+        }
+
+        private void ModifyElementFromCode(MessageUpdate msg)
+        {
+            string scenarioName = msg.Scenario;
+            string fsPath = msg.FsPath;
+            string elementOldValue = msg.OldValue;
+            string elementNewValue = msg.NewValue;
+            TypeChanged typeChanged = msg.Type;
+            ALTestCodeunitReader alTestCodeunitReader = new ALTestCodeunitReader();
+            TestALCodeunit testCodeunit = (TestALCodeunit)alTestCodeunitReader.ReadSingle(fsPath);
+            TestALMethod testALMethod = testCodeunit.Methods.First(m => m.Scenario.Name == scenarioName);
+
+            string oldProcedureNameOfElement = GetProcedurename(typeChanged, elementOldValue);
+            string newProcedureNameOfElement = GetProcedurename(typeChanged, elementNewValue);
+
+            List<string> fileContent = File.ReadAllLines(fsPath).ToList();
+            int scenarioLine = FindScenarioLine(testALMethod.Scenario.Name, fileContent);
+            if (scenarioLine == 0)
+                return;
+
+            ScenarioElementType scenarioElementType = Library.ALMethodHelper.ToEnum<ScenarioElementType>(typeChanged.ToString().ToUpper());
+            int elementLine = FindElementLine(fileContent, scenarioElementType, elementOldValue, scenarioLine);
+            if (elementLine == 0)
+                return;
+
+            fileContent.RemoveAt(elementLine--);
+            AddElement(ref fileContent, elementNewValue, typeChanged, ref elementLine);
+            RenameOrOnlyAddNewProcedure(testCodeunit, oldProcedureNameOfElement, newProcedureNameOfElement, ref fileContent, ref elementLine);
+            WriteFile(fsPath, fileContent);
+        }
+
+        private static string GetProcedurename(TypeChanged typeChanged, string elementValue)
+        {
+            TextInfo info = CultureInfo.CurrentCulture.TextInfo;
+            string elementValueTitleCase = info.ToTitleCase(Regex.Replace(elementValue, @"[^\w]", ""));
             string prefix;
             switch (typeChanged)
             {
                 case TypeChanged.Given:
-                    scenarioElementType = ScenarioElementType.GIVEN;
                     prefix = "Create";
                     break;
                 case TypeChanged.When:
-                    scenarioElementType = ScenarioElementType.WHEN;
                     prefix = "";
                     break;
                 case TypeChanged.Then:
-                    scenarioElementType = ScenarioElementType.THEN;
                     prefix = "Verify";
                     break;
                 default:
                     throw new Exception("Expected a new value for Given, When or Then.");
             }
-            string procedureNameToCall = string.Format("{0}{1}", prefix, newValueTitleCase);
-            int lineToInsert = findLineToInsert(testALMethod, fileContent, scenarioLine, scenarioElementType);
-            if (lineToInsert == 0)
-                return;
+            return string.Format("{0}{1}", prefix, elementValueTitleCase);
+        }
 
-            fileContent.Insert(lineToInsert, "");
-            fileContent.Insert(lineToInsert + 1, string.Format("\t\t// [{0}] {1}", scenarioElementType.ToString(), newValue));
-            fileContent.Insert(lineToInsert + 2, string.Format("\t\t{0}();", procedureNameToCall));
-            File.WriteAllLines(fsPath, fileContent, System.Text.Encoding.Unicode);
-
+        private static void AddElement(ref List<string> fileContent, string elementValue, TypeChanged typeChanged, ref int lineToInsert)
+        {
+            fileContent.Insert(lineToInsert++, string.Format("\t\t// [{0}] {1}", typeChanged.ToString().ToUpper(), elementValue));
+        }
+        private static void AddProcedureCall(ref List<string> fileContent, string procedureNameToCall, ref int lineToInsert)
+        {
+            fileContent.Insert(lineToInsert++, string.Format("\t\t{0}();", procedureNameToCall));
+        }
+        private static void AddProcedure(ref List<string> fileContent, TestALCodeunit testCodeunit, string procedureNameToCall)
+        {
             if (!testCodeunit.Methods.Exists(m => m.Name.ToLower() == procedureNameToCall.ToLower()))
             {
-                int lineToInsertProcedure = findLineToInsertProcedure(testCodeunit, fileContent);
+                int lineToInsertProcedure = FindLineToInsertProcedure(testCodeunit, fileContent);
                 if (lineToInsertProcedure != 0)
                 {
                     fileContent.Insert(lineToInsertProcedure++, "");
@@ -172,7 +282,51 @@ namespace ATDD.TestScriptor.BackendServices.Services
             }
         }
 
-        private static int findLineToInsertProcedure(TestALCodeunit testCodeunit, List<string> fileContent)
+        private static void DeleteElementWithProcedureCall(ref List<string> fileContent, string procedureNameOfElement, int elementLine)
+        {
+            if (Regex.IsMatch(fileContent[elementLine + 1], string.Format(@"\s+{0}(", procedureNameOfElement), RegexOptions.IgnoreCase))
+                fileContent.RemoveRange(elementLine, 2);
+            else
+                fileContent.RemoveAt(elementLine);
+        }
+
+        private void DeleteProcedure(ref List<string> fileContent, string procedureNameOfElement)
+        {
+            Range? range = FindProcedureDeclarationRange(fileContent, procedureNameOfElement);
+            if (range.HasValue)
+            {
+                int[] usagesOfProcedure = FindLinesWhereProcedureIsCalled(fileContent, procedureNameOfElement);
+                if (usagesOfProcedure.Length == 0)
+                    //if user confirms procedure removal
+                    fileContent.RemoveRange(range.Value.Start.Value, range.Value.End.Value - range.Value.Start.Value);
+            }
+        }
+
+        private void RenameOrOnlyAddNewProcedure(TestALCodeunit testCodeunit, string oldProcedureNameOfElement, string newProcedureNameOfElement, ref List<string> fileContent, ref int elementLine)
+        {
+            Range? range = FindProcedureDeclarationRange(fileContent, oldProcedureNameOfElement);
+            if (range.HasValue)
+            {
+                int[] usageOfProcedure = FindLinesWhereProcedureIsCalled(fileContent, oldProcedureNameOfElement);
+                if (usageOfProcedure.Length == 1)
+                    RenameProcedure(ref fileContent, oldProcedureNameOfElement, newProcedureNameOfElement, usageOfProcedure, range.Value.Start.Value);
+                else
+                {
+                    AddProcedureCall(ref fileContent, newProcedureNameOfElement, ref elementLine);
+                    AddProcedure(ref fileContent, testCodeunit, newProcedureNameOfElement);
+                }
+            }
+        }
+
+        private void RenameProcedure(ref List<string> fileContent, string oldProcedureNameOfElement, string newProcedureNameOfElement, int[] procedureCallLines, int procedureDeclarationLine)
+        {
+            foreach (int procedureCallLine in procedureCallLines)
+                fileContent[procedureCallLine] = fileContent[procedureCallLine].Replace(oldProcedureNameOfElement, newProcedureNameOfElement);
+            fileContent[procedureDeclarationLine] = fileContent[procedureDeclarationLine].Replace(oldProcedureNameOfElement, newProcedureNameOfElement);
+        }
+
+
+        private static int FindLineToInsertProcedure(TestALCodeunit testCodeunit, List<string> fileContent)
         {
             int lineToInsertProcedure = 0;
             IEnumerable<TestALMethod> helperFunctions = testCodeunit.Methods.Where(m => m.Attributes.Count == 0);
@@ -201,18 +355,18 @@ namespace ATDD.TestScriptor.BackendServices.Services
             return lineToInsertProcedure;
         }
 
-        private static int findLineToInsert(TestALMethod testALMethod, List<string> fileContent, int scenarioLine, ScenarioElementType forType)
+        private static int FindLineToInsertElement(TestALMethod testALMethod, List<string> fileContent, int scenarioLine, ScenarioElementType elementToAdd)
         {
             int lineToInsert = 0;
-            IEnumerable<ITestScenarioElement> elementsOfType = testALMethod.Scenario.Elements.Where(e => e.Type == forType);
+            IEnumerable<ITestScenarioElement> elementsOfType = testALMethod.Scenario.Elements.Where(e => e.Type == elementToAdd);
             if (elementsOfType.Count() == 0)
             {
-                if (forType == ScenarioElementType.GIVEN)
+                if (elementToAdd == ScenarioElementType.GIVEN)
                     return scenarioLine + 1;
-                if (forType == ScenarioElementType.WHEN)
-                    return findLineToInsert(testALMethod, fileContent, scenarioLine, ScenarioElementType.GIVEN);
-                if (forType == ScenarioElementType.THEN)
-                    return findLineToInsert(testALMethod, fileContent, scenarioLine, ScenarioElementType.WHEN);
+                if (elementToAdd == ScenarioElementType.WHEN)
+                    return FindLineToInsertElement(testALMethod, fileContent, scenarioLine, ScenarioElementType.GIVEN);
+                if (elementToAdd == ScenarioElementType.THEN)
+                    return FindLineToInsertElement(testALMethod, fileContent, scenarioLine, ScenarioElementType.WHEN);
             }
             else
             {
@@ -222,7 +376,7 @@ namespace ATDD.TestScriptor.BackendServices.Services
                 {
                     if (!searchNextCommentOrEndOfProcedure)
                     {
-                        if (Regex.IsMatch(fileContent[i], @"\s+//\s*\[\s*" + forType.ToString() + @"\s*\].*", RegexOptions.IgnoreCase))
+                        if (Regex.IsMatch(fileContent[i], @"\s+//\s*\[\s*" + elementToAdd.ToString() + @"\s*\].*", RegexOptions.IgnoreCase))
                         {
                             countElementsOfType--;
                             searchNextCommentOrEndOfProcedure = countElementsOfType == 0;
@@ -242,19 +396,64 @@ namespace ATDD.TestScriptor.BackendServices.Services
             return lineToInsert;
         }
 
-        private static int findScenario(string scenario, List<string> fileContent)
+        private int FindElementLine(List<string> fileContent, ScenarioElementType scenarioElementType, string elementValue, int startingAtLine = 0)
         {
-            int scenarioLine = 0;
-            for (int i = 0; i < fileContent.Count; i++)
+            return FindLineUsingRegexPattern(fileContent, string.Format(@"\s*\[\s*{0}\s*\]\s*{1}", scenarioElementType.ToString(), elementValue), true, startingAtLine);
+        }
+
+        private int FindNextElementLineOrEndOfProcedure(List<string> fileContent, int startingAtLine)
+        {
+            return FindLineUsingRegexPattern(fileContent, @"\s*\[\s*\w+\s*\]", true, startingAtLine);
+        }
+
+        private Range? FindProcedureDeclarationRange(List<string> fileContent, string procedureNameOfElement)
+        {
+            int start = FindLineUsingRegexPattern(fileContent, string.Format(@"^\s*(local)?\sprocedure\s{0}\(.*\).*$", procedureNameOfElement), false);
+            if (start > 0)
             {
-                if (Regex.IsMatch(fileContent[i], @"\s+//\s*\[Scenario.*\]\s*" + scenario, RegexOptions.IgnoreCase))
+                int end = FindLineUsingRegexPattern(fileContent, @"\s{4}end;", true, start);
+                return new Range(start, end);
+            }
+            return null;
+        }
+
+        private int[] FindLinesWhereProcedureIsCalled(List<string> fileContent, string procedureNameOfElement)
+        {
+            List<int> lines = new List<int>();
+            int line = 0;
+            do
+            {
+                line = FindLineUsingRegexPattern(fileContent, string.Format(@"{0}(?<!procedure {0})\(.*)", procedureNameOfElement), false, line);
+                if (line > 0)
+                    lines.Add(line);
+            } while (line > 0);
+            return lines.ToArray();
+        }
+
+        private static int FindScenarioLine(string scenario, List<string> fileContent)
+        {
+            return FindLineUsingRegexPattern(fileContent, @"\s+//\s*\[Scenario.*\]\s*" + scenario, false);
+        }
+
+        private static int FindLineUsingRegexPattern(List<string> fileContent, string pattern, bool stopAtEndOfProcedure, int startingAtLine = 0)
+        {
+            string endOfProcedurePattern = @"^\s{4}end;";
+            for (int i = startingAtLine; i < fileContent.Count; i++)
+            {
+                if (Regex.IsMatch(fileContent[i], pattern, RegexOptions.IgnoreCase))
                 {
-                    scenarioLine = i;
-                    break;
+                    return i;
+                }
+                else if (stopAtEndOfProcedure && Regex.IsMatch(fileContent[i], endOfProcedurePattern, RegexOptions.IgnoreCase))
+                {
+                    return i;
                 }
             }
-
-            return scenarioLine;
+            return 0;
+        }
+        private static void WriteFile(string fsPath, List<string> fileContent)
+        {
+            File.WriteAllLines(fsPath, fileContent, System.Text.Encoding.Unicode);
         }
     }
 }
