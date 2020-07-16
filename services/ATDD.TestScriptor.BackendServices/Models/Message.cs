@@ -51,6 +51,15 @@ namespace ATDD.TestScriptor.BackendServices.Models
         public string OldValue { get; set; }
         public string NewValue { get; set; }
         public string FsPath { get; set; }
+        public bool DeleteProcedure { get; set; }
+    }
+    public class Configurations
+    {
+        public int maxLengthOfDescription { get; set; }
+        public bool addException { get; set; }
+        public string prefixGiven { get; set; }
+        public string prefixWhen { get; set; }
+        public string prefixThen{ get; set; }
     }
     public enum TypeChanged
     {

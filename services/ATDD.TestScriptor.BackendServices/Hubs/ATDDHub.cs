@@ -32,10 +32,16 @@ namespace ATDD.TestScriptor.BackendServices.Hubs
             await Clients.All.GetObjects(result);
         }
 
-        public async Task SaveChanges(MessageUpdate msg)
+        public async Task SaveChanges(MessageUpdate msg, Configurations config)
         {
-            objectService.SaveChanges(msg);
+            objectService.SaveChanges(msg, config);
             await Clients.All.SaveChangesResponse(true);
+        }
+        public async Task CheckSaveChanges(MessageUpdate msg, Configurations config)
+        {
+            //check changes
+            bool removeProcedure = false;
+            await Clients.All.CheckSaveChangesResponse(removeProcedure);
         }
 
     }

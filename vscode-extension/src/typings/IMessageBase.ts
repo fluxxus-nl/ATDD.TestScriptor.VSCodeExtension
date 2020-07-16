@@ -47,6 +47,7 @@ export interface MessageUpdate
     OldValue: string;
     NewValue: string;
     FsPath: string;
+    DeleteProcedure: boolean;
 }
 
 export enum TypeChanged

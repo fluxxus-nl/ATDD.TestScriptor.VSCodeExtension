@@ -11,5 +11,6 @@ namespace ATDD.TestScriptor.BackendServices.Hubs
         Task GetProjects(IEnumerable<ALProject> msg);
         Task GetObjects(IEnumerable<Message> msg);
         Task SaveChangesResponse(bool response);
+        Task CheckSaveChangesResponse(bool response);
     }
 }
