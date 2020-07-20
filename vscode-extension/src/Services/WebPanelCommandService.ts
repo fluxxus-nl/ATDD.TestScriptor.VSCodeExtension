@@ -4,7 +4,7 @@ import { ExcelService } from './ExcelService';
 import { MiddlewareService } from './MiddlewareService';
 import { VSCommandService, VSCommandType, VSDependency } from './VSCommandService';
 import { WebPanel } from '../WebPanel';
-import { IMessageBase, Message, MessageUpdate, TypeChanged, MessageState } from '../typings/IMessageBase';
+import { IMessageBase, Message, MessageUpdate, TypeChanged, MessageState } from '../typings/types';
 import { workspace, window, TextDocument, ViewColumn, TextEditorRevealType, Selection, Range } from 'vscode';
 
 @singleton(true)

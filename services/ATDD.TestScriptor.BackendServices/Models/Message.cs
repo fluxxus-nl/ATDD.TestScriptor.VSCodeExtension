@@ -7,6 +7,12 @@ namespace ATDD.TestScriptor.BackendServices.Models
 {
     public class Message
     {
+        public Message()
+        {
+            Uid = Guid.NewGuid();
+        }
+
+        public Guid Uid { get; set; }
         public string Project { get; set; }
         public string Feature { get; set; }
         public int? Id { get; set; }
@@ -65,6 +71,7 @@ namespace ATDD.TestScriptor.BackendServices.Models
     public enum TypeChanged
     {
         Feature,
+        ScenarioFeature,
         ScenarioId,
         ScenarioName,
         Given,

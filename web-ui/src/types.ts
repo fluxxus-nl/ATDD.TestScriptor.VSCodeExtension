@@ -14,6 +14,7 @@ export enum AppEventPublisher {
 }
 
 export class Message {
+    Uid: string;
     Project: string;
     Feature: string;
     Id?: number;
@@ -35,6 +36,26 @@ export class MessageDetails {
     then: Array<string>;
 }
 
+export class MessageUpdate {
+    Scenario: string;
+    Type: TypeChanged;
+    State: MessageState;
+    OldValue: string;
+    NewValue: string;
+    FsPath: string;
+    DeleteProcedure: boolean;
+}
+
+export enum TypeChanged {
+    Feature,
+    ScenarioFeature,
+    ScenarioId,
+    ScenarioName,
+    Given,
+    When,
+    Then
+}
+
 export enum ALTestRunnerResult {
     NoInfo,
     Success,
@@ -46,4 +67,10 @@ export enum MessageState {
     New,
     Modified,
     Deleted
+}
+
+export enum MessageDetailType {
+    Given = 'Given',
+    When = 'When',
+    Then = 'Then'
 }

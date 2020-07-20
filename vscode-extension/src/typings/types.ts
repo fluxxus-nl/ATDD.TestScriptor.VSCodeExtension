@@ -5,6 +5,7 @@ export interface IMessageBase {
 }
 
 export interface Message {
+    Uid: string;
     Project: string;
     Feature: string;
     Id?: number;
@@ -40,7 +41,7 @@ export enum MessageState {
 }
 
 export interface MessageUpdate
-{
+{    
     Scenario: string;
     Type: TypeChanged;
     State: MessageState;
@@ -53,6 +54,7 @@ export interface MessageUpdate
 export enum TypeChanged
 {
     Feature,
+    ScenarioFeature,
     ScenarioId,
     ScenarioName,
     Given,
