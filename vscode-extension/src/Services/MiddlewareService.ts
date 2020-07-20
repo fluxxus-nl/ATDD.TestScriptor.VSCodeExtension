@@ -1,7 +1,7 @@
 import { Application } from './../Application';
 import { singleton } from 'aurelia-dependency-injection';
 import { WebPanel } from '../WebPanel';
-import { Message, MessageUpdate } from '../typings/IMessageBase';
+import { Message, MessageUpdate } from '../typings/types';
 import { HubConnectionState, HubConnectionBuilder, LogLevel, HubConnection } from "@microsoft/signalr";
 
 @singleton(true)

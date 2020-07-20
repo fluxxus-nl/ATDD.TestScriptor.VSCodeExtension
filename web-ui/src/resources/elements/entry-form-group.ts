@@ -1,6 +1,7 @@
+import { AppService } from 'services/app-service';
 import { EventAggregator } from 'aurelia-event-aggregator';
-import { autoinject, bindable, PassThroughSlot } from 'aurelia-framework';
-import { AppEventPublisher } from 'types';
+import { autoinject, bindable } from 'aurelia-framework';
+import { AppEventPublisher, Message, MessageDetailType, TypeChanged, MessageState } from 'types';
 
 @autoinject()
 export class EntryFormGroup {
@@ -9,12 +10,18 @@ export class EntryFormGroup {
     title: any;
 
     @bindable()
+    scenario: Message;
+
+    @bindable()
     entries: Array<string>;
 
     @bindable()
     singleEntry: boolean;
 
-    constructor(private eventAggregator: EventAggregator) {
+    @bindable()
+    type: MessageDetailType;
+
+    constructor(private eventAggregator: EventAggregator, private appService: AppService) {
 
     }
 
@@ -32,24 +39,44 @@ export class EntryFormGroup {
         } else {
             this.entries = [''];
         }
-
-        this.eventAggregator.publish(AppEventPublisher.entryFormEdited);
     }
 
     update(index: number, newValue: any) {
-        if (index !== -1)
+        let oldValue: string = '';
+        if (index !== -1) {
+            oldValue = this.entries[index];
             this.entries.splice(index, 1, newValue);
+        }
 
-        console.log('entry-form-group changed', index, newValue, this.entries);
-
-        this.eventAggregator.publish(AppEventPublisher.entryFormEdited);
+        let newState = !oldValue || oldValue.length == 0 ? MessageState.New : MessageState.Modified;
+        this.appService.sendChangeNotification(this.getTypeChanged(), newState, newValue, oldValue, this.scenario);
     }
 
     remove(index: number, e: MouseEvent) {
-        if (index !== -1)
+        let currValue: string = '';
+        if (index !== -1) {
+            currValue = this.entries[index];
             this.entries.splice(index, 1);
+        }
 
-        this.eventAggregator.publish(AppEventPublisher.entryFormEdited);
+        this.appService.sendChangeNotification(this.getTypeChanged(), MessageState.Deleted, currValue, null, this.scenario);
+    }
+
+    getTypeChanged() {
+        let changedType: TypeChanged;
+        switch (this.type) {
+            case MessageDetailType.Given:
+                changedType = TypeChanged.Given;
+                break;
+            case MessageDetailType.When:
+                changedType = TypeChanged.When;
+                break;
+            case MessageDetailType.Then:
+                changedType = TypeChanged.Then;
+                break;
+        }
+
+        return changedType;
     }
 
 }

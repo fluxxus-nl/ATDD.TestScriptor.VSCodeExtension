@@ -20,12 +20,12 @@
             </div>
 
             <div show.bind="scenario">
-                <entry-form-group title="Given" entries.two-way="scenario.Details.given"></entry-form-group>
+                <entry-form-group title="Given" scenario.bind="scenario" type.bind="'Given'" entries.two-way="scenario.Details.given"></entry-form-group>
 
-                <entry-form-group title="When" entries.two-way="scenario.Details.when" single-entry.bind="true">
+                <entry-form-group title="When" scenario.bind="scenario" type.bind="'When'" entries.two-way="scenario.Details.when" single-entry.bind="true">
                 </entry-form-group>
 
-                <entry-form-group title="Then" entries.two-way="scenario.Details.then"></entry-form-group>
+                <entry-form-group title="Then" scenario.bind="scenario" type.bind="'Then'" entries.two-way="scenario.Details.then"></entry-form-group>
             </div>
         </div>
     </div>
