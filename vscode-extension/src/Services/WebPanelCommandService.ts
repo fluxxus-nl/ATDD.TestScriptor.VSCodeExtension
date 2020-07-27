@@ -59,7 +59,7 @@ export class WebPanelCommandService {
     async SaveChangesCommand(message: IMessageBase) {
         let config = Application.clone(Application.config) as any;
         let entry = message.Data as MessageUpdate;
-
+        entry.DeleteProcedure = false;
         if (entry.State === MessageState.Deleted && [TypeChanged.Given, TypeChanged.When, TypeChanged.Then].includes(entry.Type)) {
             let confirmedDeletionOfElement: string | undefined = await window.showInformationMessage('Do you want to delete this element?', 'Yes', 'No');
             if (confirmedDeletionOfElement === 'Yes') {

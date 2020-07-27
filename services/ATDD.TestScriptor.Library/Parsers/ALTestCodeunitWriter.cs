@@ -16,18 +16,24 @@ namespace ATDD.TestScriptor.Library
 
         }
 
-        /*#region Write to Object
+        #region Write to Object
 
-        public override void OnWriteObjectHeader(IndentedTextWriter writer, IALObject Target, List<ITestFeature> Features = null)
+        public override void OnWriteObjectHeader(IndentedTextWriter writer, IALObject Target)
         {
-            base.OnWriteObjectHeader(writer, Target, Features);
-            writer.Indent++;
-            writer.WriteLine("SubType = Test;");
-            writer.WriteLine();
-            writer.Indent--;
-        }
+            base.OnWriteObjectHeader(writer, Target);
+            TestALCodeunit testALCodeunit= (TestALCodeunit)Target;
+            ALMethod aLMethod = new ALMethod { MethodKind = ALMethodKind.Trigger, Name = "OnRun" };
 
-        public override void OnWriteObjectMethods(IndentedTextWriter writer, IALObject Target, List<ITestFeature> Features = null)
+            List<string> contentLines = new List<string>();
+            foreach (ITestFeature feature in testALCodeunit.Features)
+                contentLines.Add(string.Format("[Feature] {0}", feature.Name));
+            aLMethod.Content = String.Join("\r\n        ", contentLines);
+
+            writer.Write(OnWriteObjectMethod(Target, aLMethod));
+        }
+        #endregion
+        /**
+        public override void OnWriteObjectMethods(IndentedTextWriter writer, IALObject Target)
         {
             if (Features != null && Features.Count() > 0)
             {
@@ -43,7 +49,6 @@ namespace ATDD.TestScriptor.Library
 
             base.OnWriteObjectMethods(writer, Target, Features);
         }
-
         public override string OnWriteObjectMethod(IALObject Target, ALMethod method)
         {
             var result = "";
