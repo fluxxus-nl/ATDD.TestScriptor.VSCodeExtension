@@ -8,6 +8,7 @@ namespace ATDD.TestScriptor.Library
     {
         public ScenarioElementType Type { get; set; }
         public string Value { get; set; }
+        public string LineText { get; set; }
     }
 
     public enum ScenarioElementType
@@ -23,5 +24,6 @@ namespace ATDD.TestScriptor.Library
     {
         ScenarioElementType Type { get; set; }
         string Value { get; set; }
+        string LineText { get; set; }
     }
 }

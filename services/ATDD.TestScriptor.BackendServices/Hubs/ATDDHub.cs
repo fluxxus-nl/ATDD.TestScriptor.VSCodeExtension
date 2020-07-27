@@ -39,9 +39,8 @@ namespace ATDD.TestScriptor.BackendServices.Hubs
         }
         public async Task CheckSaveChanges(MessageUpdate msg, Configurations config)
         {
-            //check changes
-            bool removeProcedure = false;
-            await Clients.All.CheckSaveChangesResponse(removeProcedure);
+            bool procedureCanBeRemovedAfterwards = objectService.checkSaveChanges(msg, config);
+            await Clients.All.CheckSaveChangesResponse(procedureCanBeRemovedAfterwards);
         }
 
     }
