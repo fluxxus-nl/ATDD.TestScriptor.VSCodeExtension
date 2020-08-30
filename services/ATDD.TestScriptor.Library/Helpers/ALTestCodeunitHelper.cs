@@ -78,16 +78,28 @@ namespace ATDD.TestScriptor.Library.Helpers
 
         public static void RenameOrOnlyAddNewProcedure(string oldProcedureNameOfElement, string newProcedureNameOfElement, ref List<string> fileContent, ref int elementLine, bool addException)
         {
-            Range? range = FindProcedureDeclarationRange(fileContent, oldProcedureNameOfElement);
-            if (range.HasValue)
+            Range? rangeOldProcedure = FindProcedureDeclarationRange(fileContent, oldProcedureNameOfElement);
+            if (rangeOldProcedure.HasValue)
             {
-                int[] usageOfProcedure = FindLinesWhereProcedureIsCalled(fileContent, oldProcedureNameOfElement);
-                if (usageOfProcedure.Length == 1)
-                    RenameProcedureAndAllRelatedCalls(ref fileContent, oldProcedureNameOfElement, newProcedureNameOfElement, usageOfProcedure, range.Value.Start.Value);
+                int[] usageOldProcedure = FindLinesWhereProcedureIsCalled(fileContent, oldProcedureNameOfElement);
+                Range? rangeNewProcedure = FindProcedureDeclarationRange(fileContent, newProcedureNameOfElement);
+                if (rangeNewProcedure.HasValue)
+                {
+                    if (usageOldProcedure.Length == 1)
+                    {
+                        ALTestMethodHelper.RenameProcedureCall(ref fileContent, oldProcedureNameOfElement, newProcedureNameOfElement, elementLine);
+                        DeleteProcedure(ref fileContent, oldProcedureNameOfElement);
+                    }
+                }
                 else
                 {
-                    ALTestMethodHelper.RenameProcedureCall(ref fileContent, oldProcedureNameOfElement, newProcedureNameOfElement, elementLine);
-                    AddProcedure(ref fileContent, newProcedureNameOfElement, addException);
+                    if (usageOldProcedure.Length == 1)
+                        RenameProcedureAndAllRelatedCalls(ref fileContent, oldProcedureNameOfElement, newProcedureNameOfElement, usageOldProcedure, rangeOldProcedure.Value.Start.Value);
+                    else
+                    {
+                        ALTestMethodHelper.RenameProcedureCall(ref fileContent, oldProcedureNameOfElement, newProcedureNameOfElement, elementLine);
+                        AddProcedure(ref fileContent, newProcedureNameOfElement, addException);
+                    }
                 }
             }
         }
@@ -96,8 +108,15 @@ namespace ATDD.TestScriptor.Library.Helpers
         private static void RenameProcedureAndAllRelatedCalls(ref List<string> fileContent, string oldProcedureNameOfElement, string newProcedureNameOfElement, int[] procedureCallLines, int procedureDeclarationLine)
         {
             foreach (int procedureCallLine in procedureCallLines)
-                fileContent[procedureCallLine] = fileContent[procedureCallLine].Replace(oldProcedureNameOfElement, newProcedureNameOfElement);
-            fileContent[procedureDeclarationLine] = fileContent[procedureDeclarationLine].Replace(oldProcedureNameOfElement, newProcedureNameOfElement);
+                fileContent[procedureCallLine] = Regex.Replace(fileContent[procedureCallLine], "\\b" + oldProcedureNameOfElement + "\\b", newProcedureNameOfElement);
+            fileContent[procedureDeclarationLine] = Regex.Replace(fileContent[procedureDeclarationLine], "\\b" + oldProcedureNameOfElement + "\\b", newProcedureNameOfElement);
+
+            for (int line = procedureDeclarationLine; line < fileContent.Count; line++)
+            {
+                fileContent[line] = Regex.Replace(fileContent[line], "\\b" + oldProcedureNameOfElement + "\\b", newProcedureNameOfElement);
+                if (Regex.IsMatch(fileContent[line], "^\\s{4}\\}.*"))
+                    break;
+            }
         }
 
         public static int FindElementLine(List<string> fileContent, ScenarioElementType scenarioElementType, string elementValue, int startingAtLine = 0)

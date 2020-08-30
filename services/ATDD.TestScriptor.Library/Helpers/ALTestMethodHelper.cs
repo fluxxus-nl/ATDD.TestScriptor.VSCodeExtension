@@ -29,7 +29,7 @@ namespace ATDD.TestScriptor.Library.Helpers
             string commentLineText = fileContent[elementLine];
             ITestScenarioElement element = method.Scenario.Elements.First(element => element.LineText.Trim() == commentLineText.Trim());
             int deleteRange = 1;
-            for(int line = elementLine + 1; line < fileContent.Count; line++)
+            for (int line = elementLine + 1; line < fileContent.Count; line++)
             {
                 if (Regex.IsMatch(fileContent[line], @"\s*//\s*\[.+\].*"))
                 {
@@ -42,12 +42,12 @@ namespace ATDD.TestScriptor.Library.Helpers
                     break;
                 }
             }
-            
+
             fileContent.RemoveRange(elementLine, deleteRange);
         }
         public static void RenameProcedureCall(ref List<string> fileContent, string oldProcedureNameOfElement, string newProcedureNameOfElement, int elementLine)
         {
-            fileContent[elementLine] = Regex.Replace(fileContent[elementLine], oldProcedureNameOfElement + @"\((?:[^)(]+|\((?:[^)(]+|\([^)(]*\))*\))*\)", newProcedureNameOfElement + "()");
+            fileContent[elementLine] = Regex.Replace(fileContent[elementLine], "\b" + oldProcedureNameOfElement + "\b", newProcedureNameOfElement);
         }
     }
 }

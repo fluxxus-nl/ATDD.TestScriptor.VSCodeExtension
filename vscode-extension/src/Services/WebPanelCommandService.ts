@@ -5,7 +5,7 @@ import { MiddlewareService } from './MiddlewareService';
 import { VSCommandService, VSCommandType, VSDependency } from './VSCommandService';
 import { WebPanel } from '../WebPanel';
 import { IMessageBase, Message, MessageUpdate, TypeChanged, MessageState } from '../typings/types';
-import { workspace, window, TextDocument, ViewColumn, TextEditorRevealType, Selection, Range } from 'vscode';
+import { workspace, window, TextDocument, ViewColumn, TextEditorRevealType, Selection, Range, WorkspaceConfiguration } from 'vscode';
 
 @singleton(true)
 @autoinject()
@@ -59,22 +59,40 @@ export class WebPanelCommandService {
     async SaveChangesCommand(message: IMessageBase) {
         let config = Application.clone(Application.config) as any;
         let entry = message.Data as MessageUpdate;
-        entry.DeleteProcedure = false;
-        if (entry.State === MessageState.Deleted && [TypeChanged.Given, TypeChanged.When, TypeChanged.Then].includes(entry.Type)) {
-            let confirmedDeletionOfElement: string | undefined = await window.showInformationMessage('Do you want to delete this element?', 'Yes', 'No');
-            if (confirmedDeletionOfElement === 'Yes') {
-                let couldHelperFunctionBeDeleted: boolean = await this.middlewareService.checkSaveChanges(entry, config);
-                if (couldHelperFunctionBeDeleted) {
-                    let confirmedDeletionOfProcedure: string | undefined = await window.showInformationMessage('Do you want to delete the helper function?', 'Yes', 'No');
-                    entry.DeleteProcedure = confirmedDeletionOfProcedure === 'Yes';
-                }
-            } else {
-                WebPanel.postMessage(null);
-                return;
-            }
-        }
+        await this.askUserForConfirmations(entry, config);
+
         await this.middlewareService.saveChanges(entry, config);
         WebPanel.postMessage(null);
+    }
+    async askUserForConfirmations(entry: MessageUpdate, config: WorkspaceConfiguration) {
+        entry.DeleteProcedure = false;
+        let confirmDeletionOfElementQuestion: string = 'Do you want to delete this element?';
+        let confirmDeletionOfProcedureQuestion: string = 'Do you want to delete the helper function?';
+        let confirmUpdateOfElementQuestion: string = 'Do you want to update this element?';
+        let optionYes: string = 'Yes';
+        let optionNo: string = 'No;'
+        if ([TypeChanged.Given, TypeChanged.When, TypeChanged.Then].includes(entry.Type)) {
+            if (entry.State === MessageState.Deleted) {
+                let confirmedDeletionOfElement: string | undefined = await window.showInformationMessage(confirmDeletionOfElementQuestion, optionYes, optionNo);
+                if (confirmedDeletionOfElement === optionYes) {
+
+                    let couldHelperFunctionBeDeleted: boolean = await this.middlewareService.checkSaveChanges(entry, config);
+                    if (couldHelperFunctionBeDeleted) {
+                        let confirmedDeletionOfProcedure: string | undefined = await window.showInformationMessage(confirmDeletionOfProcedureQuestion, 'Yes', 'No');
+                        entry.DeleteProcedure = confirmedDeletionOfProcedure === optionYes;
+                    }
+                } else {
+                    WebPanel.postMessage(null);
+                    return;
+                }
+            } else if (entry.State === MessageState.Modified) {
+                let confirmedUpdateOfElement: string | undefined = await window.showInformationMessage(confirmUpdateOfElementQuestion, 'Yes', 'No');
+                if (confirmedUpdateOfElement === optionNo) {
+                    WebPanel.postMessage(null);
+                    return;
+                }
+            }
+        }
     }
 
     async ViewSourceCommand(message: IMessageBase) {

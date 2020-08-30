@@ -88,6 +88,10 @@ namespace ATDD.TestScriptor.Library
             }
         }
 
+        public static string GetProcedurename(string procedureName)
+        {
+            return GetProcedurename(ScenarioElementType.GIVEN, procedureName, "", "", "");
+        }
         public static string GetProcedurename(ScenarioElementType typeChanged, string elementValue, string prefixGiven, string prefixWhen, string prefixThen)
         {
             TextInfo info = CultureInfo.CurrentCulture.TextInfo;

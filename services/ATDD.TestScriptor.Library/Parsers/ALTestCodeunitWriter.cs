@@ -1,4 +1,5 @@
 using ALObjectParser.Library;
+using ATDD.TestScriptor.Library.Helpers;
 using Newtonsoft.Json;
 using System;
 using System.CodeDom.Compiler;
@@ -16,12 +17,12 @@ namespace ATDD.TestScriptor.Library
 
         }
 
-        #region Write to Object
+        //#region Write to Object
 
         public override void OnWriteObjectHeader(IndentedTextWriter writer, IALObject Target)
         {
             base.OnWriteObjectHeader(writer, Target);
-            TestALCodeunit testALCodeunit= (TestALCodeunit)Target;
+            TestALCodeunit testALCodeunit = (TestALCodeunit)Target;
             ALMethod aLMethod = new ALMethod { MethodKind = ALMethodKind.Trigger, Name = "OnRun" };
 
             List<string> contentLines = new List<string>();
@@ -31,27 +32,29 @@ namespace ATDD.TestScriptor.Library
 
             writer.Write(OnWriteObjectMethod(Target, aLMethod));
         }
-        #endregion
-        /**
+        /*
         public override void OnWriteObjectMethods(IndentedTextWriter writer, IALObject Target)
         {
-            if (Features != null && Features.Count() > 0)
+            TestALCodeunit testALCodeunit = (TestALCodeunit)Target;
+            if (testALCodeunit.Features != null && testALCodeunit.Features.Count() > 0)
             {
                 if (Target.Methods.Count > 0)
                 {
-                    MergeFeatures(Target, Features);
+                    MergeFeatures(testALCodeunit, testALCodeunit.Features);
                 }
                 else
                 {
-                    FeaturesToMethods(Target, Features);
+                    FeaturesToMethods(testALCodeunit, testALCodeunit.Features);
                 }
             }
 
-            base.OnWriteObjectMethods(writer, Target, Features);
+            base.OnWriteObjectMethods(writer, Target);
         }
+        /*
         public override string OnWriteObjectMethod(IALObject Target, ALMethod method)
         {
             var result = "";
+            TestALMethod testALMethod = (TestALMethod)method;
             using (var stringWriter = new StringWriter())
             {
                 using (var writer = new IndentedTextWriter(stringWriter))
@@ -59,9 +62,9 @@ namespace ATDD.TestScriptor.Library
                     writer.Indent++;
                     writer.WriteLine();
 
-                    WriteObjectMethodHeader(method, writer);
-                    WriteObjectMethodBody(Target, method, writer);
-                    WriteObjectMethodFooter(method, writer);
+                    WriteObjectMethodHeader(testALMethod, writer);
+                    WriteObjectMethodBody(Target, testALMethod, writer);
+                    WriteObjectMethodFooter(testALMethod, writer);
 
                     writer.Indent--;
 
@@ -71,7 +74,7 @@ namespace ATDD.TestScriptor.Library
 
             return result;
         }
-
+        /*
         public void WriteObjectMethodHeader(TestALMethod method, IndentedTextWriter writer)
         {
             bool HasScenario = method.Scenario != null;
@@ -89,10 +92,10 @@ namespace ATDD.TestScriptor.Library
             var parameterTxt = "";
             if (method.Parameters.Count > 0)
             {
-                parameterTxt = String.Join(';', method.Parameters.Select(s => $"{(s.IsVar ? "var " : "")}{s.Name}: {s.Type}"));
+                parameterTxt = String.Join(';', method.Parameters.Select(s => $"{(s.IsVar ? "var " : "")}{s.Name}: {s.TypeDefinition}"));
             }
 
-            writer.WriteLine($"{(method.IsLocal ? "local " : "")}{method.MethodKind} {method.Name}({parameterTxt}){(!String.IsNullOrEmpty(method.ReturnType) ? ": " + method.ReturnType : "")}");
+            writer.WriteLine($"{(method.IsLocal ? "local " : "")}{method.MethodKind} {method.Name}({parameterTxt}){(!String.IsNullOrEmpty(method.ReturnTypeDefinition.Name) ? ": " + method.ReturnTypeDefinition.Name : "")}");
         }
 
         public void WriteObjectMethodBody(IALObject Target, TestALMethod method, IndentedTextWriter writer)
@@ -166,32 +169,32 @@ namespace ATDD.TestScriptor.Library
         }
 
         #endregion
-
+        
         #region Merge Feature-sets or create a new set
 
-        public void FeaturesToMethods(IALObject Target, List<ITestFeature> Features = null)
+        public void FeaturesToMethods(TestALCodeunit Target, List<ITestFeature> Features = null)
         {
             if (Features == null)
                 return;
 
             if (Features.Count == 0)
                 return;
-
+            
             Target.Methods.AddRange(Features
                 .SelectMany(s => s.Scenarios)
-                .Select(s => new ALMethod()
+                .Select(s => new TestALMethod()
                 {
-                    Name = s.Name.SanitizeName(),
+                    Name = ALMethodHelper.GetProcedurename(s.Name),
                     TestMethod = true,
                     Scenario = s,
-                    MethodKind = "procedure",
+                    MethodKind = ALMethodKind.Method,
                     Content = ""
                 })
                 .ToList()
             );
         }
 
-        public void MergeFeatures(IALObject Target, List<ITestFeature> Features = null)
+        public void MergeFeatures(TestALCodeunit Target, List<ITestFeature> Features = null)
         {
             if (Features == null)
                 return;
@@ -199,14 +202,14 @@ namespace ATDD.TestScriptor.Library
             if (Features.Count == 0)
                 return;
 
-            var identical = Target.Features.SequenceEqual(Features, new TestFeatureComparer());
+            bool identical = Target.Features.SequenceEqual(Features, new TestFeatureComparer());
             if (identical)
             {
                 return;
             }
 
             // add new features
-            var newFeatures = Features.Except(Target.Features, new TestFeatureNameComparer()).ToList();
+            List<ITestFeature> newFeatures = Features.Except(Target.Features, new TestFeatureNameComparer()).ToList();
             if (newFeatures.Count() > 0)
             {
                 Target.Features.AddRange(newFeatures);
@@ -215,22 +218,22 @@ namespace ATDD.TestScriptor.Library
             }
 
             // check same feature for new scenarios
-            foreach (var feature in Target.Features)
+            foreach (ITestFeature feature in Target.Features)
             {
-                var UpdatedFeature = Features.FirstOrDefault(f => f.Name == feature.Name);
+                ITestFeature UpdatedFeature = Features.FirstOrDefault(f => f.Name == feature.Name);
                 if (UpdatedFeature != null)
                 {
-                    var newScenarios = UpdatedFeature.Scenarios.Except(feature.Scenarios, new TestScenarioIDComparer()).ToList();
+                    ICollection<ITestScenario> newScenarios = UpdatedFeature.Scenarios.Except(feature.Scenarios, new TestScenarioIDComparer()).ToList();
                     if (newScenarios.Count > 0)
                     {
                         (feature.Scenarios as List<ITestScenario>).AddRange(newScenarios);
                         Target.Methods.AddRange(newScenarios
-                            .Select(s => new ALMethod()
+                            .Select(s => new TestALMethod
                             {
-                                Name = s.Name.SanitizeName(),
+                                Name = ALMethodHelper.GetProcedurename(s.Name),
                                 TestMethod = true,
                                 Scenario = s,
-                                MethodKind = "procedure",
+                                MethodKind = ALMethodKind.Method,
                                 Content = ""
                             })
                             .ToList()
@@ -240,32 +243,32 @@ namespace ATDD.TestScriptor.Library
             }
 
             // check existing scenarios for updates
-            var CurrentScenarios = Target.Features.SelectMany(s => s.Scenarios).ToList();
-            var UpdatedScenarios = Features.SelectMany(s => s.Scenarios).ToList();
+            List<ITestScenario> CurrentScenarios = Target.Features.SelectMany(s => s.Scenarios).ToList();
+            List<ITestScenario> UpdatedScenarios = Features.SelectMany(s => s.Scenarios).ToList();
 
-            foreach (var scenario in CurrentScenarios)
+            foreach (ITestScenario scenario in CurrentScenarios)
             {
-                var UpdatedScenario = UpdatedScenarios
+                ITestScenario updatedScenario = UpdatedScenarios
                     .Where(w => w.Feature.Name == scenario.Feature.Name && w.ID == scenario.ID)
                     .FirstOrDefault();
 
-                if (UpdatedScenario != null)
+                if (updatedScenario != null)
                 {
-                    scenario.Name = UpdatedScenario.Name;
-                    scenario.ID = UpdatedScenario.ID;
-                    scenario.Elements = UpdatedScenario.Elements.ToList();
+                    scenario.Name = updatedScenario.Name;
+                    scenario.ID = updatedScenario.ID;
+                    scenario.Elements = updatedScenario.Elements.ToList();
 
-                    var method = Target.Methods.Where(w => w.Scenario == scenario).FirstOrDefault();
+                    TestALMethod method = Target.Methods.Where(w => w.Scenario == scenario).FirstOrDefault();
                     if (method != null)
                     {
-                        method.Scenario = UpdatedScenario;
+                        method.Scenario = updatedScenario;
                         method.Content = ""; //TODO!! Update content instead of recreation
                     }
                 }
             }
         }
-
-        #endregion*/
+        #endregion
+        /*
 
     }
 
@@ -617,4 +620,5 @@ namespace ATDD.TestScriptor.Library
             
     #endregion*/
 
+    }
 }
