@@ -140,6 +140,10 @@ namespace ATDD.TestScriptor.Library.Helpers
         {
             List<int> lines = new List<int>();
             int line = 0;
+            for(line = 0; line < fileContent.Count; line++)
+            {
+
+            }
             do
             {
                 line = FindLineUsingRegexPattern(fileContent, string.Format(@"{0}(?<!procedure {0}).*", procedureNameOfElement), false, line + 1);
