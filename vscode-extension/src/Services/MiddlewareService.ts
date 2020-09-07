@@ -3,7 +3,7 @@ import { singleton } from 'aurelia-dependency-injection';
 import { Message, MessageUpdate } from '../typings/types';
 import { WebPanel } from '../WebPanel';
 import { Application } from './../Application';
-import { ObjectService } from "../Backend/Services/ObjectService";
+import { ObjectService } from "../App logic/Services/ObjectService";
 
 @singleton(true)
 export class MiddlewareService {
