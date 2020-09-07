@@ -23,7 +23,7 @@ export class ObjectService {
     }
     public async checkSaveChanges(msg: MessageUpdate, config: WorkspaceConfiguration): Promise<boolean> {
         let procedureCanBeRemovedAfterwards: boolean = false;
-        if (msg.Type in [TypeChanged.Given, TypeChanged.When, TypeChanged.Then] && msg.State in [MessageState.Deleted, MessageState.Modified]) {
+        if ([TypeChanged.Given, TypeChanged.When, TypeChanged.Then].includes(msg.Type) && [MessageState.Deleted, MessageState.Modified].includes(msg.State)) {
             let document: TextDocument = await workspace.openTextDocument(msg.FsPath);
             let elementValue: string = msg.State == MessageState.Deleted ? msg.NewValue : msg.OldValue;
             let elementRange: Range | undefined = await ElementUtils.getRangeOfElement(document, msg.Scenario, msg.Type, elementValue);
@@ -33,7 +33,7 @@ export class ObjectService {
             } else {
                 let identifierTreeNodeOfInvocation: ALFullSyntaxTreeNode | undefined = await ElementUtils.getProcedureCallToElementValue(document, elementRange.start, msg.Type, elementValue);
                 if (identifierTreeNodeOfInvocation) {
-                    let references: Location[] | undefined = await commands.executeCommand('vscode.executeReferenceProvider', document.uri, RangeUtils.trimRange(document, TextRangeExt.createVSCodeRange(identifierTreeNodeOfInvocation.fullSpan)));
+                    let references: Location[] | undefined = await commands.executeCommand('vscode.executeReferenceProvider', document.uri, RangeUtils.trimRange(document, TextRangeExt.createVSCodeRange(identifierTreeNodeOfInvocation.fullSpan)).start);
                     if (references)
                         procedureCanBeRemovedAfterwards = references.length <= 2; //call + declaration
                 }

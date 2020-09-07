@@ -149,7 +149,7 @@ export class ElementUtils {
         let textToAdd: string = '\r\n';
         textToAdd += '        ' + procedureName + '();\r\n';
         let currentLineText: string = document.lineAt(positionToInsert.line).text.trim();
-        if (currentLineText != '' && currentLineText != '}')
+        if (currentLineText != '' && currentLineText != 'end;')
             textToAdd += '\r\n';
         edit.insert(document.uri, positionToInsert, textToAdd);
     }
@@ -168,7 +168,7 @@ export class ElementUtils {
             edit.delete(document.uri, statementRange);
             if (msg.DeleteProcedure) {
                 let procedureName = TestMethodUtils.getProcedureName(msg.Type, msg.NewValue);
-                let invocationRange: Range | undefined = RangeUtils.getRangeOfTextInsideRange(document, statementRange, new RegExp(procedureName + '\(', 'i'))
+                let invocationRange: Range | undefined = RangeUtils.getRangeOfTextInsideRange(document, statementRange, new RegExp(procedureName + '\\(', 'i'))
                 if (invocationRange) {
                     let procedureDeclaration: Location[] | undefined = await commands.executeCommand('vscode.executeDefinitionProvider', document.uri, invocationRange.start);
                     if (procedureDeclaration && procedureDeclaration.length > 0) {

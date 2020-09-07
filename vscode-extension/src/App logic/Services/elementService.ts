@@ -1,5 +1,5 @@
 import { writeFileSync } from "fs-extra";
-import { Position, Range, TextDocument, workspace, WorkspaceEdit } from "vscode";
+import { Position, Range, TextDocument, workspace, WorkspaceEdit, commands, Location } from "vscode";
 import { MessageUpdate, TypeChanged } from "../../typings/types";
 import { SyntaxTreeExt } from "../AL Code Outline Ext/syntaxTreeExt";
 import { TextRangeExt } from "../AL Code Outline Ext/textRangeExt";
@@ -60,25 +60,33 @@ export class ElementService {
         if (await ElementUtils.existsProcedureCallToElementValue(document, methodRange.start, msg.Type, msg.OldValue)) {
             let identifierOfOldProcedureCall: ALFullSyntaxTreeNode = <ALFullSyntaxTreeNode>await ElementUtils.getProcedureCallToElementValue(document, rangeOfOldElement.start, msg.Type, msg.OldValue)
             let rangeOfOldIdentifier: Range = RangeUtils.trimRange(document, TextRangeExt.createVSCodeRange(identifierOfOldProcedureCall.fullSpan));
-            let oldMethodTreeNode: ALFullSyntaxTreeNode | undefined = await SyntaxTreeExt.getMethodTreeNodeByCallPosition(document, TextRangeExt.createVSCodeRange(identifierOfOldProcedureCall.fullSpan).end);
-            //delete old procedure eventually
-            if (msg.DeleteProcedure && oldMethodTreeNode)
-                TestCodeunitUtils.deleteProcedure(edit, document.uri, oldMethodTreeNode);
-            //rename procedurecall
-            ElementUtils.renameProcedureCall(edit, document, rangeOfOldIdentifier, newProcedureName);
+            let oldMethodTreeNode: ALFullSyntaxTreeNode | undefined = await SyntaxTreeExt.getMethodTreeNodeByCallPosition(document, rangeOfOldIdentifier.end);
+
+            let alreadyRenamed: boolean = false;
             //add procedure similar to old one
             if (oldMethodTreeNode) {
                 let parameterTypes: string[] = TestMethodUtils.getParameterTypesOfMethod(oldMethodTreeNode, document);
                 if (!(await TestCodeunitUtils.isProcedureAlreadyDeclared(document, newProcedureName, parameterTypes))) {
-                    let procedureHeaderOfOldMethod = TestMethodUtils.getProcedureHeaderOfMethod(oldMethodTreeNode, document);
-                    let procedureHeaderOfNewMethod: string = procedureHeaderOfOldMethod.replace(new RegExp("procedure " + oldProcedureName, 'i'), 'procedure ' + newProcedureName);
-                    await TestCodeunitUtils.addProcedureWithSpecificHeader(edit, document, newProcedureName, procedureHeaderOfNewMethod);
+                    let references: Location[] | undefined = await commands.executeCommand('vscode.executeReferenceProvider', document.uri, rangeOfOldIdentifier.end);
+                    if (references && references.length == 2) {
+                        await TestMethodUtils.renameMethod(edit, oldMethodTreeNode, document, newProcedureName);
+                        alreadyRenamed = true;
+                    } else {
+                        let procedureHeaderOfOldMethod = TestMethodUtils.getProcedureHeaderOfMethod(oldMethodTreeNode, document);
+                        let procedureHeaderOfNewMethod: string = procedureHeaderOfOldMethod.replace(new RegExp("procedure " + oldProcedureName, 'i'), 'procedure ' + newProcedureName);
+                        await TestCodeunitUtils.addProcedureWithSpecificHeader(edit, document, newProcedureName, procedureHeaderOfNewMethod);
+                    }
                 }
             } else {
                 //only happens if procedure call to old procedure exists, but no implementation to that one.
                 if (!(await TestCodeunitUtils.isProcedureAlreadyDeclared(document, newProcedureName, [])))
                     TestCodeunitUtils.addProcedure(edit, document, newProcedureName);
             }
+            //rename procedurecall and element
+            ElementUtils.deleteElement(edit, document, rangeOfOldElement);
+            if (!alreadyRenamed)
+                ElementUtils.renameProcedureCall(edit, document, rangeOfOldIdentifier, newProcedureName);
+            ElementUtils.addElement(edit, document, rangeOfOldElement.start.with({ character: 0 }), msg.Type, msg.NewValue);
         } else {
             ElementUtils.deleteElement(edit, document, rangeOfOldElement);
             ElementUtils.addProcedureCall(edit, document, rangeOfOldElement.start, newProcedureName);
@@ -95,7 +103,7 @@ export class ElementService {
     public static async deleteElementFromCode(msg: MessageUpdate): Promise<boolean> {
         let edit: WorkspaceEdit = new WorkspaceEdit();
         let document: TextDocument = await workspace.openTextDocument(msg.FsPath);
-        ElementUtils.deleteElementWithProcedureCall(edit, msg, document);
+        await ElementUtils.deleteElementWithProcedureCall(edit, msg, document);
         let successful: boolean = await workspace.applyEdit(edit);
         await document.save();
         return successful;

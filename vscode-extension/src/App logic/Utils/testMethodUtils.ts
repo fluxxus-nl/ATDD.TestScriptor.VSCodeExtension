@@ -1,11 +1,10 @@
+import { commands, Location, Position, Range, TextDocument, window, workspace, WorkspaceConfiguration, WorkspaceEdit } from "vscode";
 import { TypeChanged } from "../../typings/types";
-import { workspace, window, WorkspaceConfiguration, TextDocument, Range, Position } from "vscode";
-import { ALFullSyntaxTreeNode } from "../AL Code Outline/alFullSyntaxTreeNode";
 import { ALFullSyntaxTreeNodeExt } from "../AL Code Outline Ext/alFullSyntaxTreeNodeExt";
 import { FullSyntaxTreeNodeKind } from "../AL Code Outline Ext/fullSyntaxTreeNodeKind";
 import { TextRangeExt } from "../AL Code Outline Ext/textRangeExt";
+import { ALFullSyntaxTreeNode } from "../AL Code Outline/alFullSyntaxTreeNode";
 import { RangeUtils } from "./rangeUtils";
-import { SyntaxTree } from "../AL Code Outline/syntaxTree";
 
 export class TestMethodUtils {
     public static getProcedureName(type: TypeChanged, name: string): string {
@@ -64,5 +63,32 @@ export class TestMethodUtils {
             }
         }
         return parameterTypes;
+    }
+    static async renameMethod(edit: WorkspaceEdit, oldMethodTreeNode: ALFullSyntaxTreeNode, document: TextDocument, newProcedureName: string) {
+        let identifierTreeNode: ALFullSyntaxTreeNode | undefined = ALFullSyntaxTreeNodeExt.getFirstChildNodeOfKind(oldMethodTreeNode, FullSyntaxTreeNodeKind.getIdentifierName(), false);
+        if (!identifierTreeNode)
+            return;
+        let rangeOfIdentifier: Range = RangeUtils.trimRange(document, TextRangeExt.createVSCodeRange(identifierTreeNode.fullSpan));
+        let oldProcedureName: string = document.getText(rangeOfIdentifier);
+        let references: Location[] | undefined = await commands.executeCommand('vscode.executeReferenceProvider', document.uri, rangeOfIdentifier.start);
+        if (references) {
+            references = references.sort((a, b) => a.uri.fsPath.toString().localeCompare(b.uri.fsPath.toString()));
+            for (let i = 0; i < references.length; i++) {
+                edit.replace(references[i].uri, references[i].range, newProcedureName);
+            }
+        }
+        let blockTreeNode: ALFullSyntaxTreeNode | undefined = ALFullSyntaxTreeNodeExt.getFirstChildNodeOfKind(oldMethodTreeNode, FullSyntaxTreeNodeKind.getBlock(), false);
+        if (blockTreeNode) {
+            let blockRange: Range = RangeUtils.trimRange(document, TextRangeExt.createVSCodeRange(blockTreeNode.fullSpan));
+            let regex: RegExp = new RegExp("(.*)\\b" + oldProcedureName + "\\b");
+            for (let line = blockRange.start.line; line <= blockRange.end.line; line++) {
+                let lineText: string = document.lineAt(line).text;
+                let matchArr: RegExpMatchArray | null = lineText.match(new RegExp(regex, 'i'));
+                if (matchArr) {
+                    let rangeToReplace: Range = new Range(line, matchArr[1].length, line, matchArr[1].length + oldProcedureName.length)
+                    edit.replace(document.uri, rangeToReplace, newProcedureName);
+                }
+            }
+        }
     }
 }

@@ -70,7 +70,7 @@ export class WebPanelCommandService {
         let confirmDeletionOfProcedureQuestion: string = 'Do you want to delete the helper function?';
         let confirmUpdateOfElementQuestion: string = 'Do you want to update this element?';
         let optionYes: string = 'Yes';
-        let optionNo: string = 'No;'
+        let optionNo: string = 'No';
         if ([TypeChanged.Given, TypeChanged.When, TypeChanged.Then].includes(entry.Type)) {
             if (entry.State === MessageState.Deleted) {
                 let confirmedDeletionOfElement: string | undefined = await window.showInformationMessage(confirmDeletionOfElementQuestion, optionYes, optionNo);
@@ -78,7 +78,7 @@ export class WebPanelCommandService {
 
                     let couldHelperFunctionBeDeleted: boolean = await this.middlewareService.checkSaveChanges(entry, config);
                     if (couldHelperFunctionBeDeleted) {
-                        let confirmedDeletionOfProcedure: string | undefined = await window.showInformationMessage(confirmDeletionOfProcedureQuestion, 'Yes', 'No');
+                        let confirmedDeletionOfProcedure: string | undefined = await window.showInformationMessage(confirmDeletionOfProcedureQuestion, optionYes, optionNo);
                         entry.DeleteProcedure = confirmedDeletionOfProcedure === optionYes;
                     }
                 } else {
@@ -86,7 +86,7 @@ export class WebPanelCommandService {
                     return;
                 }
             } else if (entry.State === MessageState.Modified) {
-                let confirmedUpdateOfElement: string | undefined = await window.showInformationMessage(confirmUpdateOfElementQuestion, 'Yes', 'No');
+                let confirmedUpdateOfElement: string | undefined = await window.showInformationMessage(confirmUpdateOfElementQuestion, optionYes, optionNo);
                 if (confirmedUpdateOfElement === optionNo) {
                     WebPanel.postMessage(null);
                     return;
