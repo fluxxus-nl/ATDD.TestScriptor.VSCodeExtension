@@ -75,6 +75,7 @@ export class TestList {
             this.columnApi = this.gridOptions.columnApi;
             this.columnApi.setColumnVisible('Project', false);
             this.api.sizeColumnsToFit();
+            this.appService.gridApi = this.api;
         };
     }
 
@@ -96,6 +97,7 @@ export class TestList {
         let projects = [...new Set(this.entries.map(item => item.Project))];
         this.columnApi.setColumnVisible('Project', projects.length > 1);
         this.appService.updateSidebarLinks(this.entries);
+        this.appService.entries = this.entries;
     }
 
     selectionChanged() {

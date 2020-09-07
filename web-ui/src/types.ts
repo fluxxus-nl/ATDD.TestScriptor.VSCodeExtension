@@ -10,7 +10,8 @@ export enum AppEventPublisher {
     onNewScenario = 'onNewScenario',
     selectedEntryEdited = 'selectedEntryEdited',
     sidebarLinksUpdated = 'sidebarLinksUpdated',
-    saveChanges = 'saveChanges'
+    saveChanges = 'saveChanges',
+    saveChangesOK = 'saveChangesOK'
 }
 
 export class Message {
@@ -26,6 +27,7 @@ export class Message {
     State: MessageState;
     TestRunnerResult: ALTestRunnerResult;
     Details: MessageDetails;
+    ArrayIndex?: number;
 }
 
 export class MessageDetails {
@@ -37,6 +39,7 @@ export class MessageDetails {
 }
 
 export class MessageUpdate {
+    Feature: string;
     Scenario: string;
     Type: TypeChanged;
     State: MessageState;
@@ -44,6 +47,7 @@ export class MessageUpdate {
     NewValue: string;
     FsPath: string;
     DeleteProcedure: boolean;
+    ArrayIndex?: number;
 }
 
 export enum TypeChanged {
