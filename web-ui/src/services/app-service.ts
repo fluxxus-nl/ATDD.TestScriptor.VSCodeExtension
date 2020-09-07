@@ -1,12 +1,17 @@
 import { EventAggregator } from 'aurelia-event-aggregator';
 import { singleton, computedFrom } from 'aurelia-framework';
 import { AppEventPublisher, AppEditMode, MessageState, TypeChanged, MessageUpdate, Message } from 'types';
+import Enumerable from 'linq';
+import { GridApi } from 'ag-grid-community';
 
 @singleton()
 export class AppService {
     private _sidebarLinks: Array<any>;
     private _projects: Array<string>;
     private _editMode: AppEditMode;
+    private _entries: Array<Message> = [];
+    public selectedEntry: Message;
+    public gridApi: GridApi;
 
     public constructor(private eventAggregator: EventAggregator) {
         this._editMode = AppEditMode.Scenario;
@@ -27,6 +32,14 @@ export class AppService {
 
     public get projects() {
         return this._projects;
+    }
+
+    public get entries() {
+        return this._entries;
+    }
+
+    public set entries(newEntries: Array<Message>) {
+        this._entries = newEntries;
     }
 
     public updateProjects(entries: Array<any>) {
@@ -60,6 +73,7 @@ export class AppService {
             return;
 
         let message: MessageUpdate = new MessageUpdate();
+        message.Feature = item.Feature;
         message.Type = type;
         message.State = state;
         message.OldValue = oldValue;
@@ -69,9 +83,32 @@ export class AppService {
             message.FsPath = item.FsPath;
         }
         message.DeleteProcedure = [TypeChanged.Given, TypeChanged.When, TypeChanged.Then].indexOf(type) !== -1 && state == MessageState.Deleted;
-
+        message.ArrayIndex = item.ArrayIndex;        
 
         this.eventAggregator.publish(AppEventPublisher.saveChanges, message);
+    }
+
+    public getNextScenarioID(featureName: string) {
+        let currEntry = Enumerable
+            .from(this._entries)
+            .where(w => w.Feature == featureName)
+            .orderByDescending(o => o.Id)
+            .firstOrDefault();
+
+        let newId = 1;
+        if (currEntry) {
+            return newId += currEntry.Id;
+        }
+
+        return newId;
+    }
+
+    public getLastFeatureName(): string {
+        let lastIndex = this.gridApi.getLastDisplayedRow();
+        let previousRow = this.gridApi.getDisplayedRowAtIndex(lastIndex - 1);
+        let data = previousRow.data as Message;
+
+        return data ? data.Feature : '';
     }
 
 

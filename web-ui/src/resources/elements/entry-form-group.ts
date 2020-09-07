@@ -1,7 +1,7 @@
 import { AppService } from 'services/app-service';
 import { EventAggregator } from 'aurelia-event-aggregator';
 import { autoinject, bindable } from 'aurelia-framework';
-import { AppEventPublisher, Message, MessageDetailType, TypeChanged, MessageState } from 'types';
+import { AppEventPublisher, Message, MessageDetailType, TypeChanged, MessageState, MessageUpdate } from 'types';
 
 @autoinject()
 export class EntryFormGroup {
@@ -20,9 +20,38 @@ export class EntryFormGroup {
 
     @bindable()
     type: MessageDetailType;
+    subscriptions: any;
 
     constructor(private eventAggregator: EventAggregator, private appService: AppService) {
 
+        this.subscriptions.push(this.eventAggregator.subscribe(AppEventPublisher.saveChangesOK, async (message: MessageUpdate) => {
+            if (!message.ArrayIndex) {
+                return;
+            }
+
+            if (![TypeChanged.Given, TypeChanged.When, TypeChanged.Then].indexOf(message.Type)) {
+                return;
+            }
+
+            let type: MessageDetailType;
+            switch (message.Type) {
+                case TypeChanged.Given:
+                    type = MessageDetailType.Given;
+                    break;
+                case TypeChanged.When:
+                    type = MessageDetailType.When;
+                    break;
+                case TypeChanged.Then:
+                    type = MessageDetailType.Then;
+                    break;
+            }
+
+            if (type !== this.type) {
+                return;
+            }
+
+            this.entries.splice(message.ArrayIndex, 1);
+        }));
     }
 
     attached() {
@@ -58,6 +87,9 @@ export class EntryFormGroup {
             currValue = this.entries[index];
             this.entries.splice(index, 1);
         }
+
+        let message: Message = JSON.parse(JSON.stringify(this.scenario));
+        message.ArrayIndex = index;
 
         this.appService.sendChangeNotification(this.getTypeChanged(), MessageState.Deleted, null, currValue, this.scenario);
     }

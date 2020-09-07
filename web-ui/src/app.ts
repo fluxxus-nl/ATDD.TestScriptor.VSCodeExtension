@@ -41,7 +41,12 @@ export class App {
     }));
 
     this.subscriptions.push(this.eventAggregator.subscribe(AppEventPublisher.saveChanges, async (message: MessageUpdate) => {
-      await this.backendService.send({ Command: 'SaveChanges', Data: message });
+      let result = await this.backendService.send({ Command: 'SaveChanges', Data: message });
+
+      if (!result)
+        return;
+
+      this.eventAggregator.publish(AppEventPublisher.saveChangesOK, message);
     }));
 
   }
@@ -50,7 +55,7 @@ export class App {
     let eventData = await this.backendService.send({ Command: 'LoadTests' });
     this.entries = eventData.Data;
 
-    this.appService.updateSidebarLinks(this.entries);    
+    this.appService.updateSidebarLinks(this.entries);
 
     Split(['#test-col-1', '#test-col-2'], {
       sizes: [60, 40],
@@ -71,6 +76,7 @@ export class App {
       if (e.data.Command == 'LoadTests') {
         this.entries = [];
         this.entries = e.data.Data;
+        this.appService.entries = this.entries;
         console.log('entries updated', e.data.Data);
       }
     });
