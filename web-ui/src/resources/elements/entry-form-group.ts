@@ -59,7 +59,7 @@ export class EntryFormGroup {
             this.entries.splice(index, 1);
         }
 
-        this.appService.sendChangeNotification(this.getTypeChanged(), MessageState.Deleted, currValue, null, this.scenario);
+        this.appService.sendChangeNotification(this.getTypeChanged(), MessageState.Deleted, null, currValue, this.scenario);
     }
 
     getTypeChanged() {

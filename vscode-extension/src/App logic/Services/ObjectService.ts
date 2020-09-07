@@ -40,7 +40,7 @@ export class ObjectService {
         let procedureCanBeRemovedAfterwards: boolean = false;
         if ([TypeChanged.Given, TypeChanged.When, TypeChanged.Then].includes(msg.Type) && [MessageState.Deleted, MessageState.Modified].includes(msg.State)) {
             let document: TextDocument = await workspace.openTextDocument(msg.FsPath);
-            let elementValue: string = msg.State == MessageState.Deleted ? msg.NewValue : msg.OldValue;
+            let elementValue: string = msg.OldValue;
             let elementRange: Range | undefined = await ElementUtils.getRangeOfElement(document, msg.Scenario, msg.Type, elementValue);
             if (!elementRange) {
                 //TODO: What if the element is not found?

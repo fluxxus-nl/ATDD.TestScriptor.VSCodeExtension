@@ -156,9 +156,9 @@ export class ElementUtils {
 
 
     public static async deleteElementWithProcedureCall(edit: WorkspaceEdit, msg: MessageUpdate, document: TextDocument) {
-        let rangeOfElement: Range | undefined = await ElementUtils.getRangeOfElement(document, msg.Scenario, msg.Type, msg.NewValue);
+        let rangeOfElement: Range | undefined = await ElementUtils.getRangeOfElement(document, msg.Scenario, msg.Type, msg.OldValue);
         if (!rangeOfElement)
-            throw new Error('Element ' + msg.NewValue + ' not found in scenario \'' + msg.Scenario + '\'.');
+            throw new Error('Element ' + msg.OldValue + ' not found in scenario \'' + msg.Scenario + '\'.');
 
         //search for procedurecall    
         let syntaxTree: SyntaxTree = await SyntaxTree.getInstance(document);
@@ -167,7 +167,7 @@ export class ElementUtils {
             let statementRange: Range = TextRangeExt.createVSCodeRange(statementTreeNode.fullSpan);
             edit.delete(document.uri, statementRange);
             if (msg.DeleteProcedure) {
-                let procedureName = TestMethodUtils.getProcedureName(msg.Type, msg.NewValue);
+                let procedureName = TestMethodUtils.getProcedureName(msg.Type, msg.OldValue);
                 let invocationRange: Range | undefined = RangeUtils.getRangeOfTextInsideRange(document, statementRange, new RegExp(procedureName + '\\(', 'i'))
                 if (invocationRange) {
                     let procedureDeclaration: Location[] | undefined = await commands.executeCommand('vscode.executeDefinitionProvider', document.uri, invocationRange.start);
