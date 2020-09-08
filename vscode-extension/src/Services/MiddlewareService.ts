@@ -18,7 +18,8 @@ export class MiddlewareService {
     }
 
     async getProjects(msg: Array<string>): Promise<Array<string>> {
-        return this.send(MiddlewareRequestMethod.QueryProjects, MiddlewareResponseMethod.GetProjects, false, msg) as Promise<Array<string>>;
+        return new ObjectService().getProjects();
+        // return this.send(MiddlewareRequestMethod.QueryProjects, MiddlewareResponseMethod.GetProjects, false, msg) as Promise<Array<string>>;
     }
 
     async getObjects(paths: Array<string>): Promise<Array<Message>> {

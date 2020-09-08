@@ -1,14 +1,29 @@
-import { commands, Range, TextDocument, Uri, workspace, WorkspaceConfiguration } from 'vscode';
+import { commands, Range, TextDocument, Uri, workspace, WorkspaceConfiguration, RelativePattern } from 'vscode';
 import { Message, MessageState, MessageUpdate, TypeChanged } from "../../typings/types";
 import { TextRangeExt } from '../AL Code Outline Ext/textRangeExt';
 import { ALFullSyntaxTreeNode } from '../AL Code Outline/alFullSyntaxTreeNode';
-import { RangeUtils } from '../Utils/rangeUtils';
 import { ElementUtils } from '../Utils/elementUtils';
 import { ObjectToMessageUtils } from '../Utils/objectToMessageUtils';
+import { RangeUtils } from '../Utils/rangeUtils';
 import { TestCodeunitUtils } from '../Utils/testCodeunitUtils';
 import { ElementService } from './elementService';
 
 export class ObjectService {
+    async getProjects(): Promise<string[]> {
+        if (!workspace.workspaceFolders)
+            return [];
+        let appJsons: string[] = [];
+        for (let i = 0; i < workspace.workspaceFolders.length; i++) {
+            let files: Uri[] = await workspace.findFiles(new RelativePattern(workspace.workspaceFolders[i], 'app.json'));
+            for(let a = 0; a < files.length; a++){
+                let appDoc: TextDocument = await workspace.openTextDocument(files[a]);
+                let appJson = JSON.parse(appDoc.getText());
+                appJson.FilePath = workspace.workspaceFolders[i].uri.fsPath;
+                appJsons.push(appJson);
+            }
+        }
+        return appJsons;
+    }
 
     public async getObjects(paths: string[]): Promise<Message[]> {
         let messages: Message[] = [];
