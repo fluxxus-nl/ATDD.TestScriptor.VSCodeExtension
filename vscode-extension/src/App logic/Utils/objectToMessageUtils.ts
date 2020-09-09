@@ -59,6 +59,8 @@ export class ObjectToMessageUtils {
         matchArr = methodText.match(regexWhen);
         if (matchArr && matchArr.groups)
             message.Details.when.push(matchArr.groups['content']);
+        else
+            message.Details.when.push('');
         //Then
         matchArr = methodText.match(new RegExp(thenPattern, 'ig'));
         if (matchArr) {
