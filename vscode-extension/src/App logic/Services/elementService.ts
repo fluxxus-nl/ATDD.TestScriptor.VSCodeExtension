@@ -15,6 +15,9 @@ export class ElementService {
         if (msg.Type == TypeChanged.Feature) {
             writeFileSync(msg.FsPath, TestCodeunitUtils.getDefaultTestCodeunit(msg.NewValue), { encoding: 'utf8' });
             return true;
+        } else if (msg.Type == TypeChanged.ScenarioName){
+            //TODO: Get the workspacefolder using the msg.Project, search for the feature and add the scenario there.
+            return true;
         }
         else {
             let document: TextDocument = await workspace.openTextDocument(msg.FsPath);

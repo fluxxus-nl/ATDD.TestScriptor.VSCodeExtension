@@ -165,6 +165,7 @@ export class ElementUtils {
         let statementTreeNode: ALFullSyntaxTreeNode | undefined = syntaxTree.findTreeNode(rangeOfElement.start, FullSyntaxTreeNodeKind.getAllStatementKinds());
         if (statementTreeNode) {
             let statementRange: Range = TextRangeExt.createVSCodeRange(statementTreeNode.fullSpan);
+            //TODO:Looks like the procedure call is included in the range.
             edit.delete(document.uri, statementRange);
             if (msg.DeleteProcedure) {
                 let procedureName = TestMethodUtils.getProcedureName(msg.Type, msg.OldValue);

@@ -47,7 +47,9 @@ export interface MessageUpdate
     State: MessageState;
     OldValue: string;
     NewValue: string;
+    Id?: number;
     FsPath: string;
+    Project: string;
     DeleteProcedure: boolean;
 }
 

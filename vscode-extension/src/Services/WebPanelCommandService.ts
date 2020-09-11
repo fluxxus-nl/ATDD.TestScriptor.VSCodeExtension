@@ -59,12 +59,13 @@ export class WebPanelCommandService {
     async SaveChangesCommand(message: IMessageBase) {
         let config = Application.clone(Application.config) as any;
         let entry = message.Data as MessageUpdate;
-        await this.askUserForConfirmations(entry, config);
-
-        await this.middlewareService.saveChanges(entry, config);
-        WebPanel.postMessage(null);
+        let proceed: boolean = await this.askUserForConfirmations(entry, config);
+        if (proceed){
+            await this.middlewareService.saveChanges(entry, config);
+        }
+        WebPanel.postMessage({Command: 'SaveChanges', Data: proceed});
     }
-    async askUserForConfirmations(entry: MessageUpdate, config: WorkspaceConfiguration) {
+    async askUserForConfirmations(entry: MessageUpdate, config: WorkspaceConfiguration): Promise<boolean> {
         entry.DeleteProcedure = false;
         let confirmDeletionOfElementQuestion: string = 'Do you want to delete this element?';
         let confirmDeletionOfProcedureQuestion: string = 'Do you want to delete the helper function?';
@@ -82,17 +83,16 @@ export class WebPanelCommandService {
                         entry.DeleteProcedure = confirmedDeletionOfProcedure === optionYes;
                     }
                 } else {
-                    WebPanel.postMessage(null);
-                    return;
+                    return false;
                 }
             } else if (entry.State === MessageState.Modified) {
                 let confirmedUpdateOfElement: string | undefined = await window.showInformationMessage(confirmUpdateOfElementQuestion, optionYes, optionNo);
                 if (confirmedUpdateOfElement === optionNo) {
-                    WebPanel.postMessage(null);
-                    return;
+                    return false;
                 }
             }
         }
+        return true;
     }
 
     async ViewSourceCommand(message: IMessageBase) {

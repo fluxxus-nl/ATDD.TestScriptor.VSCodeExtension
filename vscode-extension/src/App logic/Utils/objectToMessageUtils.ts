@@ -27,7 +27,7 @@ export class ObjectToMessageUtils {
         message.Details = new MessageDetailsImpl();
         let methodText: string = document.getText(RangeUtils.trimRange(document, TextRangeExt.createVSCodeRange(testMethod.fullSpan)));
         let regexFeature: RegExp = /\[Feature\]\s*(?<content>.+)\s*/i;
-        let regexScenario: RegExp = /\[Scenario\s*(?:#(?<id>\d+))?\]\s*(?<content>.+)\s*/i;
+        let regexScenario: RegExp = /\[Scenario\s*(?:#?(?<id>\d+))?\]\s*(?<content>.+)\s*/i;
         let givenPattern: RegExp = /\[Given\]\s*(?<content>.+)\s*/i;
         let regexWhen: RegExp = /\[When\]\s*(?<content>.+)\s*/i;
         let thenPattern: RegExp = /\[Then\]\s*(?<content>.+)\s*/i;
