@@ -46,6 +46,7 @@ export class MessageUpdate {
     OldValue: string;
     NewValue: string;
     FsPath: string;
+    Project: string;
     DeleteProcedure: boolean;
     ArrayIndex?: number;
 }

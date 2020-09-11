@@ -79,6 +79,7 @@ export class AppService {
         message.OldValue = oldValue;
         message.NewValue = newValue;
         if (item) {
+            message.Project = item.Project;
             message.Scenario = item.Scenario;
             message.FsPath = item.FsPath;
         }
