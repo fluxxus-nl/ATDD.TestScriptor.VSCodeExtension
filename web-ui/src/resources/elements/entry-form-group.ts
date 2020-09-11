@@ -20,7 +20,7 @@ export class EntryFormGroup {
 
     @bindable()
     type: MessageDetailType;
-    subscriptions: any;
+    subscriptions: any = [];
 
     constructor(private eventAggregator: EventAggregator, private appService: AppService) {
 
