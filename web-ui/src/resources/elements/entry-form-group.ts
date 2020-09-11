@@ -23,7 +23,9 @@ export class EntryFormGroup {
     subscriptions: any = [];
 
     constructor(private eventAggregator: EventAggregator, private appService: AppService) {
+    }
 
+    attached() {
         this.subscriptions.push(this.eventAggregator.subscribe(AppEventPublisher.saveChangesOK, async (message: MessageUpdate) => {
             if (!message.ArrayIndex) {
                 return;
@@ -54,10 +56,6 @@ export class EntryFormGroup {
         }));
     }
 
-    attached() {
-
-    }
-
     detached() {
 
     }
@@ -85,7 +83,7 @@ export class EntryFormGroup {
         let currValue: string = '';
         if (index !== -1) {
             currValue = this.entries[index];
-            this.entries.splice(index, 1);
+            //this.entries.splice(index, 1);
         }
 
         let message: Message = JSON.parse(JSON.stringify(this.scenario));
