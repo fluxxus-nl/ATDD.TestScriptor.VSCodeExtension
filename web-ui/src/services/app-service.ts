@@ -80,6 +80,7 @@ export class AppService {
         message.NewValue = newValue;
         if (item) {
             message.Project = item.Project;
+            message.Id = item.Id;
             message.Scenario = item.Scenario;
             message.FsPath = item.FsPath;
         }
