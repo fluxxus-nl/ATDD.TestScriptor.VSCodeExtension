@@ -43,6 +43,7 @@ export enum MessageState {
 export interface MessageUpdate
 {    
     Scenario: string;
+    Feature: string;
     Type: TypeChanged;
     State: MessageState;
     OldValue: string;

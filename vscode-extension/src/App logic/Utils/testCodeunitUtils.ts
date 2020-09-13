@@ -9,8 +9,11 @@ import { RangeUtils } from './rangeUtils';
 import { TestMethodUtils } from './testMethodUtils';
 
 export class TestCodeunitUtils {
-    public static async getTestUrisOfWorkspaces(): Promise<Uri[]> {
-        let uris: Uri[] = await workspace.findFiles('**/*.al');
+    public static async getTestUrisOfWorkspaces(paths: string[]): Promise<Uri[]> {
+        let uris: Uri[] = []
+        for (let i = 0; i < paths.length; i++) {
+            uris = uris.concat(await workspace.findFiles(new RelativePattern(paths[i], '**/*.al')))
+        }
         let testUris: Uri[] = [];
         for (let i = 0; i < uris.length; i++) {
             let document: TextDocument = await workspace.openTextDocument(uris[i].fsPath);
@@ -117,6 +120,10 @@ export class TestCodeunitUtils {
             return existsWithSameTypes;
         }
     }
+    public static includesFeature(fileContent: string, feature: string): boolean {
+        let regexFeature: RegExp = new RegExp('\\[Feature\\]\\s*' + feature + '\\s*\\\\r\\\\n', 'i');
+        return regexFeature.test(fileContent);
+    }
     public static getDefaultTestCodeunit(elementValue: string): string[] {
         let codeunitName: string = elementValue.includes(' ') ? '"' + elementValue + '"' : elementValue;
         return [
@@ -133,9 +140,26 @@ export class TestCodeunitUtils {
             '    local procedure NewTestProcedure()',
             '    // [Feature] ' + elementValue,
             '    begin',
-            '        // [SCENARIO #0001] New Test Procedure',
+            '        // [Scenario #0001] New Test Procedure',
             '    end;',
             '}'
+        ];
+    }
+    public static getDefaultTestMethod(feature: string, id: number | undefined, scenario: string): string[] {
+        let scenarioNameTitleCase: string = scenario.replace(/\w\S*/g, function (txt) {
+            return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+        });
+        scenarioNameTitleCase = scenarioNameTitleCase.replace(/\s/g, '');
+        let idAsString: string = '';
+        if (id)
+            idAsString = ' #' + (id + '').padStart(4, '0');
+        return [
+            '    [Test]',
+            '    local procedure ' + scenarioNameTitleCase + '()',
+            '    // [Feature] ' + feature,
+            '    begin',
+            '        // [Scenario' + idAsString + '] ' + scenario,
+            '    end;'
         ];
     }
 }

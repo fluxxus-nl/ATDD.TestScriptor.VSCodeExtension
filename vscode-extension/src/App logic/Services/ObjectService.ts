@@ -27,7 +27,7 @@ export class ObjectService {
 
     public async getObjects(paths: string[]): Promise<Message[]> {
         let messages: Message[] = [];
-        let testUris: Uri[] = await TestCodeunitUtils.getTestUrisOfWorkspaces();
+        let testUris: Uri[] = await TestCodeunitUtils.getTestUrisOfWorkspaces(paths);
         for (let i = 0; i < testUris.length; i++) {
             let document: TextDocument = await workspace.openTextDocument(testUris[i].fsPath);
             let testMethods: ALFullSyntaxTreeNode[] = await TestCodeunitUtils.getTestMethodsOfDocument(document);
