@@ -27,6 +27,8 @@ out
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+*.js
+*.js.map
 
 # Dependencies
 node_modules
