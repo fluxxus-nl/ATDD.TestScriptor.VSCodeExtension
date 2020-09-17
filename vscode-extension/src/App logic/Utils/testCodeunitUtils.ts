@@ -1,10 +1,12 @@
 import { Range, RelativePattern, TextDocument, Uri, workspace, WorkspaceEdit, WorkspaceFolder } from 'vscode';
+import { TypeChanged } from '../../typings/types';
 import { ALFullSyntaxTreeNodeExt } from '../AL Code Outline Ext/alFullSyntaxTreeNodeExt';
 import { FullSyntaxTreeNodeKind } from '../AL Code Outline Ext/fullSyntaxTreeNodeKind';
 import { SyntaxTreeExt } from '../AL Code Outline Ext/syntaxTreeExt';
 import { TextRangeExt } from '../AL Code Outline Ext/textRangeExt';
 import { ALFullSyntaxTreeNode } from '../AL Code Outline/alFullSyntaxTreeNode';
 import { SyntaxTree } from '../AL Code Outline/syntaxTree';
+import { Config } from './config';
 import { RangeUtils } from './rangeUtils';
 import { TestMethodUtils } from './testMethodUtils';
 
@@ -69,7 +71,7 @@ export class TestCodeunitUtils {
             let textToAdd: string = '\r\n\r\n';
             textToAdd += procedureHeader + '\r\n';
             textToAdd += '    begin\r\n';
-            if (workspace.getConfiguration('atddTestScriptor', document.uri).get<boolean>('addException', false))
+            if (Config.getAddException(document.uri))
                 textToAdd += '        Error(\'Procedure ' + procedureNameOnly + ' not yet implemented.\');\r\n';
             textToAdd += '    end;'
             edit.insert(document.uri, lastRange.end, textToAdd);
@@ -145,15 +147,12 @@ export class TestCodeunitUtils {
             '}'
         ];
     }
-    public static getDefaultTestMethod(feature: string, id: number | undefined, scenario: string): string[] {
-        let scenarioNameTitleCase: string = scenario.replace(/\w\S*/g, function (txt) {
-            return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-        });
-        scenarioNameTitleCase = scenarioNameTitleCase.replace(/\s/g, '');
+    public static getDefaultTestMethod(feature: string, id: number | undefined, scenario: string, uri: Uri): string[] {
+        let scenarioNameTitleCase: string = TestMethodUtils.getProcedureName(TypeChanged.ScenarioName, scenario);
         let idAsString: string = '';
         if (id)
             idAsString = ' #' + (id + '').padStart(4, '0');
-        return [
+        let procedure: string[] = [
             '    [Test]',
             '    local procedure ' + scenarioNameTitleCase + '()',
             '    // [Feature] ' + feature,
@@ -161,5 +160,8 @@ export class TestCodeunitUtils {
             '        // [Scenario' + idAsString + '] ' + scenario,
             '    end;'
         ];
+        if (Config.getAddInitializeFunction(uri))
+            procedure.splice(5, 0, '        Initialize();');
+        return procedure;
     }
 }

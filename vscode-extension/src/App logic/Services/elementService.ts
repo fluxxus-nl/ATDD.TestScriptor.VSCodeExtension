@@ -44,9 +44,9 @@ export class ElementService {
             let lastTestMethodTreeNode: ALFullSyntaxTreeNode = testMethodTreeNodes[testMethodTreeNodes.length - 1];
             let positionToInsert: Position = RangeUtils.trimRange(document, TextRangeExt.createVSCodeRange(lastTestMethodTreeNode.fullSpan)).end;
             let edit: WorkspaceEdit = new WorkspaceEdit();
-            edit.insert(document.uri, positionToInsert, '\r\n\r\n' + TestCodeunitUtils.getDefaultTestMethod(msg.Feature, msg.Id, msg.NewValue).join('\r\n'));
+            edit.insert(document.uri, positionToInsert, '\r\n\r\n' + TestCodeunitUtils.getDefaultTestMethod(msg.Feature, msg.Id, msg.NewValue, document.uri).join('\r\n'));
             let success = await workspace.applyEdit(edit);
-            await document.save();
+            success = success && await document.save();
             return success;
         }
         else {

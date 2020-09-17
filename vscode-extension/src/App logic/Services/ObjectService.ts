@@ -1,4 +1,4 @@
-import { commands, Range, TextDocument, Uri, workspace, WorkspaceConfiguration, RelativePattern } from 'vscode';
+import { commands, Range, RelativePattern, TextDocument, Uri, workspace, WorkspaceConfiguration } from 'vscode';
 import { Message, MessageState, MessageUpdate, TypeChanged } from "../../typings/types";
 import { TextRangeExt } from '../AL Code Outline Ext/textRangeExt';
 import { ALFullSyntaxTreeNode } from '../AL Code Outline/alFullSyntaxTreeNode';
@@ -15,7 +15,7 @@ export class ObjectService {
         let appJsons: string[] = [];
         for (let i = 0; i < workspace.workspaceFolders.length; i++) {
             let files: Uri[] = await workspace.findFiles(new RelativePattern(workspace.workspaceFolders[i], 'app.json'));
-            for(let a = 0; a < files.length; a++){
+            for (let a = 0; a < files.length; a++) {
                 let appDoc: TextDocument = await workspace.openTextDocument(files[a]);
                 let appJson = JSON.parse(appDoc.getText());
                 appJson.FilePath = workspace.workspaceFolders[i].uri.fsPath;
@@ -34,7 +34,7 @@ export class ObjectService {
             for (let a = 0; a < testMethods.length; a++)
                 messages.push(await ObjectToMessageUtils.testMethodsToMessage(document, testMethods[a]));
         }
-        return messages;
+        return messages.sort((a, b) => a.Id && b.Id ? (a.Id - b.Id) : (a.MethodName.localeCompare(b.MethodName)));
     }
     public async checkSaveChanges(msg: MessageUpdate, config: WorkspaceConfiguration): Promise<boolean> {
         let procedureCanBeRemovedAfterwards: boolean = false;

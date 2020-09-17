@@ -52,6 +52,11 @@
                         "default": true,
                         "description": "Adds an 'Not yet implemented'-Error to the body of the created helper functions."
                     },
+                    "atddTestScriptor.addInitializeFunction": {
+                        "type": "boolean",
+                        "default": true,
+                        "description": "Adds a call to the Initialize-Function to each new scenario."
+                    },
                     "atddTestScriptor.prefixGiven": {
                         "type": "string",
                         "default": "Create",

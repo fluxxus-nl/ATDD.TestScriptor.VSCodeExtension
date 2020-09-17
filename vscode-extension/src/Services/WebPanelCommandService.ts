@@ -6,6 +6,8 @@ import { VSCommandService, VSCommandType, VSDependency } from './VSCommandServic
 import { WebPanel } from '../WebPanel';
 import { IMessageBase, Message, MessageUpdate, TypeChanged, MessageState } from '../typings/types';
 import { workspace, window, TextDocument, ViewColumn, TextEditorRevealType, Selection, Range, WorkspaceConfiguration } from 'vscode';
+import { TestMethodUtils } from '../App logic/Utils/testMethodUtils';
+import { TestCodeunitUtils } from '../App logic/Utils/testCodeunitUtils';
 
 @singleton(true)
 @autoinject()
@@ -60,10 +62,10 @@ export class WebPanelCommandService {
         let config = Application.clone(Application.config) as any;
         let entry = message.Data as MessageUpdate;
         let proceed: boolean = await this.askUserForConfirmations(entry, config);
-        if (proceed){
+        if (proceed) {
             await this.middlewareService.saveChanges(entry, config);
         }
-        WebPanel.postMessage({Command: 'SaveChanges', Data: proceed});
+        WebPanel.postMessage({ Command: 'SaveChanges', Data: proceed });
     }
     async askUserForConfirmations(entry: MessageUpdate, config: WorkspaceConfiguration): Promise<boolean> {
         entry.DeleteProcedure = false;
@@ -90,6 +92,13 @@ export class WebPanelCommandService {
                 if (confirmedUpdateOfElement === optionNo) {
                     return false;
                 }
+            }
+        } else if (entry.Type == TypeChanged.ScenarioName && entry.State == MessageState.New) {
+            let document: TextDocument = await workspace.openTextDocument(entry.FsPath);
+            let scenarioProcedureName = TestMethodUtils.getProcedureName(TypeChanged.ScenarioName, entry.NewValue);
+            if (await TestCodeunitUtils.isProcedureAlreadyDeclared(document, scenarioProcedureName, [])) {
+                window.showErrorMessage('Scenario already exists. Please update your scenario definition so it is unique.');
+                return false;
             }
         }
         return true;

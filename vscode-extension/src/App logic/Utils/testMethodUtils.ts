@@ -1,36 +1,33 @@
-import { commands, Location, Position, Range, TextDocument, window, workspace, WorkspaceConfiguration, WorkspaceEdit } from "vscode";
+import { commands, Location, Position, Range, TextDocument, Uri, window, WorkspaceEdit } from "vscode";
 import { TypeChanged } from "../../typings/types";
 import { ALFullSyntaxTreeNodeExt } from "../AL Code Outline Ext/alFullSyntaxTreeNodeExt";
 import { FullSyntaxTreeNodeKind } from "../AL Code Outline Ext/fullSyntaxTreeNodeKind";
 import { TextRangeExt } from "../AL Code Outline Ext/textRangeExt";
 import { ALFullSyntaxTreeNode } from "../AL Code Outline/alFullSyntaxTreeNode";
+import { Config } from "./config";
 import { RangeUtils } from "./rangeUtils";
 
 export class TestMethodUtils {
     public static getProcedureName(type: TypeChanged, name: string): string {
-        let nameTitleCase: string = name.replace(/\w\S*/g, function (txt) {
+        let nameTitleCase: string = name.replace(/\w+/g, function (txt) {
             return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
         });
-        nameTitleCase = nameTitleCase.replace(/\s/g, '');
+        nameTitleCase = nameTitleCase.replace(/[^\w]/g, '');
 
         let prefix: string = '';
-        let config: WorkspaceConfiguration = workspace.getConfiguration('atddTestScriptor', window.activeTextEditor?.document.uri);
-        let prefixGiven: string | undefined = config.get('prefixGiven');
-        let prefixWhen: string | undefined = config.get('prefixWhen');
-        let prefixThen: string | undefined = config.get('prefixThen');
+        let uri: Uri | undefined = window.activeTextEditor?.document.uri;
         switch (type) {
             case TypeChanged.Given:
-                if (prefixGiven)
-                    prefix = prefixGiven;
+                prefix = Config.getPrefixGiven(uri);
                 break;
             case TypeChanged.When:
-                if (prefixWhen)
-                    prefix = prefixWhen;
+                prefix = Config.getPrefixWhen(uri);
                 break;
             case TypeChanged.Then:
-                if (prefixThen)
-                    prefix = prefixThen;
+                prefix = Config.getPrefixThen(uri);
                 break;
+            case TypeChanged.ScenarioName:
+                break; //no prefix
         }
         return prefix + nameTitleCase;
     }
