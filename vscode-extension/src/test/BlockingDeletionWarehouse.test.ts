@@ -4,8 +4,6 @@ import { writeFileSync } from "fs-extra";
 import { commands, TextDocument, Uri, window, workspace, WorkspaceFolder } from 'vscode';
 import { ObjectService } from '../App logic/Services/ObjectService';
 import { Config } from '../App logic/Utils/config';
-import { TestCodeunitUtils } from '../App logic/Utils/testCodeunitUtils';
-import { TestMethodUtils } from '../App logic/Utils/testMethodUtils';
 import { Message, MessageState, MessageUpdate, TypeChanged } from '../typings/types';
 
 
@@ -69,7 +67,7 @@ suite('Extension Test Suite', async function () {
 			DeleteProcedure: false
 		};
 		let config: any;
-		messageUpdate.DeleteProcedure = await new ObjectService().checkSaveChanges(messageUpdate, config);
+		messageUpdate.DeleteProcedure = await new ObjectService().checkIfProcedureCanBeDeletedAfterwards(messageUpdate, config);
 		assert.strictEqual(messageUpdate.DeleteProcedure, true);
 		await restoreOriginalFileContent(testDoc, originalText);
 	});
@@ -88,7 +86,7 @@ suite('Extension Test Suite', async function () {
 			DeleteProcedure: false
 		};
 		let config: any;
-		messageUpdate.DeleteProcedure = await new ObjectService().checkSaveChanges(messageUpdate, config);
+		messageUpdate.DeleteProcedure = await new ObjectService().checkIfProcedureCanBeDeletedAfterwards(messageUpdate, config);
 		assert.strictEqual(messageUpdate.DeleteProcedure, false);
 		await restoreOriginalFileContent(testDoc, originalText);
 	});
@@ -202,9 +200,9 @@ suite('Extension Test Suite', async function () {
 			Project: 'Testing Blocking Deletion of Warehouse Shipment Lines (app)',
 			DeleteProcedure: false
 		};
-		let scenarioProcedureName = TestMethodUtils.getProcedureName(TypeChanged.ScenarioName, messageUpdate.NewValue);
-		let successful = await TestCodeunitUtils.isProcedureAlreadyDeclared(testDoc, scenarioProcedureName, []);
-		assert.strictEqual(successful, true);
+		let config: any;
+		let validationResult: { valid: boolean, reason: string } = await new ObjectService().isChangeValid(messageUpdate, config);
+		assert.strictEqual(validationResult.valid, false);
 		await restoreOriginalFileContent(testDoc, originalText);
 	})
 });

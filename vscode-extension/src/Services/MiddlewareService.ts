@@ -26,9 +26,11 @@ export class MiddlewareService {
         return new ObjectService().getObjects(paths);
         // return this.send(MiddlewareRequestMethod.QueryObjects, MiddlewareResponseMethod.GetObjects, false, paths) as Promise<Array<Message>>;
     }
-
-    async checkSaveChanges(item: MessageUpdate, config: any): Promise<boolean> {
-        return new ObjectService().checkSaveChanges(item, config);
+    async isChangeValid(item: MessageUpdate, config: any): Promise<{ valid: boolean, reason: string }> {
+        return new ObjectService().isChangeValid(item, config);
+    }
+    async checkIfProcedureCanBeDeletedAfterwards(item: MessageUpdate, config: any): Promise<boolean> {
+        return new ObjectService().checkIfProcedureCanBeDeletedAfterwards(item, config);
         // return this.send(MiddlewareRequestMethod.CheckSaveChanges, MiddlewareResponseMethod.CheckSaveChangesResponse, false, item, config) as Promise<boolean>;
     }
 

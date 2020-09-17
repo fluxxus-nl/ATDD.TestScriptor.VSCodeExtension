@@ -1,13 +1,11 @@
+import { autoinject, singleton } from 'aurelia-dependency-injection';
+import { Range, Selection, TextDocument, TextEditorRevealType, ViewColumn, window, workspace, WorkspaceConfiguration } from 'vscode';
 import { Application } from '../Application';
-import { singleton, autoinject } from 'aurelia-dependency-injection';
+import { IMessageBase, Message, MessageState, MessageUpdate, TypeChanged } from '../typings/types';
+import { WebPanel } from '../WebPanel';
 import { ExcelService } from './ExcelService';
 import { MiddlewareService } from './MiddlewareService';
 import { VSCommandService, VSCommandType, VSDependency } from './VSCommandService';
-import { WebPanel } from '../WebPanel';
-import { IMessageBase, Message, MessageUpdate, TypeChanged, MessageState } from '../typings/types';
-import { workspace, window, TextDocument, ViewColumn, TextEditorRevealType, Selection, Range, WorkspaceConfiguration } from 'vscode';
-import { TestMethodUtils } from '../App logic/Utils/testMethodUtils';
-import { TestCodeunitUtils } from '../App logic/Utils/testCodeunitUtils';
 
 @singleton(true)
 @autoinject()
@@ -61,14 +59,21 @@ export class WebPanelCommandService {
     async SaveChangesCommand(message: IMessageBase) {
         let config = Application.clone(Application.config) as any;
         let entry = message.Data as MessageUpdate;
-        let proceed: boolean = await this.askUserForConfirmations(entry, config);
-        if (proceed) {
-            await this.middlewareService.saveChanges(entry, config);
+        let validationResult: { valid: boolean, reason: string } = await this.middlewareService.isChangeValid(entry, config);
+        let somethingIsChanged: boolean = false;;
+        if (!validationResult.valid) {
+            window.showErrorMessage(validationResult.reason);
+        } else {
+            let userResponses: { wantsToContinue: boolean, wantsToDeleteHelperFunction: boolean } = await this.askUserForConfirmationsToProceed(entry, config);
+            if (userResponses.wantsToContinue) {
+                entry.DeleteProcedure = userResponses.wantsToDeleteHelperFunction;
+                await this.middlewareService.saveChanges(entry, config);
+                somethingIsChanged = true;
+            }
         }
-        WebPanel.postMessage({ Command: 'SaveChanges', Data: proceed });
+        WebPanel.postMessage({ Command: 'SaveChanges', Data: somethingIsChanged });
     }
-    async askUserForConfirmations(entry: MessageUpdate, config: WorkspaceConfiguration): Promise<boolean> {
-        entry.DeleteProcedure = false;
+    async askUserForConfirmationsToProceed(entry: MessageUpdate, config: WorkspaceConfiguration): Promise<{ wantsToContinue: boolean, wantsToDeleteHelperFunction: boolean }> {
         let confirmDeletionOfElementQuestion: string = 'Do you want to delete this element?';
         let confirmDeletionOfProcedureQuestion: string = 'Do you want to delete the helper function?';
         let confirmUpdateOfElementQuestion: string = 'Do you want to update this element?';
@@ -76,32 +81,24 @@ export class WebPanelCommandService {
         let optionNo: string = 'No';
         if ([TypeChanged.Given, TypeChanged.When, TypeChanged.Then].includes(entry.Type)) {
             if (entry.State === MessageState.Deleted) {
-                let confirmedDeletionOfElement: string | undefined = await window.showInformationMessage(confirmDeletionOfElementQuestion, optionYes, optionNo);
-                if (confirmedDeletionOfElement === optionYes) {
-
-                    let couldHelperFunctionBeDeleted: boolean = await this.middlewareService.checkSaveChanges(entry, config);
+                let responseElementShouldBeDeleted: string | undefined = await window.showInformationMessage(confirmDeletionOfElementQuestion, optionYes, optionNo);
+                if (responseElementShouldBeDeleted === optionYes) {
+                    let couldHelperFunctionBeDeleted: boolean = await this.middlewareService.checkIfProcedureCanBeDeletedAfterwards(entry, config);
                     if (couldHelperFunctionBeDeleted) {
-                        let confirmedDeletionOfProcedure: string | undefined = await window.showInformationMessage(confirmDeletionOfProcedureQuestion, optionYes, optionNo);
-                        entry.DeleteProcedure = confirmedDeletionOfProcedure === optionYes;
+                        let responseHelperFunctionShouldBeDeleted: string | undefined = await window.showInformationMessage(confirmDeletionOfProcedureQuestion, optionYes, optionNo);
+                        return { wantsToContinue: true, wantsToDeleteHelperFunction: responseHelperFunctionShouldBeDeleted === optionYes };
                     }
                 } else {
-                    return false;
+                    return { wantsToContinue: false, wantsToDeleteHelperFunction: false };
                 }
             } else if (entry.State === MessageState.Modified) {
                 let confirmedUpdateOfElement: string | undefined = await window.showInformationMessage(confirmUpdateOfElementQuestion, optionYes, optionNo);
                 if (confirmedUpdateOfElement === optionNo) {
-                    return false;
+                    return { wantsToContinue: false, wantsToDeleteHelperFunction: false };
                 }
             }
-        } else if (entry.Type == TypeChanged.ScenarioName && entry.State == MessageState.New) {
-            let document: TextDocument = await workspace.openTextDocument(entry.FsPath);
-            let scenarioProcedureName = TestMethodUtils.getProcedureName(TypeChanged.ScenarioName, entry.NewValue);
-            if (await TestCodeunitUtils.isProcedureAlreadyDeclared(document, scenarioProcedureName, [])) {
-                window.showErrorMessage('Scenario already exists. Please update your scenario definition so it is unique.');
-                return false;
-            }
         }
-        return true;
+        return { wantsToContinue: true, wantsToDeleteHelperFunction: false };
     }
 
     async ViewSourceCommand(message: IMessageBase) {

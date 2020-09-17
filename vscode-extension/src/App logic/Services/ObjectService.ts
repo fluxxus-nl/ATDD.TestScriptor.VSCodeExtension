@@ -6,6 +6,7 @@ import { ElementUtils } from '../Utils/elementUtils';
 import { ObjectToMessageUtils } from '../Utils/objectToMessageUtils';
 import { RangeUtils } from '../Utils/rangeUtils';
 import { TestCodeunitUtils } from '../Utils/testCodeunitUtils';
+import { TestMethodUtils } from '../Utils/testMethodUtils';
 import { ElementService } from './elementService';
 
 export class ObjectService {
@@ -36,7 +37,7 @@ export class ObjectService {
         }
         return messages.sort((a, b) => a.Id && b.Id ? (a.Id - b.Id) : (a.MethodName.localeCompare(b.MethodName)));
     }
-    public async checkSaveChanges(msg: MessageUpdate, config: WorkspaceConfiguration): Promise<boolean> {
+    public async checkIfProcedureCanBeDeletedAfterwards(msg: MessageUpdate, config: WorkspaceConfiguration): Promise<boolean> {
         let procedureCanBeRemovedAfterwards: boolean = false;
         if ([TypeChanged.Given, TypeChanged.When, TypeChanged.Then].includes(msg.Type) && [MessageState.Deleted, MessageState.Modified].includes(msg.State)) {
             let document: TextDocument = await workspace.openTextDocument(msg.FsPath);
@@ -68,5 +69,17 @@ export class ObjectService {
                 return false;
         }
     }
-
+    async isChangeValid(entry: MessageUpdate, config: WorkspaceConfiguration): Promise<{ valid: boolean, reason: string }> {
+        if (entry.Type == TypeChanged.ScenarioName && entry.State == MessageState.New) {
+            let document: TextDocument = await workspace.openTextDocument(entry.FsPath);
+            let scenarioProcedureName = TestMethodUtils.getProcedureName(TypeChanged.ScenarioName, entry.NewValue);
+            if (await TestCodeunitUtils.isProcedureAlreadyDeclared(document, scenarioProcedureName, [])) {
+                return {
+                    valid: false,
+                    reason: 'Scenario already exists. Please update your scenario definition so it is unique.'
+                };
+            }
+        }
+        return { valid: true, reason: '' };
+    }
 }
