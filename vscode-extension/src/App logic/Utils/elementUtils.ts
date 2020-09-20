@@ -69,7 +69,8 @@ export class ElementUtils {
 
     public static getRangeOfScenario(document: TextDocument, scenarioValue: string, id?: number): Range | undefined {
         let idAsString: string = (id ? id : '') + '';
-        let regexScenario: RegExp = new RegExp('[/][/]\\s*\\[Scenario[^\\]]*' + idAsString + '\\]\\s*' + scenarioValue, 'i');
+        let scenarioValueSafe: string = scenarioValue.replace(/([\(\)\[\]\{\}\\\?\*\+])/g, '\\$1');
+        let regexScenario: RegExp = new RegExp('[/][/]\\s*\\[Scenario[^\\]]*' + idAsString + '\\]\\s*' + scenarioValueSafe, 'i');
         return RangeUtils.getRangeOfTextInsideRange(document, new Range(0, 0, document.lineCount - 1, 0), regexScenario);
 
         // for (let line = 0; line < document.lineCount; line++) {
@@ -139,7 +140,7 @@ export class ElementUtils {
     }
     public static addElement(edit: WorkspaceEdit, document: TextDocument, positionToInsert: Position, type: TypeChanged, elementValue: string) {
         let textToAdd: string = '';
-        textToAdd += '        // [' + TypeChanged[type] + ']' + elementValue;
+        textToAdd += '        // [' + TypeChanged[type] + '] ' + elementValue;
         edit.insert(document.uri, positionToInsert, textToAdd);
     }
     public static async deleteElement(edit: WorkspaceEdit, document: TextDocument, rangeToDelete: Range) {
