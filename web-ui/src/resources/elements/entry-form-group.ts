@@ -89,7 +89,7 @@ export class EntryFormGroup {
         let message: Message = JSON.parse(JSON.stringify(this.scenario));
         message.ArrayIndex = index;
 
-        this.appService.sendChangeNotification(this.getTypeChanged(), MessageState.Deleted, null, currValue, this.scenario);
+        this.appService.sendChangeNotification(this.getTypeChanged(), MessageState.Deleted, null, currValue, message);
     }
 
     getTypeChanged() {

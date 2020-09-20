@@ -84,7 +84,7 @@ export class AppService {
             message.Scenario = item.Scenario;
             message.FsPath = item.FsPath;
         }
-        message.DeleteProcedure = [TypeChanged.Given, TypeChanged.When, TypeChanged.Then].indexOf(type) !== -1 && state == MessageState.Deleted;
+        //message.DeleteProcedure = [TypeChanged.Given, TypeChanged.When, TypeChanged.Then].indexOf(type) !== -1 && state == MessageState.Deleted;
         message.ArrayIndex = item.ArrayIndex;        
 
         this.eventAggregator.publish(AppEventPublisher.saveChanges, message);

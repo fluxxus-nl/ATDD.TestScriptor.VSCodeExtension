@@ -11,7 +11,8 @@ export enum AppEventPublisher {
     selectedEntryEdited = 'selectedEntryEdited',
     sidebarLinksUpdated = 'sidebarLinksUpdated',
     saveChanges = 'saveChanges',
-    saveChangesOK = 'saveChangesOK'
+    saveChangesOK = 'saveChangesOK',
+    onDeleteScenario = 'onDeleteScenario'
 }
 
 export class Message {
@@ -41,6 +42,7 @@ export class MessageDetails {
 export class MessageUpdate {
     Feature: string;
     Scenario: string;
+    Id?: number;
     Type: TypeChanged;
     State: MessageState;
     OldValue: string;
