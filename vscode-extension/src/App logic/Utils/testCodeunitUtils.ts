@@ -1,16 +1,21 @@
 import { Range, RelativePattern, TextDocument, Uri, workspace, WorkspaceEdit, WorkspaceFolder } from 'vscode';
+import { TypeChanged } from '../../typings/types';
 import { ALFullSyntaxTreeNodeExt } from '../AL Code Outline Ext/alFullSyntaxTreeNodeExt';
 import { FullSyntaxTreeNodeKind } from '../AL Code Outline Ext/fullSyntaxTreeNodeKind';
 import { SyntaxTreeExt } from '../AL Code Outline Ext/syntaxTreeExt';
 import { TextRangeExt } from '../AL Code Outline Ext/textRangeExt';
 import { ALFullSyntaxTreeNode } from '../AL Code Outline/alFullSyntaxTreeNode';
 import { SyntaxTree } from '../AL Code Outline/syntaxTree';
+import { Config } from './config';
 import { RangeUtils } from './rangeUtils';
 import { TestMethodUtils } from './testMethodUtils';
 
 export class TestCodeunitUtils {
-    public static async getTestUrisOfWorkspaces(): Promise<Uri[]> {
-        let uris: Uri[] = await workspace.findFiles('**/*.al');
+    public static async getTestUrisOfWorkspaces(paths: string[]): Promise<Uri[]> {
+        let uris: Uri[] = []
+        for (let i = 0; i < paths.length; i++) {
+            uris = uris.concat(await workspace.findFiles(new RelativePattern(paths[i], '**/*.al')))
+        }
         let testUris: Uri[] = [];
         for (let i = 0; i < uris.length; i++) {
             let document: TextDocument = await workspace.openTextDocument(uris[i].fsPath);
@@ -66,7 +71,7 @@ export class TestCodeunitUtils {
             let textToAdd: string = '\r\n\r\n';
             textToAdd += procedureHeader + '\r\n';
             textToAdd += '    begin\r\n';
-            if (workspace.getConfiguration('atddTestScriptor', document.uri).get<boolean>('addException', false))
+            if (Config.getAddException(document.uri))
                 textToAdd += '        Error(\'Procedure ' + procedureNameOnly + ' not yet implemented.\');\r\n';
             textToAdd += '    end;'
             edit.insert(document.uri, lastRange.end, textToAdd);
@@ -117,6 +122,10 @@ export class TestCodeunitUtils {
             return existsWithSameTypes;
         }
     }
+    public static includesFeature(fileContent: string, feature: string): boolean {
+        let regexFeature: RegExp = new RegExp('\\[Feature\\]\\s*' + feature + '\\s*\\\\r\\\\n', 'i');
+        return regexFeature.test(fileContent);
+    }
     public static getDefaultTestCodeunit(elementValue: string): string[] {
         let codeunitName: string = elementValue.includes(' ') ? '"' + elementValue + '"' : elementValue;
         return [
@@ -133,9 +142,26 @@ export class TestCodeunitUtils {
             '    local procedure NewTestProcedure()',
             '    // [Feature] ' + elementValue,
             '    begin',
-            '        // [SCENARIO #0001] New Test Procedure',
+            '        // [Scenario #0001] New Test Procedure',
             '    end;',
             '}'
         ];
+    }
+    public static getDefaultTestMethod(feature: string, id: number | undefined, scenario: string, uri: Uri): string[] {
+        let scenarioNameTitleCase: string = TestMethodUtils.getProcedureName(TypeChanged.ScenarioName, scenario);
+        let idAsString: string = '';
+        if (id)
+            idAsString = ' #' + (id + '').padStart(4, '0');
+        let procedure: string[] = [
+            '    [Test]',
+            '    local procedure ' + scenarioNameTitleCase + '()',
+            '    // [Feature] ' + feature,
+            '    begin',
+            '        // [Scenario' + idAsString + '] ' + scenario,
+            '    end;'
+        ];
+        if (Config.getAddInitializeFunction(uri))
+            procedure.splice(5, 0, '        Initialize();');
+        return procedure;
     }
 }

@@ -83,7 +83,6 @@ export class EntryFormGroup {
         let currValue: string = '';
         if (index !== -1) {
             currValue = this.entries[index];
-            //this.entries.splice(index, 1);
         }
 
         let message: Message = JSON.parse(JSON.stringify(this.scenario));

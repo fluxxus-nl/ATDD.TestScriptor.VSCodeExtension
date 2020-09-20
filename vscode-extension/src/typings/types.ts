@@ -40,19 +40,20 @@ export enum MessageState {
     Deleted
 }
 
-export interface MessageUpdate
-{    
+export interface MessageUpdate {
     Scenario: string;
+    Feature: string;
     Type: TypeChanged;
     State: MessageState;
     OldValue: string;
     NewValue: string;
+    Id?: number;
     FsPath: string;
-    DeleteProcedure: boolean;
+    Project: string;
+    ProceduresToDelete?: Array<{ procedureName: string, parameterTypes: string[] }>;
 }
 
-export enum TypeChanged
-{
+export enum TypeChanged {
     Feature,
     ScenarioFeature,
     ScenarioId,

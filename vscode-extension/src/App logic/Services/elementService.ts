@@ -1,6 +1,8 @@
 import { writeFileSync } from "fs-extra";
-import { Position, Range, TextDocument, workspace, WorkspaceEdit, commands, Location } from "vscode";
-import { MessageUpdate, TypeChanged } from "../../typings/types";
+import { commands, Location, Position, Range, TextDocument, workspace, WorkspaceEdit } from "vscode";
+import { Message, MessageUpdate, TypeChanged } from "../../typings/types";
+import { ALFullSyntaxTreeNodeExt } from "../AL Code Outline Ext/alFullSyntaxTreeNodeExt";
+import { FullSyntaxTreeNodeKind } from "../AL Code Outline Ext/fullSyntaxTreeNodeKind";
 import { SyntaxTreeExt } from "../AL Code Outline Ext/syntaxTreeExt";
 import { TextRangeExt } from "../AL Code Outline Ext/textRangeExt";
 import { ALFullSyntaxTreeNode } from "../AL Code Outline/alFullSyntaxTreeNode";
@@ -9,12 +11,35 @@ import { ElementUtils } from "../Utils/elementUtils";
 import { RangeUtils } from "../Utils/rangeUtils";
 import { TestCodeunitUtils } from "../Utils/testCodeunitUtils";
 import { TestMethodUtils } from "../Utils/testMethodUtils";
+import { ObjectService } from "./ObjectService";
 
 export class ElementService {
     public static async addNewElementToCode(msg: MessageUpdate): Promise<boolean> {
         if (msg.Type == TypeChanged.Feature) {
             writeFileSync(msg.FsPath, TestCodeunitUtils.getDefaultTestCodeunit(msg.NewValue), { encoding: 'utf8' });
             return true;
+        } else if (msg.Type == TypeChanged.ScenarioName) {
+            //TODO: Get the workspacefolder using the msg.Project, search for the feature and add the scenario there.
+            //msg.Id will contain the next ID of the Feature
+            let fsPath: string = await ElementService.getFSPathOfFeature(msg.Project,msg.Feature);
+            let document: TextDocument = await workspace.openTextDocument(fsPath);
+
+            let syntaxTree: SyntaxTree = await SyntaxTree.getInstance(document);
+            let methodTreeNodes: ALFullSyntaxTreeNode[] = syntaxTree.collectNodesOfKindXInWholeDocument(FullSyntaxTreeNodeKind.getMethodDeclaration());
+            let testMethodTreeNodes = methodTreeNodes.filter(methodTreeNode => {
+                let memberAttributes: ALFullSyntaxTreeNode[] = [];
+                ALFullSyntaxTreeNodeExt.collectChildNodes(methodTreeNode, FullSyntaxTreeNodeKind.getMemberAttribute(), false, memberAttributes);
+                let containsTestMemberAttribute: boolean = memberAttributes.some(memberAttribute => document.getText(TextRangeExt.createVSCodeRange(memberAttribute.fullSpan)).toLowerCase().includes('[test]'));
+                return containsTestMemberAttribute;
+            });
+            testMethodTreeNodes = testMethodTreeNodes.sort((a, b) => a.fullSpan && a.fullSpan.end && b.fullSpan && b.fullSpan.end ? a.fullSpan?.end?.line - b.fullSpan?.end?.line : 0);
+            let lastTestMethodTreeNode: ALFullSyntaxTreeNode = testMethodTreeNodes[testMethodTreeNodes.length - 1];
+            let positionToInsert: Position = RangeUtils.trimRange(document, TextRangeExt.createVSCodeRange(lastTestMethodTreeNode.fullSpan)).end;
+            let edit: WorkspaceEdit = new WorkspaceEdit();
+            edit.insert(document.uri, positionToInsert, '\r\n\r\n' + TestCodeunitUtils.getDefaultTestMethod(msg.Feature, msg.Id, msg.NewValue, document.uri).join('\r\n'));
+            let success = await workspace.applyEdit(edit);
+            success = success && await document.save();
+            return success;
         }
         else {
             let document: TextDocument = await workspace.openTextDocument(msg.FsPath);
@@ -36,6 +61,19 @@ export class ElementService {
             await document.save();
             return successful;
         }
+    }
+
+    public static async getFSPathOfFeature(projectName: string, featureName: string): Promise<string> {
+        let projects: any[] = await new ObjectService().getProjects();
+        let project: any = projects.find(project => project.name == projectName);
+
+        let basePath = (project.FilePath as string).substr(0, (project.FilePath as string).lastIndexOf('\\'));
+        let objects: Message[] = await new ObjectService().getObjects([basePath]);
+        let object: Message | undefined = objects.find(object => object.Feature == featureName);
+        if (!object) {
+            throw new Error('Feature ' + featureName + 'not found.');
+        }
+        return object.FsPath;
     }
 
     public static async modifyElementInCode(msg: MessageUpdate): Promise<boolean> {
@@ -103,7 +141,11 @@ export class ElementService {
     public static async deleteElementFromCode(msg: MessageUpdate): Promise<boolean> {
         let edit: WorkspaceEdit = new WorkspaceEdit();
         let document: TextDocument = await workspace.openTextDocument(msg.FsPath);
-        await ElementUtils.deleteElementWithProcedureCall(edit, msg, document);
+        if ([TypeChanged.Given, TypeChanged.When, TypeChanged.Then].includes(msg.Type))
+            await ElementUtils.deleteElementWithProcedureCall(edit, msg, document);
+        else if (TypeChanged.ScenarioName == msg.Type && msg.ProceduresToDelete)
+            await ElementUtils.deleteProcedures(edit, document, msg.ProceduresToDelete);
+
         let successful: boolean = await workspace.applyEdit(edit);
         await document.save();
         return successful;

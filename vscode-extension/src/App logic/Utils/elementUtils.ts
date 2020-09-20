@@ -1,4 +1,4 @@
-import { commands, Location, Position, Range, TextDocument, WorkspaceEdit } from "vscode";
+import { Position, Range, TextDocument, WorkspaceEdit } from "vscode";
 import { MessageUpdate, TypeChanged } from "../../typings/types";
 import { ALFullSyntaxTreeNodeExt } from "../AL Code Outline Ext/alFullSyntaxTreeNodeExt";
 import { FullSyntaxTreeNodeKind } from "../AL Code Outline Ext/fullSyntaxTreeNodeKind";
@@ -166,19 +166,21 @@ export class ElementUtils {
         if (statementTreeNode) {
             let statementRange: Range = TextRangeExt.createVSCodeRange(statementTreeNode.fullSpan);
             edit.delete(document.uri, statementRange);
-            if (msg.DeleteProcedure) {
-                let procedureName = TestMethodUtils.getProcedureName(msg.Type, msg.OldValue);
-                let invocationRange: Range | undefined = RangeUtils.getRangeOfTextInsideRange(document, statementRange, new RegExp(procedureName + '\\(', 'i'))
-                if (invocationRange) {
-                    let procedureDeclaration: Location[] | undefined = await commands.executeCommand('vscode.executeDefinitionProvider', document.uri, invocationRange.start);
-                    if (procedureDeclaration && procedureDeclaration.length > 0) {
-                        let methodTreeNode: ALFullSyntaxTreeNode | undefined = syntaxTree.findTreeNode(procedureDeclaration[0].range.start, [FullSyntaxTreeNodeKind.getMethodDeclaration()]);
-                        if (methodTreeNode)
-                            edit.delete(document.uri, TextRangeExt.createVSCodeRange(methodTreeNode.fullSpan));
-                    }
-                }
-            }
+            if (msg.ProceduresToDelete)
+                this.deleteProcedures(edit, document, msg.ProceduresToDelete);
         } else
             edit.delete(document.uri, new Range(rangeOfElement.start.line, 0, rangeOfElement.end.line + 1, 0));
+    }
+    static async deleteProcedures(edit: WorkspaceEdit, document: TextDocument, proceduresToDelete: { procedureName: string; parameterTypes: string[]; }[]) {
+        let syntaxTree: SyntaxTree = await SyntaxTree.getInstance(document);
+        let methodTreeNodes: ALFullSyntaxTreeNode[] = syntaxTree.collectNodesOfKindXInWholeDocument(FullSyntaxTreeNodeKind.getMethodDeclaration());
+        methodTreeNodes = methodTreeNodes.filter(method =>
+            proceduresToDelete.some(procedure =>
+                procedure.procedureName == ALFullSyntaxTreeNodeExt.findIdentifierAndGetValueOfTreeNode(document, method) &&
+                JSON.stringify(TestMethodUtils.getParameterTypesOfMethod(method, document)) == JSON.stringify(procedure.parameterTypes)
+            )
+        );
+        methodTreeNodes = methodTreeNodes.sort((a, b) => a.fullSpan && a.fullSpan.start && b.fullSpan && b.fullSpan.start ? b.fullSpan.start.line - a.fullSpan.start.line : 0);
+        methodTreeNodes.forEach(method => edit.delete(document.uri, TextRangeExt.createVSCodeRange(method.fullSpan)));
     }
 }

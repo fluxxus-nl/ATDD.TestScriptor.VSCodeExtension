@@ -10,7 +10,7 @@ import { SyntaxTree } from '../AL Code Outline/syntaxTree';
 import { ALFullSyntaxTreeNodeExt } from '../AL Code Outline Ext/alFullSyntaxTreeNodeExt';
 
 export class ObjectToMessageUtils {
-    public static async testMethodsToMessage(document: TextDocument, testMethod: ALFullSyntaxTreeNode): Promise<Message> {
+    public static async testMethodToMessage(document: TextDocument, testMethod: ALFullSyntaxTreeNode): Promise<Message> {
         let message: MessageImpl = new MessageImpl();
         let syntaxTree: SyntaxTree = await SyntaxTree.getInstance(document);
         message.Codeunit = TestCodeunitUtils.getObjectName(syntaxTree, testMethod, document);
@@ -27,7 +27,7 @@ export class ObjectToMessageUtils {
         message.Details = new MessageDetailsImpl();
         let methodText: string = document.getText(RangeUtils.trimRange(document, TextRangeExt.createVSCodeRange(testMethod.fullSpan)));
         let regexFeature: RegExp = /\[Feature\]\s*(?<content>.+)\s*/i;
-        let regexScenario: RegExp = /\[Scenario\s*(?:#(?<id>\d+))?\]\s*(?<content>.+)\s*/i;
+        let regexScenario: RegExp = /\[Scenario\s*(?:#?(?<id>\d+))?\]\s*(?<content>.+)\s*/i;
         let givenPattern: RegExp = /\[Given\]\s*(?<content>.+)\s*/i;
         let regexWhen: RegExp = /\[When\]\s*(?<content>.+)\s*/i;
         let thenPattern: RegExp = /\[Then\]\s*(?<content>.+)\s*/i;
