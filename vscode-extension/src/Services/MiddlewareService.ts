@@ -29,8 +29,8 @@ export class MiddlewareService {
     async isChangeValid(item: MessageUpdate, config: any): Promise<{ valid: boolean, reason: string }> {
         return new ObjectService().isChangeValid(item, config);
     }
-    async checkIfProcedureCanBeDeletedAfterwards(item: MessageUpdate, config: any): Promise<boolean> {
-        return new ObjectService().checkIfProcedureCanBeDeletedAfterwards(item, config);
+    async getProceduresWhichCouldBeDeletedAfterwards(item: MessageUpdate, config: any): Promise<Array<{ procedureName: string, parameterTypes: string[] }>> {
+        return new ObjectService().getProceduresWhichCouldBeDeletedAfterwards(item, config);
         // return this.send(MiddlewareRequestMethod.CheckSaveChanges, MiddlewareResponseMethod.CheckSaveChangesResponse, false, item, config) as Promise<boolean>;
     }
 

@@ -21,17 +21,9 @@ export class ElementService {
         } else if (msg.Type == TypeChanged.ScenarioName) {
             //TODO: Get the workspacefolder using the msg.Project, search for the feature and add the scenario there.
             //msg.Id will contain the next ID of the Feature
-            let projects: any[] = await new ObjectService().getProjects();
-            let project: any = projects.find(project => project.name == msg.Project);
+            let fsPath: string = await ElementService.getFSPathOfFeature(msg.Project,msg.Feature);
+            let document: TextDocument = await workspace.openTextDocument(fsPath);
 
-            let basePath = (project.FilePath as string).substr(0, (project.FilePath as string).lastIndexOf('\\'));
-            let objects: Message[] = await new ObjectService().getObjects([basePath]);
-            let object: Message | undefined = objects.find(object => object.Feature == msg.Feature);
-            if (!object) {
-                throw new Error('Feature ' + msg.Feature + 'not found.');
-            }
-            let document: TextDocument = await workspace.openTextDocument(object.FsPath);
-            
             let syntaxTree: SyntaxTree = await SyntaxTree.getInstance(document);
             let methodTreeNodes: ALFullSyntaxTreeNode[] = syntaxTree.collectNodesOfKindXInWholeDocument(FullSyntaxTreeNodeKind.getMethodDeclaration());
             let testMethodTreeNodes = methodTreeNodes.filter(methodTreeNode => {
@@ -69,6 +61,19 @@ export class ElementService {
             await document.save();
             return successful;
         }
+    }
+
+    public static async getFSPathOfFeature(projectName: string, featureName: string): Promise<string> {
+        let projects: any[] = await new ObjectService().getProjects();
+        let project: any = projects.find(project => project.name == projectName);
+
+        let basePath = (project.FilePath as string).substr(0, (project.FilePath as string).lastIndexOf('\\'));
+        let objects: Message[] = await new ObjectService().getObjects([basePath]);
+        let object: Message | undefined = objects.find(object => object.Feature == featureName);
+        if (!object) {
+            throw new Error('Feature ' + featureName + 'not found.');
+        }
+        return object.FsPath;
     }
 
     public static async modifyElementInCode(msg: MessageUpdate): Promise<boolean> {
@@ -136,7 +141,11 @@ export class ElementService {
     public static async deleteElementFromCode(msg: MessageUpdate): Promise<boolean> {
         let edit: WorkspaceEdit = new WorkspaceEdit();
         let document: TextDocument = await workspace.openTextDocument(msg.FsPath);
-        await ElementUtils.deleteElementWithProcedureCall(edit, msg, document);
+        if ([TypeChanged.Given, TypeChanged.When, TypeChanged.Then].includes(msg.Type))
+            await ElementUtils.deleteElementWithProcedureCall(edit, msg, document);
+        else if (TypeChanged.ScenarioName == msg.Type && msg.ProceduresToDelete)
+            await ElementUtils.deleteProcedures(edit, document, msg.ProceduresToDelete);
+
         let successful: boolean = await workspace.applyEdit(edit);
         await document.save();
         return successful;

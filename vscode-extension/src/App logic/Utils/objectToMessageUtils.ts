@@ -10,7 +10,7 @@ import { SyntaxTree } from '../AL Code Outline/syntaxTree';
 import { ALFullSyntaxTreeNodeExt } from '../AL Code Outline Ext/alFullSyntaxTreeNodeExt';
 
 export class ObjectToMessageUtils {
-    public static async testMethodsToMessage(document: TextDocument, testMethod: ALFullSyntaxTreeNode): Promise<Message> {
+    public static async testMethodToMessage(document: TextDocument, testMethod: ALFullSyntaxTreeNode): Promise<Message> {
         let message: MessageImpl = new MessageImpl();
         let syntaxTree: SyntaxTree = await SyntaxTree.getInstance(document);
         message.Codeunit = TestCodeunitUtils.getObjectName(syntaxTree, testMethod, document);

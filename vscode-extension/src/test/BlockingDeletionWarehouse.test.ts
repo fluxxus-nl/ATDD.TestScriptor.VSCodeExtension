@@ -2,6 +2,9 @@ import * as assert from 'assert';
 import { readFileSync } from 'fs';
 import { writeFileSync } from "fs-extra";
 import { commands, TextDocument, Uri, window, workspace, WorkspaceFolder } from 'vscode';
+import { FullSyntaxTreeNodeKind } from '../App logic/AL Code Outline Ext/fullSyntaxTreeNodeKind';
+import { ALFullSyntaxTreeNode } from '../App logic/AL Code Outline/alFullSyntaxTreeNode';
+import { SyntaxTree } from '../App logic/AL Code Outline/syntaxTree';
 import { ObjectService } from '../App logic/Services/ObjectService';
 import { Config } from '../App logic/Utils/config';
 import { Message, MessageState, MessageUpdate, TypeChanged } from '../typings/types';
@@ -63,12 +66,11 @@ suite('Extension Test Suite', async function () {
 			OldValue: 'Error disallowing deletion',
 			NewValue: '',
 			FsPath: testDoc.uri.fsPath,
-			Project: 'Testing Blocking Deletion of Warehouse Shipment Lines (app)',
-			DeleteProcedure: false
+			Project: 'Testing Blocking Deletion of Warehouse Shipment Lines (app)'
 		};
 		let config: any;
-		messageUpdate.DeleteProcedure = await new ObjectService().checkIfProcedureCanBeDeletedAfterwards(messageUpdate, config);
-		assert.strictEqual(messageUpdate.DeleteProcedure, true);
+		messageUpdate.ProceduresToDelete = await new ObjectService().getProceduresWhichCouldBeDeletedAfterwards(messageUpdate, config);
+		assert.strictEqual(messageUpdate.ProceduresToDelete.length, 1);
 		await restoreOriginalFileContent(testDoc, originalText);
 	});
 
@@ -82,12 +84,11 @@ suite('Extension Test Suite', async function () {
 			OldValue: 'Warehouse employee for current user with no allowance',
 			NewValue: '',
 			FsPath: testDoc.uri.fsPath,
-			Project: 'Testing Blocking Deletion of Warehouse Shipment Lines (app)',
-			DeleteProcedure: false
+			Project: 'Testing Blocking Deletion of Warehouse Shipment Lines (app)'
 		};
 		let config: any;
-		messageUpdate.DeleteProcedure = await new ObjectService().checkIfProcedureCanBeDeletedAfterwards(messageUpdate, config);
-		assert.strictEqual(messageUpdate.DeleteProcedure, false);
+		messageUpdate.ProceduresToDelete = await new ObjectService().getProceduresWhichCouldBeDeletedAfterwards(messageUpdate, config);
+		assert.strictEqual(messageUpdate.ProceduresToDelete.length, 0);
 		await restoreOriginalFileContent(testDoc, originalText);
 	});
 
@@ -101,8 +102,7 @@ suite('Extension Test Suite', async function () {
 			OldValue: '',
 			NewValue: 'Test DFE',
 			FsPath: testDoc.uri.fsPath,
-			Project: 'Testing Blocking Deletion of Warehouse Shipment Lines (app)',
-			DeleteProcedure: false
+			Project: 'Testing Blocking Deletion of Warehouse Shipment Lines (app)'
 		};
 		let config: any;
 		let successful = await new ObjectService().saveChanges(messageUpdate, config);
@@ -120,8 +120,7 @@ suite('Extension Test Suite', async function () {
 			OldValue: '',
 			NewValue: 'My new Test-Scenario',
 			FsPath: '',
-			Project: 'Testing Blocking Deletion of Warehouse Shipment Lines (app)',
-			DeleteProcedure: false
+			Project: 'Testing Blocking Deletion of Warehouse Shipment Lines (app)'
 		};
 		let config: any;
 		let successful = await new ObjectService().saveChanges(messageUpdate, config);
@@ -158,8 +157,7 @@ suite('Extension Test Suite', async function () {
 			OldValue: '',
 			NewValue: 'My new Test-Scenario',
 			FsPath: '',
-			Project: 'Testing Blocking Deletion of Warehouse Shipment Lines (app)',
-			DeleteProcedure: false
+			Project: 'Testing Blocking Deletion of Warehouse Shipment Lines (app)'
 		};
 		let config: any;
 		let uris: Uri[] = await workspace.findFiles('**/Cod75651.UnblockDeletionDisabledFLX.al');
@@ -197,12 +195,39 @@ suite('Extension Test Suite', async function () {
 			OldValue: '',
 			NewValue: '"Allowed to Delete Shpt. Line" is editable on warehouse employees page',
 			FsPath: '',
-			Project: 'Testing Blocking Deletion of Warehouse Shipment Lines (app)',
-			DeleteProcedure: false
+			Project: 'Testing Blocking Deletion of Warehouse Shipment Lines (app)'
 		};
 		let config: any;
 		let validationResult: { valid: boolean, reason: string } = await new ObjectService().isChangeValid(messageUpdate, config);
 		assert.strictEqual(validationResult.valid, false);
+		await restoreOriginalFileContent(testDoc, originalText);
+	})
+	test('remove scenario', async () => {
+		await openFile();
+		let messageUpdate: MessageUpdate = {
+			Scenario: 'Delete by user with allowance automatically created whse. shpt. line with no confirmation',
+			Id: 11,
+			Feature: 'Unblock Deletion of Whse. Shpt. Line disabled',
+			Type: TypeChanged.ScenarioName,
+			State: MessageState.Deleted,
+			OldValue: 'Delete by user with allowance automatically created whse. shpt. line with no confirmation',
+			NewValue: '',
+			FsPath: testDoc.uri.fsPath,
+			Project: 'Testing Blocking Deletion of Warehouse Shipment Lines (app)',
+			ProceduresToDelete: [
+				{ procedureName: 'DeleteByUserWithAllowanceAutomaticallyCreatedWhseShptLineWithNoConfirmation', parameterTypes: [] },
+				{ procedureName: 'VerifyEmptyErrorOccurred', parameterTypes: [] }
+			]
+		};
+		let config: any;
+		let syntaxTree: SyntaxTree = await SyntaxTree.getInstance(testDoc);
+		let methodsBeforeDeletion: ALFullSyntaxTreeNode[] = syntaxTree.collectNodesOfKindXInWholeDocument(FullSyntaxTreeNodeKind.getMethodDeclaration());
+		let successful: boolean = await new ObjectService().saveChanges(messageUpdate, config);
+		syntaxTree = await SyntaxTree.getInstance(testDoc);
+		let methodsAfterDeletion: ALFullSyntaxTreeNode[] = syntaxTree.collectNodesOfKindXInWholeDocument(FullSyntaxTreeNodeKind.getMethodDeclaration());
+
+		assert.strictEqual(successful, true);
+		assert.strictEqual(methodsBeforeDeletion.length - methodsAfterDeletion.length, 2, 'Two procedures should be deleted.');
 		await restoreOriginalFileContent(testDoc, originalText);
 	})
 });
