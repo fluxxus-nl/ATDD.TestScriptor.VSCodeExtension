@@ -60,7 +60,7 @@ export class WebPanelCommandService {
         let config = Application.clone(Application.config) as any;
         let entry = message.Data as MessageUpdate;
         let validationResult: { valid: boolean, reason: string } = await this.middlewareService.isChangeValid(entry, config);
-        let somethingIsChanged: boolean = false;;
+        let somethingIsChanged: boolean = false;
         if (!validationResult.valid) {
             window.showErrorMessage(validationResult.reason);
         } else {
