@@ -77,9 +77,11 @@ export class ObjectService {
                         proceduresWhichCouldBeDeleted.push(procedureToDelete);
                 }
                 for (let i = 0; i < message.Details.when.length; i++) {
-                    let procedureToDelete: { procedureName: string; parameterTypes: string[]; } | undefined = await this.getProcedureWhichCouldBeDeletedAfterwardsOfElement(document, msg.Scenario, message.Details.when[i], TypeChanged.When);
-                    if (procedureToDelete)
-                        proceduresWhichCouldBeDeleted.push(procedureToDelete);
+                    if (message.Details.when[i] != '') {
+                        let procedureToDelete: { procedureName: string; parameterTypes: string[]; } | undefined = await this.getProcedureWhichCouldBeDeletedAfterwardsOfElement(document, msg.Scenario, message.Details.when[i], TypeChanged.When);
+                        if (procedureToDelete)
+                            proceduresWhichCouldBeDeleted.push(procedureToDelete);
+                    }
                 }
                 for (let i = 0; i < message.Details.then.length; i++) {
                     let procedureToDelete: { procedureName: string; parameterTypes: string[]; } | undefined = await this.getProcedureWhichCouldBeDeletedAfterwardsOfElement(document, msg.Scenario, message.Details.then[i], TypeChanged.Then);

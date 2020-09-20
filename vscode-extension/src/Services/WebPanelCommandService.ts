@@ -113,6 +113,7 @@ export class WebPanelCommandService {
                     let proceduresWhichCouldBeDeleted: Array<{ procedureName: string, parameterTypes: string[] }> =
                         await this.middlewareService.getProceduresWhichCouldBeDeletedAfterwards(entry, config);
                     let proceduresToDelete: Array<{ procedureName: string, parameterTypes: string[] }> = [];
+                    proceduresToDelete.push(proceduresWhichCouldBeDeleted[0]);
                     for (let i = 1; i < proceduresWhichCouldBeDeleted.length; i++) { //i = 1 because scenario-Testprocedure is also inside this this array
                         let responseHelperFunctionShouldBeDeleted: string | undefined = await window.showInformationMessage(confirmDeletionOfProcedureVariableQuestion(proceduresWhichCouldBeDeleted[i].procedureName), optionYes, optionNo);
                         if (responseHelperFunctionShouldBeDeleted === optionYes) {

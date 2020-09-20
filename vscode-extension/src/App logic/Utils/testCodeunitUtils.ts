@@ -154,7 +154,7 @@ export class TestCodeunitUtils {
             idAsString = ' #' + (id + '').padStart(4, '0');
         let procedure: string[] = [
             '    [Test]',
-            '    local procedure ' + scenarioNameTitleCase + '()',
+            '    procedure ' + scenarioNameTitleCase + '()',
             '    // [Feature] ' + feature,
             '    begin',
             '        // [Scenario' + idAsString + '] ' + scenario,
