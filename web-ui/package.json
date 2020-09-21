@@ -19,7 +19,7 @@
     "dragula": "^3.7.2",
     "jquery": "^3.5.0",
     "linq": "^3.2.3",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "popper.js": "^1.16.0",
     "requirejs": "^2.3.6",
     "split.js": "^1.5.11"
