@@ -34,10 +34,6 @@ steps:
   displayName: 'VSCE install'
   workingDirectory: 'vscode-extension'
 
-- script: yarn add fs
-  displayName: 'fs install'
-  workingDirectory: 'vscode-extension'
-
 - script: yarn install
   displayName: 'VS Ext. restore'
   workingDirectory: 'vscode-extension'

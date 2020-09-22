@@ -121,7 +121,6 @@
         "aurelia-loader-nodejs": "^1.1.0",
         "clipboardy": "^2.2.0",
         "exceljs": "3.8.1",
-        "fs": "^0.0.1-security",
         "fs-extra": "^8.1.0",
         "portfinder": "^1.0.25",
         "reflect-metadata": "^0.1.13"
