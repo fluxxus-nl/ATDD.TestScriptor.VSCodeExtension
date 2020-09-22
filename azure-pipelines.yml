@@ -9,60 +9,10 @@ pool:
   vmImage: 'windows-latest'
 
 variables:
-  solution: '**/*.sln'
-  buildPlatform: 'Any CPU'
-  buildConfiguration: 'Release'
-  targetPlatformWin: 'win-x64'
-  targetPlatformLinux: 'linux-x64'
   RunVersion: "0.1.$(Build.BuildId)"
-
-# .NET Server
 
 steps:
 - checkout: self
-  submodules: recursive
-
-- task: NuGetToolInstaller@1
-
-- task: NuGetCommand@2
-  displayName: '.NET Server restore'
-  inputs:
-    command: 'restore'
-    restoreSolution: '**/*.sln'
-    #feedsToUse: 'config'
-    #nugetConfigPath: './Nuget.config'
-
-- task: VSBuild@1
-  displayName: '.NET Server VS build'
-  inputs:
-    solution: '$(solution)'
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
-
-- task: DotNetCoreCLI@2
-  displayName: '.NET Server tests'
-  inputs:      
-    command: 'test'
-    projects: '$(solution)'
-
-- task: DotNetCoreCLI@2
-  displayName: '.NET Server Windows build'
-  inputs:
-    workingDirectory: 'services/ATDD.TestScriptor.BackendServices'
-    command: 'publish'
-    publishWebProjects: false    
-    zipAfterPublish: false
-    arguments: '--configuration $(BuildConfiguration) --output ../../vscode-extension/bin/windows --self-contained -r $(targetPlatformWin) /p:PublishSingleFile=true /p:PublishTrimmed=true'
-
-- task: DotNetCoreCLI@2
-  displayName: '.NET Server Linux build'
-  inputs:
-    workingDirectory: 'services/ATDD.TestScriptor.BackendServices'
-    command: 'publish'
-    publishWebProjects: false    
-    zipAfterPublish: false
-    arguments: '--configuration $(BuildConfiguration) --output ../../vscode-extension/bin/linux --self-contained -r $(targetPlatformLinux) /p:PublishSingleFile=true /p:PublishTrimmed=true'
-  
 
 # Aurelia App
 
@@ -82,6 +32,10 @@ steps:
 
 - script: yarn global add vsce
   displayName: 'VSCE install'
+  workingDirectory: 'vscode-extension'
+
+- script: yarn add fs
+  displayName: 'fs install'
   workingDirectory: 'vscode-extension'
 
 - script: yarn install
