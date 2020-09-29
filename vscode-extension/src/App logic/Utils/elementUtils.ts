@@ -59,9 +59,7 @@ export class ElementUtils {
         return this.getRangeOfElementInsideMethodRange(document, methodRange, type, elementValue);
     }
     public static getRangeOfElementInsideMethodRange(document: TextDocument, methodRange: Range, type: TypeChanged, elementValue: string): Range | undefined {
-        let charsToEscape: string[] = ['(', ')', '{', '}', '.'];
-        let elementValueRegexSafe = elementValue;
-        charsToEscape.forEach(char => elementValueRegexSafe = elementValueRegexSafe.replace(char, '\\' + char));
+        let elementValueRegexSafe: string = elementValue.replace(/([^\w 0-9])/g, '\\$1')
         let regexElement: RegExp = new RegExp('[/][/]\\s*\\[' + TypeChanged[type] + '\\]\\s*' + elementValueRegexSafe, 'i');
         let commentRange: Range | undefined = RangeUtils.getRangeOfTextInsideRange(document, methodRange, regexElement);
         return commentRange;
@@ -69,20 +67,9 @@ export class ElementUtils {
 
     public static getRangeOfScenario(document: TextDocument, scenarioValue: string, id?: number): Range | undefined {
         let idAsString: string = (id ? id : '') + '';
-        let scenarioValueSafe: string = scenarioValue.replace(/([\(\)\[\]\{\}\\\?\*\+])/g, '\\$1');
+        let scenarioValueSafe: string = scenarioValue.replace(/([^\w 0-9])/g, '\\$1');
         let regexScenario: RegExp = new RegExp('[/][/]\\s*\\[Scenario[^\\]]*' + idAsString + '\\]\\s*' + scenarioValueSafe, 'i');
         return RangeUtils.getRangeOfTextInsideRange(document, new Range(0, 0, document.lineCount - 1, 0), regexScenario);
-
-        // for (let line = 0; line < document.lineCount; line++) {
-        //     let match: RegExpMatchArray | null = document.lineAt(line).text.match(regexScenario);
-        //     if (match && match.length > 0) {
-        //         let scenarioText = match[0];
-        //         let startPos = document.lineAt(line).text.indexOf(scenarioText);
-        //         let endPos = startPos + scenarioText.length;
-        //         return new Range(line, startPos, line, endPos);
-        //     }
-        // }
-        // return undefined;
     }
 
     public static async findPositionToInsertElement(document: TextDocument, scenarioRange: Range, type: TypeChanged): Promise<Position | undefined> {
