@@ -107,6 +107,7 @@ export class ObjectService {
 
     private async getProcedureWhichCouldBeDeletedAfterwardsOfElement(document: TextDocument, scenario: string, elementValue: string, elementType: TypeChanged): Promise<{ procedureName: string, parameterTypes: string[] } | undefined> {
         let elementRange: Range | undefined = await ElementUtils.getRangeOfElement(document, scenario, elementType, elementValue) as Range;
+
         let identifierTreeNodeOfInvocation: ALFullSyntaxTreeNode | undefined = await ElementUtils.getProcedureCallToElementValue(document, elementRange.start, elementType, elementValue);
         if (identifierTreeNodeOfInvocation) {
             let rangeOfProcedureCall: Range = RangeUtils.trimRange(document, TextRangeExt.createVSCodeRange(identifierTreeNodeOfInvocation.fullSpan));
@@ -144,6 +145,16 @@ export class ObjectService {
                     valid: false,
                     reason: 'Scenario already exists. Please update your scenario definition so it is unique.'
                 };
+            }
+        }
+        if ([TypeChanged.Given, TypeChanged.When, TypeChanged.Then].includes(entry.Type) && [MessageState.Modified, MessageState.Deleted].includes(entry.State)) {
+            let fsPath: string = await ElementService.getFSPathOfFeature(entry.Project, entry.Feature);
+            let document: TextDocument = await workspace.openTextDocument(fsPath);
+            if (!await ElementUtils.getRangeOfElement(document, entry.Scenario, entry.Type, entry.OldValue)) {
+                return {
+                    valid: false,
+                    reason: TypeChanged[TypeChanged.Given] + ' \'' + entry.OldValue + '\' not found.'
+                }
             }
         }
         return { valid: true, reason: '' };
