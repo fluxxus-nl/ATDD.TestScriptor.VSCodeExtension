@@ -153,7 +153,7 @@ export class ElementUtils {
         let statementTreeNode: ALFullSyntaxTreeNode | undefined = syntaxTree.findTreeNode(rangeOfElement.start, FullSyntaxTreeNodeKind.getAllStatementKinds());
         if (statementTreeNode) {
             let statementRange: Range = TextRangeExt.createVSCodeRange(statementTreeNode.fullSpan);
-            edit.delete(document.uri, statementRange);
+            edit.delete(document.uri, new Range(rangeOfElement.start, statementRange.end));
             if (msg.ProceduresToDelete)
                 this.deleteProcedures(edit, document, msg.ProceduresToDelete);
         } else
