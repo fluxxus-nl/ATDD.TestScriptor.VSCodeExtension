@@ -42,7 +42,7 @@ export class ObjectToMessageUtils {
         if (matchArr && matchArr.groups) {
             message.Scenario = matchArr.groups['content'];
             message.Details.name = message.Scenario;
-            if (matchArr.length == 3) //0, id and content
+            if (matchArr.length == 3 && matchArr.groups['id']) //0, id and content
                 message.Id = Number(matchArr.groups['id']);
         }
 
