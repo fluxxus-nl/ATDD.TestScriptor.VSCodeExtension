@@ -28,6 +28,8 @@ export class ElementService {
         }
     }
     static async addNewElementToCode(msg: MessageUpdate): Promise<boolean> {
+        if (msg.FsPath == '' && msg.Feature !== '' && msg.Project !== '')
+            msg.FsPath = await ElementService.getFSPathOfFeature(msg.Project, msg.Feature);
         let document: TextDocument = await workspace.openTextDocument(msg.FsPath);
         let scenarioRange: Range | undefined = ElementUtils.getRangeOfScenario(document, msg.Scenario);
         if (!scenarioRange)
