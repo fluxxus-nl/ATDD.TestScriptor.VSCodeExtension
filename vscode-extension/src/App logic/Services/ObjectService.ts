@@ -126,11 +126,11 @@ export class ObjectService {
     public async saveChanges(msg: MessageUpdate, config: WorkspaceConfiguration): Promise<boolean> {
         switch (msg.State) {
             case MessageState.New:
-                return ElementService.addNewElementToCode(msg);
+                return ElementService.addSomethingNewToCode(msg);
             case MessageState.Modified:
-                return ElementService.modifyElementInCode(msg);
+                return ElementService.modifySomethingInCode(msg);
             case MessageState.Deleted:
-                return ElementService.deleteElementFromCode(msg);
+                return ElementService.deleteSomethingFromCode(msg);
             default:
                 return false;
         }

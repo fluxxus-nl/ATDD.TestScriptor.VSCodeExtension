@@ -72,7 +72,7 @@ export class ElementUtils {
         return RangeUtils.getRangeOfTextInsideRange(document, new Range(0, 0, document.lineCount - 1, 0), regexScenario);
     }
 
-    public static async findPositionToInsertElement(document: TextDocument, scenarioRange: Range, type: TypeChanged): Promise<Position | undefined> {
+    public static async findPositionToInsertElement(document: TextDocument, scenarioRange: Range, type: TypeChanged): Promise<{ addEmptyLine: boolean; endPositionOfPreviousLine: Position | undefined }> {
         let syntaxTree: SyntaxTree = await SyntaxTree.getInstance(document);
 
         let typeRanges: Map<TypeChanged, Range[]> | undefined = await ElementUtils.getRangesOfElementsOfProcedure(scenarioRange.start, document);
@@ -81,21 +81,34 @@ export class ElementUtils {
 
         let typesToSearch: TypeChanged[] = [TypeChanged.Given, TypeChanged.When, TypeChanged.Then];
         let startIndex = type == TypeChanged.Given ? 0 : type == TypeChanged.When ? 1 : 2;
+        let addEmptyLine: boolean = false;
         for (; startIndex >= 0; startIndex--) {
             let rangesOfType: Range[] | undefined = typeRanges.get(typesToSearch[startIndex]);
             if (rangesOfType && rangesOfType.length > 0) {
-                let statementTreeNode: ALFullSyntaxTreeNode | undefined = syntaxTree.findTreeNode(rangesOfType[rangesOfType.length - 1].end, FullSyntaxTreeNodeKind.getAllStatementKinds())
+                let lastRangeOfType: Range = rangesOfType[rangesOfType.length - 1]
+                let statementTreeNode: ALFullSyntaxTreeNode | undefined = syntaxTree.findTreeNode(lastRangeOfType.end, FullSyntaxTreeNodeKind.getAllStatementKinds())
                 if (statementTreeNode)
-                    return TextRangeExt.createVSCodeRange(statementTreeNode.fullSpan).end;
+                    return { addEmptyLine: addEmptyLine, endPositionOfPreviousLine: RangeUtils.trimRange(document, TextRangeExt.createVSCodeRange(statementTreeNode.fullSpan)).end };
                 else
-                    return rangesOfType[rangesOfType.length - 1].end;
+                    return { addEmptyLine: addEmptyLine, endPositionOfPreviousLine: RangeUtils.trimRange(document, lastRangeOfType).end };
+            }
+            addEmptyLine = true;
+        }
+        let methodTreeNode: ALFullSyntaxTreeNode | undefined = syntaxTree.findTreeNode(scenarioRange.end, [FullSyntaxTreeNodeKind.getMethodDeclaration()])
+        if (methodTreeNode) {
+            let blockTreeNode: ALFullSyntaxTreeNode | undefined = ALFullSyntaxTreeNodeExt.getFirstChildNodeOfKind(methodTreeNode, FullSyntaxTreeNodeKind.getBlock(), false);
+            if (blockTreeNode) {
+                let firstExpressionStatement: ALFullSyntaxTreeNode | undefined = ALFullSyntaxTreeNodeExt.getFirstChildNodeOfKind(blockTreeNode, FullSyntaxTreeNodeKind.getExpressionStatement(), false)
+                if (firstExpressionStatement) {
+                    let firstInvocationStatement: ALFullSyntaxTreeNode | undefined = ALFullSyntaxTreeNodeExt.getFirstChildNodeOfKind(firstExpressionStatement, FullSyntaxTreeNodeKind.getInvocationExpression(), false)
+                    if (firstInvocationStatement) {
+                        if (ALFullSyntaxTreeNodeExt.findIdentifierAndGetValueOfTreeNode(document, firstInvocationStatement).toLowerCase() == 'initialize')
+                            return { addEmptyLine: true, endPositionOfPreviousLine: RangeUtils.trimRange(document, TextRangeExt.createVSCodeRange(firstExpressionStatement.fullSpan)).end };
+                    }
+                }
             }
         }
-        let statementTreeNode: ALFullSyntaxTreeNode | undefined = syntaxTree.findTreeNode(scenarioRange.end, FullSyntaxTreeNodeKind.getAllStatementKinds())
-        if (statementTreeNode)
-            return TextRangeExt.createVSCodeRange(statementTreeNode.fullSpan).end;
-        else
-            return scenarioRange.end;
+        return { addEmptyLine: true, endPositionOfPreviousLine: scenarioRange.end };
     }
 
     public static async getRangesOfElementsOfProcedure(somePositionInsideProcedure: Position, document: TextDocument): Promise<Map<TypeChanged, Range[]> | undefined> {
@@ -126,7 +139,7 @@ export class ElementUtils {
         return typeRanges;
     }
     public static addElement(edit: WorkspaceEdit, document: TextDocument, positionToInsert: Position, type: TypeChanged, elementValue: string) {
-        let textToAdd: string = '';
+        let textToAdd: string = '\r\n';
         textToAdd += '        // [' + TypeChanged[type] + '] ' + elementValue;
         edit.insert(document.uri, positionToInsert, textToAdd);
     }
@@ -135,10 +148,7 @@ export class ElementUtils {
     }
     public static addProcedureCall(edit: WorkspaceEdit, document: TextDocument, positionToInsert: Position, procedureName: string) {
         let textToAdd: string = '\r\n';
-        textToAdd += '        ' + procedureName + '();\r\n';
-        let currentLineText: string = document.lineAt(positionToInsert.line).text.trim();
-        if (currentLineText != '' && currentLineText != 'end;')
-            textToAdd += '\r\n';
+        textToAdd += '        ' + procedureName + '();';
         edit.insert(document.uri, positionToInsert, textToAdd);
     }
 
@@ -153,7 +163,13 @@ export class ElementUtils {
         let statementTreeNode: ALFullSyntaxTreeNode | undefined = syntaxTree.findTreeNode(rangeOfElement.start, FullSyntaxTreeNodeKind.getAllStatementKinds());
         if (statementTreeNode) {
             let statementRange: Range = TextRangeExt.createVSCodeRange(statementTreeNode.fullSpan);
-            edit.delete(document.uri, new Range(rangeOfElement.start, statementRange.end));
+            let range: Range = new Range(rangeOfElement.start, RangeUtils.trimRange(document, statementRange).end)
+            range = range.with(range.start.translate(-1, document.lineAt(range.start.line - 1).text.length - 1), undefined);
+            // if (document.lineAt(range.start.line).isEmptyOrWhitespace)
+            //     range = range.with(range.start.translate(-1, document.lineAt(range.start.line - 1).text.length - 1), undefined);
+            // if (document.lineAt(range.end.line + 1).isEmptyOrWhitespace)
+            //     range = range.with(undefined, range.end.translate(1, undefined))
+            edit.delete(document.uri, range);
             if (msg.ProceduresToDelete)
                 this.deleteProcedures(edit, document, msg.ProceduresToDelete);
         } else

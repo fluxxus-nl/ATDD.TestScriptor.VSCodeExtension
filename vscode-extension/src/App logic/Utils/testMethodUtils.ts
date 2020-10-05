@@ -108,7 +108,7 @@ export class TestMethodUtils {
                 startChar += handlerFunctionNamesArr[i].length + 1;
             }
             for (let i = 0; i < functionNameRanges.length; i++) {
-                let locations: Location[] | undefined = await commands.executeCommand('vscode.executeDefinitionProvider', document.uri, functionNameRanges[i]);
+                let locations: Location[] | undefined = await commands.executeCommand('vscode.executeDefinitionProvider', document.uri, functionNameRanges[i].start);
                 if (locations) {
                     let syntaxTree: SyntaxTree = await SyntaxTree.getInstance(document);
                     let methodTreeNode: ALFullSyntaxTreeNode = syntaxTree.findTreeNode(locations[0].range.start, [FullSyntaxTreeNodeKind.getMethodDeclaration()]) as ALFullSyntaxTreeNode;
