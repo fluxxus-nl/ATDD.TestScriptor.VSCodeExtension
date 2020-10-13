@@ -12,6 +12,7 @@ export enum AppEventPublisher {
     sidebarLinksUpdated = 'sidebarLinksUpdated',
     saveChanges = 'saveChanges',
     saveChangesOK = 'saveChangesOK',
+    saveChangesCancelled = 'saveChangesCancelled',
     onDeleteScenario = 'onDeleteScenario'
 }
 
