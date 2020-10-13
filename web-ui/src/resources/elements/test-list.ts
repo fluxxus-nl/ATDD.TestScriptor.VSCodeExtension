@@ -37,6 +37,7 @@ export class TestList {
             this.entries.splice(this.entries.length, 0, scenario);
             this.listChanged();
             this.focusRow(this.entries.length - 1);
+            scenario.ArrayIndex = this.entries.length - 1;            
 
             this.appService.sendChangeNotification(TypeChanged.ScenarioName, MessageState.New, scenario.Scenario, null, scenario);
         }));
