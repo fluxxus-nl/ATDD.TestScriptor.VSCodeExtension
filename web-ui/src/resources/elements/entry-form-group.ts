@@ -22,7 +22,14 @@ export class EntryFormGroup {
     type: MessageDetailType;
     subscriptions: any = [];
 
+    maxInputLength: number;
+
     constructor(private eventAggregator: EventAggregator, private appService: AppService) {
+        let descLengthTxt = this.appService.getVsConfig('maxLengthOfDescription');
+        let descLength = Number.parseInt(descLengthTxt);
+        this.maxInputLength = isNaN(descLength) ? 500 : descLength;
+
+        console.log('maxInputLength', descLengthTxt, descLength, this.maxInputLength);
     }
 
     attached() {

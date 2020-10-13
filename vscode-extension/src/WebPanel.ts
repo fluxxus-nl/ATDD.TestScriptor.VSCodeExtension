@@ -85,6 +85,7 @@ export class WebPanel {
         let appJsSrc: any = this.panel.webview.asWebviewUri(appOnDiskPath);
         content = content.replace('//${vscodeApi}', 'window.vscode = acquireVsCodeApi();');
         content = content.replace('//${startupOptions}', `window.startupOptions = '${JSON.stringify(startupOptions)}';`);
+        content = content.replace('//${vsSettings}',  `window.vsSettings = '${JSON.stringify(Application.config)}';`);
         content = content.replace('scripts/bundle.js', appJsSrc);
 
         return content;
