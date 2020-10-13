@@ -1,5 +1,5 @@
 <template>
-    <nav id="menubar" class="navbar navbar-expand-sm navbar-light bg-light">
+    <nav id="menubar" class="navbar navbar-expand navbar-light bg-light">
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -16,23 +16,24 @@
                     </div>
                 </li>
                 <li>
-                    <button class="btn btn-outline-success my-2 my-sm-0" click.delegate="sendCommand('NewFeature')"><i
-                            class="fas fa-list"></i> Features</button>
+                    <button class="btn btn-outline-success my-2 my-sm-0" click.delegate="sendCommand('NewFeature')" title="Manage Features"><i
+                            class="fas fa-list"></i> <span class="d-none d-lg-inline">Features</span></button>
                 </li>
                 <li>
-                    <button class="btn btn-outline-success my-2 my-sm-0" click.delegate="sendCommand('NewScenario')"><i
-                            class="fas fa-plus"></i> Scenario</button>
+                    <button class="btn btn-outline-success my-2 my-sm-0" click.delegate="sendCommand('NewScenario')" title="Create Scenario"><i
+                            class="fas fa-plus"></i> <span class="d-none d-lg-inline">Scenario</span></button>
                 </li>
                 <li>
-                    <button class="btn btn-outline-danger my-2 my-sm-0" click.delegate="sendCommand('DeleteScenario')"><i class="fas fa-minus"></i> Scenario</button>
+                    <button class="btn btn-outline-danger my-2 my-sm-0" click.delegate="sendCommand('DeleteScenario')" title="Delete Scenario">
+                        <i class="fas fa-minus"></i> <span class="d-none d-lg-inline">Scenario</span></button>
                 </li>
                 <li>
                     <button class="btn btn-outline-secondary my-2 my-sm-0">
-                        <i class="fas fa-play"></i> Run Tests</button>
+                        <i class="fas fa-play"></i> <span class="d-none d-lg-inline" title="Run Tests">Run Tests</span></button>
                 </li>
                 <li>
                     <button class="btn btn-outline-secondary my-2 my-sm-0" click.delegate="sendCommand('Export')">
-                        <i class="fas fa-file-excel"></i> Export</button>
+                        <i class="fas fa-file-excel"></i> <span class="d-none d-lg-inline" title="Export to Excel">Export</span></button>
                 </li>
             </ul>
             <a class="navbar-brand" href="#">ATDD.TestScriptor</a>
