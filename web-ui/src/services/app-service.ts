@@ -3,6 +3,7 @@ import { singleton, computedFrom } from 'aurelia-framework';
 import { AppEventPublisher, AppEditMode, MessageState, TypeChanged, MessageUpdate, Message } from 'types';
 import Enumerable from 'linq';
 import { GridApi } from 'ag-grid-community';
+const vsSettings = JSON.parse((window as any).vsSettings);
 
 @singleton()
 export class AppService {
@@ -40,6 +41,10 @@ export class AppService {
 
     public set entries(newEntries: Array<Message>) {
         this._entries = newEntries;
+    }
+
+    public getVsConfig(name: string) {
+        return vsSettings[name];
     }
 
     public updateProjects(entries: Array<any>) {
