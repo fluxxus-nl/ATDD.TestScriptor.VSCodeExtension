@@ -9,13 +9,13 @@ import { RangeUtils } from "./rangeUtils";
 import { TestMethodUtils } from "./testMethodUtils";
 
 export class ElementUtils {
-    static async existsProcedureCallToElementValue(document: TextDocument, positionInsideMethod: Position, type: TypeChanged, elementValue: string): Promise<boolean> {
-        return (await this.getProcedureCallToElementValue(document, positionInsideMethod, type, elementValue)) != undefined;
+    static async existsProcedureCallToElementValue(document: TextDocument, positionOfElementValue: Position, type: TypeChanged, elementValue: string): Promise<boolean> {
+        return (await this.getProcedureCallToElementValue(document, positionOfElementValue, type, elementValue)) != undefined;
     }
 
-    static async getProcedureCallToElementValue(document: TextDocument, positionInsideMethod: Position, type: TypeChanged, elementValue: string): Promise<ALFullSyntaxTreeNode | undefined> {
+    static async getProcedureCallToElementValue(document: TextDocument, positionOfElementValue: Position, type: TypeChanged, elementValue: string): Promise<ALFullSyntaxTreeNode | undefined> {
         let syntaxTree: SyntaxTree = await SyntaxTree.getInstance(document);
-        let methodTreeNode: ALFullSyntaxTreeNode | undefined = syntaxTree.findTreeNode(positionInsideMethod, [FullSyntaxTreeNodeKind.getMethodDeclaration()]);
+        let methodTreeNode: ALFullSyntaxTreeNode | undefined = syntaxTree.findTreeNode(positionOfElementValue, [FullSyntaxTreeNodeKind.getMethodDeclaration()]);
         if (!methodTreeNode)
             throw new Error('The comment is expected to be inside a procedure.');
 
@@ -34,8 +34,10 @@ export class ElementUtils {
             else
                 identifierOfProcedureCall = (<ALFullSyntaxTreeNode[]>invocationExpression.childNodes[0].childNodes)[1];
 
-            let identifierName: string = document.getText(RangeUtils.trimRange(document, TextRangeExt.createVSCodeRange(identifierOfProcedureCall.fullSpan)));
-            if (procedureNameToSearch.toLowerCase() == identifierName.toLowerCase()) {
+            let rangeOfInvocation: Range = TextRangeExt.createVSCodeRange(identifierOfProcedureCall.fullSpan);
+            let identifierName: string = document.getText(RangeUtils.trimRange(document, rangeOfInvocation));
+            if (procedureNameToSearch.toLowerCase() == identifierName.toLowerCase() &&
+                (rangeOfInvocation.contains(positionOfElementValue) || rangeOfInvocation.start.isAfterOrEqual(positionOfElementValue))) {
                 return identifierOfProcedureCall;
             }
         }
@@ -44,8 +46,7 @@ export class ElementUtils {
     public static renameProcedureCall(edit: WorkspaceEdit, document: TextDocument, rangeToReplace: Range, newProcedureName: string) {
         edit.replace(document.uri, rangeToReplace, newProcedureName);
     }
-    public static async getRangeOfElement(document: TextDocument, scenarioValue: string, type: TypeChanged, elementValue: string): Promise<Range | undefined> {
-        //TODO: Make similar to getProcedureCallToElementvalue at the top of this file.
+    public static async getRangeOfElement(document: TextDocument, scenarioValue: string, type: TypeChanged, elementId: number): Promise<Range | undefined> {
         let rangeOfScenario: Range | undefined = this.getRangeOfScenario(document, scenarioValue);
         if (!rangeOfScenario)
             return undefined;
@@ -56,13 +57,14 @@ export class ElementUtils {
             throw new Error('Scenario comment is expected to be inside a procedure.');
         let methodRange: Range = TextRangeExt.createVSCodeRange(methodTreeNode.fullSpan);
 
-        return this.getRangeOfElementInsideMethodRange(document, methodRange, type, elementValue);
+        return this.getRangeOfElementInsideMethodRange(document, methodRange, type, elementId);
     }
-    public static getRangeOfElementInsideMethodRange(document: TextDocument, methodRange: Range, type: TypeChanged, elementValue: string): Range | undefined {
-        let elementValueRegexSafe: string = elementValue.replace(/([^\w 0-9])/g, '\\$1')
-        let regexElement: RegExp = new RegExp('[/][/]\\s*\\[' + TypeChanged[type] + '\\]\\s*' + elementValueRegexSafe, 'i');
-        let commentRange: Range | undefined = RangeUtils.getRangeOfTextInsideRange(document, methodRange, regexElement);
-        return commentRange;
+    public static getRangeOfElementInsideMethodRange(document: TextDocument, methodRange: Range, type: TypeChanged, elementId: number): Range | undefined {
+        let rangesOfElements: Map<TypeChanged, Range[]> = this.getRangesOfElements(methodRange, document);
+        let rangesOfElement: Range[] | undefined = rangesOfElements.get(type);
+        if (!rangesOfElement)
+            throw new Error('Expected some elements of type ' + TypeChanged[type]);
+        return rangesOfElement[elementId];
     }
 
     public static getRangeOfScenario(document: TextDocument, scenarioValue: string, id?: number): Range | undefined {
@@ -132,15 +134,19 @@ export class ElementUtils {
                 typeRange = RangeUtils.getRangeOfTextInsideRange(document, restOfMethodRange, regexType);
                 if (typeRange) {
                     restOfMethodRange = new Range(typeRange.end, restOfMethodRange.end);
+                    typeRange = typeRange.with(typeRange.start.with({ character: document.lineAt(typeRange.start.line).firstNonWhitespaceCharacterIndex }));
                     typeRanges.get(typesToSearch[i])?.push(typeRange);
                 }
             } while (typeRange);
         }
         return typeRanges;
     }
+    public static getElementComment(type: TypeChanged, elementValue: string): string {
+        return '// [' + TypeChanged[type] + '] ' + elementValue;
+    }
     public static addElement(edit: WorkspaceEdit, document: TextDocument, positionToInsert: Position, type: TypeChanged, elementValue: string) {
         let textToAdd: string = '\r\n';
-        textToAdd += '        // [' + TypeChanged[type] + '] ' + elementValue;
+        textToAdd += '        ' + this.getElementComment(type, elementValue);
         edit.insert(document.uri, positionToInsert, textToAdd);
     }
     public static async deleteElement(edit: WorkspaceEdit, document: TextDocument, rangeToDelete: Range) {
@@ -154,7 +160,9 @@ export class ElementUtils {
 
 
     public static async deleteElementWithProcedureCall(edit: WorkspaceEdit, msg: MessageUpdate, document: TextDocument) {
-        let rangeOfElement: Range | undefined = await ElementUtils.getRangeOfElement(document, msg.Scenario, msg.Type, msg.OldValue);
+        if (!msg.ArrayIndex)
+            throw new Error('ArrayIndex not passed')
+        let rangeOfElement: Range | undefined = await ElementUtils.getRangeOfElement(document, msg.Scenario, msg.Type, msg.ArrayIndex);
         if (!rangeOfElement)
             throw new Error('Element ' + msg.OldValue + ' not found in scenario \'' + msg.Scenario + '\'.');
 
@@ -171,7 +179,7 @@ export class ElementUtils {
             //     range = range.with(undefined, range.end.translate(1, undefined))
             edit.delete(document.uri, range);
             if (msg.ProceduresToDelete)
-                this.deleteProcedures(edit, document, msg.ProceduresToDelete);
+                await this.deleteProcedures(edit, document, msg.ProceduresToDelete);
         } else
             edit.delete(document.uri, new Range(rangeOfElement.start.line, 0, rangeOfElement.end.line + 1, 0));
     }

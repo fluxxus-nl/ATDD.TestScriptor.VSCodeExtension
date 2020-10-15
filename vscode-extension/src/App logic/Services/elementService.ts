@@ -92,6 +92,8 @@ export class ElementService {
     }
 
     public static async modifySomethingInCode(msg: MessageUpdate): Promise<boolean> {
+        if (!msg.ArrayIndex)
+            throw new Error('ArrayIndex not passed')
         let document: TextDocument = await workspace.openTextDocument(msg.FsPath);
         let scenarioRange: Range | undefined = ElementUtils.getRangeOfScenario(document, msg.Scenario);
         if (!scenarioRange)
@@ -103,14 +105,14 @@ export class ElementService {
             return false;
         let methodRange: Range = RangeUtils.trimRange(document, TextRangeExt.createVSCodeRange(methodTreeNode.fullSpan));
 
-        let rangeOfOldElement: Range | undefined = ElementUtils.getRangeOfElementInsideMethodRange(document, methodRange, msg.Type, msg.OldValue);
+        let rangeOfOldElement: Range | undefined = ElementUtils.getRangeOfElementInsideMethodRange(document, methodRange, msg.Type, msg.ArrayIndex);
         if (!rangeOfOldElement)
             throw new Error('Element to be renamed wasn\'t found.');
 
         let edit: WorkspaceEdit = new WorkspaceEdit();
         let newProcedureName = TestMethodUtils.getProcedureName(msg.Type, msg.NewValue);
         let oldProcedureName = TestMethodUtils.getProcedureName(msg.Type, msg.OldValue);
-        if (await ElementUtils.existsProcedureCallToElementValue(document, methodRange.start, msg.Type, msg.OldValue)) {
+        if (await ElementUtils.existsProcedureCallToElementValue(document, rangeOfOldElement.start, msg.Type, msg.OldValue)) {
             let identifierOfOldProcedureCall: ALFullSyntaxTreeNode = <ALFullSyntaxTreeNode>await ElementUtils.getProcedureCallToElementValue(document, rangeOfOldElement.start, msg.Type, msg.OldValue)
             let rangeOfOldIdentifier: Range = RangeUtils.trimRange(document, TextRangeExt.createVSCodeRange(identifierOfOldProcedureCall.fullSpan));
             let oldMethodTreeNode: ALFullSyntaxTreeNode | undefined = await SyntaxTreeExt.getMethodTreeNodeByCallPosition(document, rangeOfOldIdentifier.end);
@@ -136,17 +138,17 @@ export class ElementService {
                     TestCodeunitUtils.addProcedure(edit, document, newProcedureName);
             }
             //rename procedurecall and element
-            ElementUtils.deleteElement(edit, document, rangeOfOldElement);
+            edit.replace(document.uri, rangeOfOldElement, ElementUtils.getElementComment(msg.Type, msg.NewValue))
             if (!alreadyRenamed)
                 ElementUtils.renameProcedureCall(edit, document, rangeOfOldIdentifier, newProcedureName);
-            ElementUtils.addElement(edit, document, rangeOfOldElement.start.with({ character: 0 }), msg.Type, msg.NewValue);
         } else {
-            ElementUtils.deleteElement(edit, document, rangeOfOldElement);
+            edit.replace(document.uri, rangeOfOldElement, ElementUtils.getElementComment(msg.Type, msg.NewValue))
             ElementUtils.addProcedureCall(edit, document, rangeOfOldElement.start, newProcedureName);
-            ElementUtils.addElement(edit, document, rangeOfOldElement.start, msg.Type, msg.NewValue);
             if (!(await TestCodeunitUtils.isProcedureAlreadyDeclared(document, newProcedureName, [])))
                 TestCodeunitUtils.addProcedure(edit, document, newProcedureName);
         }
+        if (msg.ProceduresToDelete)
+            await ElementUtils.deleteProcedures(edit, document, msg.ProceduresToDelete);
 
         let successful: boolean = await workspace.applyEdit(edit);
         await document.save();

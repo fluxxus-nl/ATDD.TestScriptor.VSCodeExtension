@@ -82,9 +82,13 @@ export class WebPanelCommandService {
         let optionYes: string = 'Yes';
         let optionNo: string = 'No';
         if ([TypeChanged.Given, TypeChanged.When, TypeChanged.Then].includes(entry.Type)) {
-            if (entry.State === MessageState.Deleted) {
-                let responseElementShouldBeDeleted: string | undefined = await window.showInformationMessage(confirmDeletionOfElementQuestion, optionYes, optionNo);
-                if (responseElementShouldBeDeleted === optionYes) {
+            if ([MessageState.Deleted, MessageState.Modified].includes(entry.State)) {
+                let response: string | undefined;
+                if (entry.State == MessageState.Deleted)
+                    response = await window.showInformationMessage(confirmDeletionOfElementQuestion, optionYes, optionNo)
+                else
+                    response = await window.showInformationMessage(confirmUpdateOfElementQuestion, optionYes, optionNo)
+                if (response === optionYes) {
                     let helperFunctionsWhichCouldBeDeleted: Array<{ procedureName: string, parameterTypes: string[] }> =
                         await this.middlewareService.getProceduresWhichCouldBeDeletedAfterwards(entry, config);
                     let proceduresToDelete: Array<{ procedureName: string, parameterTypes: string[] }> = [];
@@ -99,12 +103,6 @@ export class WebPanelCommandService {
                 } else {
                     return { wantsToContinue: false, wantsProceduresToBeDeleted: [] };
                 }
-            } else if (entry.State === MessageState.Modified) {
-                let confirmedUpdateOfElement: string | undefined = await window.showInformationMessage(confirmUpdateOfElementQuestion, optionYes, optionNo);
-                if (confirmedUpdateOfElement === optionNo)
-                    return { wantsToContinue: false, wantsProceduresToBeDeleted: [] };
-                else
-                    return { wantsToContinue: true, wantsProceduresToBeDeleted: [] };
             }
         } else if (TypeChanged.ScenarioName == entry.Type) {
             if (entry.State == MessageState.Deleted) {

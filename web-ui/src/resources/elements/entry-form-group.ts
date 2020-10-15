@@ -58,9 +58,11 @@ export class EntryFormGroup {
             oldValue = this.entries[index];
             this.entries.splice(index, 1, newValue);
         }
+        let message: Message = JSON.parse(JSON.stringify(this.scenario));
+        message.ArrayIndex = index;
 
         let newState = !oldValue || oldValue.length == 0 ? MessageState.New : MessageState.Modified;
-        this.appService.sendChangeNotification(this.getTypeChanged(), newState, newValue, oldValue, this.scenario);
+        this.appService.sendChangeNotification(this.getTypeChanged(), newState, newValue, oldValue, message);
     }
 
     remove(index: number, e: MouseEvent) {
