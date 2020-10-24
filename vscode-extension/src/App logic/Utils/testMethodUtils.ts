@@ -118,4 +118,7 @@ export class TestMethodUtils {
         }
         return handlerFunctionTreeNodes;
     }
+    public static procedureAlreadyExistsInProcedureList(procedureToCheck: { procedureName: string; parameterTypes: string[]; }, procedureList: Array<{ procedureName: string; parameterTypes: string[]; }>): boolean {
+        return procedureList.some(proc => proc.procedureName == procedureToCheck?.procedureName && proc.parameterTypes.toString() == procedureToCheck.parameterTypes.toString())
+    }
 }

@@ -1,4 +1,4 @@
-import { commands, Range, RelativePattern, TextDocument, Uri, workspace } from 'vscode';
+import { commands, Range, RelativePattern, TextDocument, Uri, Location, workspace } from 'vscode';
 import { Message, MessageState, MessageUpdate, TypeChanged } from "../../typings/types";
 import { ALFullSyntaxTreeNodeExt } from '../AL Code Outline Ext/alFullSyntaxTreeNodeExt';
 import { FullSyntaxTreeNodeKind } from '../AL Code Outline Ext/fullSyntaxTreeNodeKind';
@@ -86,7 +86,7 @@ export class ObjectService {
             let syntaxTree: SyntaxTree = await SyntaxTree.getInstance(document);
             let scenarioMethodTreeNode: ALFullSyntaxTreeNode | undefined = SyntaxTreeExt.getMethodOrTriggerTreeNodeOfCurrentPosition(syntaxTree, rangeOfScenario.start);
             if (scenarioMethodTreeNode) {
-
+                let scenarioMethodRange: Range = TextRangeExt.createVSCodeRange(scenarioMethodTreeNode.fullSpan);
                 let identifier: ALFullSyntaxTreeNode = ALFullSyntaxTreeNodeExt.getFirstChildNodeOfKind(scenarioMethodTreeNode, FullSyntaxTreeNodeKind.getIdentifierName(), false) as ALFullSyntaxTreeNode;
                 let rangeOfIdentifier: Range = RangeUtils.trimRange(document, TextRangeExt.createVSCodeRange(identifier.fullSpan));
                 let references: Location[] | undefined = await commands.executeCommand('vscode.executeReferenceProvider', document.uri, rangeOfIdentifier.start);
@@ -96,34 +96,35 @@ export class ObjectService {
                     proceduresWhichCouldBeDeleted.push({ procedureName: procedureName, parameterTypes: parameterTypes });
                 }
 
-
                 let message: Message = await ObjectToMessageUtils.testMethodToMessage(document, scenarioMethodTreeNode);
                 for (let i = 0; i < message.Details.given.length; i++) {
-                    let procedureToDelete: { procedureName: string; parameterTypes: string[]; } | undefined = await this.getProcedureWhichCouldBeDeletedAfterwardsOfElement(document, msg.Scenario, message.Details.given[i], i, TypeChanged.Given);
+                    let procedureToDelete: { procedureName: string; parameterTypes: string[]; } | undefined = await this.getProcedureWhichCouldBeDeletedAfterwardsOfElement(document, msg.Scenario, message.Details.given[i], i, TypeChanged.Given, scenarioMethodRange);
                     if (procedureToDelete)
-                        proceduresWhichCouldBeDeleted.push(procedureToDelete);
+                        if (!TestMethodUtils.procedureAlreadyExistsInProcedureList(procedureToDelete, proceduresWhichCouldBeDeleted))
+                            proceduresWhichCouldBeDeleted.push(procedureToDelete);
                 }
                 for (let i = 0; i < message.Details.when.length; i++) {
                     if (message.Details.when[i] != '') {
-                        let procedureToDelete: { procedureName: string; parameterTypes: string[]; } | undefined = await this.getProcedureWhichCouldBeDeletedAfterwardsOfElement(document, msg.Scenario, message.Details.when[i], i, TypeChanged.When);
+                        let procedureToDelete: { procedureName: string; parameterTypes: string[]; } | undefined = await this.getProcedureWhichCouldBeDeletedAfterwardsOfElement(document, msg.Scenario, message.Details.when[i], i, TypeChanged.When, scenarioMethodRange);
                         if (procedureToDelete)
-                            proceduresWhichCouldBeDeleted.push(procedureToDelete);
+                            if (!TestMethodUtils.procedureAlreadyExistsInProcedureList(procedureToDelete, proceduresWhichCouldBeDeleted))
+                                proceduresWhichCouldBeDeleted.push(procedureToDelete);
                     }
                 }
                 for (let i = 0; i < message.Details.then.length; i++) {
-                    let procedureToDelete: { procedureName: string; parameterTypes: string[]; } | undefined = await this.getProcedureWhichCouldBeDeletedAfterwardsOfElement(document, msg.Scenario, message.Details.then[i], i, TypeChanged.Then);
+                    let procedureToDelete: { procedureName: string; parameterTypes: string[]; } | undefined = await this.getProcedureWhichCouldBeDeletedAfterwardsOfElement(document, msg.Scenario, message.Details.then[i], i, TypeChanged.Then, scenarioMethodRange);
                     if (procedureToDelete)
-                        proceduresWhichCouldBeDeleted.push(procedureToDelete);
+                        if (!TestMethodUtils.procedureAlreadyExistsInProcedureList(procedureToDelete, proceduresWhichCouldBeDeleted))
+                            proceduresWhichCouldBeDeleted.push(procedureToDelete);
                 }
-
                 let handlerFunctions: ALFullSyntaxTreeNode[] = await TestMethodUtils.getHandlerFunctions(document, scenarioMethodTreeNode);
-                for (let i = 0; i < handlerFunctions.length; i++) {
-                    let identifierTreeNode: ALFullSyntaxTreeNode = ALFullSyntaxTreeNodeExt.getFirstChildNodeOfKind(handlerFunctions[i], FullSyntaxTreeNodeKind.getIdentifierName(), false) as ALFullSyntaxTreeNode;
+                for(const handlerFunction of handlerFunctions){
+                    let identifierTreeNode: ALFullSyntaxTreeNode = ALFullSyntaxTreeNodeExt.getFirstChildNodeOfKind(handlerFunction, FullSyntaxTreeNodeKind.getIdentifierName(), false) as ALFullSyntaxTreeNode;
                     let rangeOfIdentifier: Range = RangeUtils.trimRange(document, TextRangeExt.createVSCodeRange(identifierTreeNode.fullSpan));
                     let locations: Location[] | undefined = await commands.executeCommand('vscode.executeReferenceProvider', document.uri, rangeOfIdentifier.start);
                     if (locations && locations.length <= 2) { //call & declaration
-                        let procedureName: string = ALFullSyntaxTreeNodeExt.findIdentifierAndGetValueOfTreeNode(document, handlerFunctions[i]);
-                        let parameterTypes: string[] = TestMethodUtils.getParameterTypesOfMethod(handlerFunctions[i], document);
+                        let procedureName: string = ALFullSyntaxTreeNodeExt.findIdentifierAndGetValueOfTreeNode(document, handlerFunction);
+                        let parameterTypes: string[] = TestMethodUtils.getParameterTypesOfMethod(handlerFunction, document);
                         proceduresWhichCouldBeDeleted.push({ procedureName: procedureName, parameterTypes: parameterTypes });
                     }
                 }
@@ -132,14 +133,24 @@ export class ObjectService {
         return proceduresWhichCouldBeDeleted;
     }
 
-    private async getProcedureWhichCouldBeDeletedAfterwardsOfElement(document: TextDocument, scenario: string, elementValue: string, elementId: number, elementType: TypeChanged): Promise<{ procedureName: string, parameterTypes: string[] } | undefined> {
+    private async getProcedureWhichCouldBeDeletedAfterwardsOfElement(document: TextDocument, scenario: string, elementValue: string, elementId: number, elementType: TypeChanged, rangeToDeleteInTotal?: Range): Promise<{ procedureName: string, parameterTypes: string[] } | undefined> {
         let elementRange: Range | undefined = await ElementUtils.getRangeOfElement(document, scenario, elementType, elementId) as Range;
 
-        let identifierTreeNodeOfInvocation: ALFullSyntaxTreeNode | undefined = await ElementUtils.getProcedureCallToElementValue(document, elementRange.start, elementType, elementValue);
+        let identifierTreeNodeOfInvocation: ALFullSyntaxTreeNode | undefined = await ElementUtils.getAppropriateProcedureCallToElementValue(document, elementRange.start, elementType, elementValue);
         if (identifierTreeNodeOfInvocation) {
             let rangeOfProcedureCall: Range = RangeUtils.trimRange(document, TextRangeExt.createVSCodeRange(identifierTreeNodeOfInvocation.fullSpan));
             let references: Location[] | undefined = await commands.executeCommand('vscode.executeReferenceProvider', document.uri, rangeOfProcedureCall.start);
-            if (references && references.length <= 2) { //call + declaration
+            let procedureCouldBeDeleted: boolean = false;
+            if (references) {
+                if (references.length == 2)
+                    procedureCouldBeDeleted = true;
+                else if (references.length > 2 && rangeToDeleteInTotal) {
+                    let referencesInsideRangeToDelete: Location[] = references.filter(reference => reference.uri.fsPath == document.uri.fsPath && rangeToDeleteInTotal.contains(reference.range));
+                    if (referencesInsideRangeToDelete.length == references.length - 1) //minus declaration
+                        procedureCouldBeDeleted = true;
+                }
+            }
+            if (procedureCouldBeDeleted) {
                 let methodTreeNode: ALFullSyntaxTreeNode | undefined = await SyntaxTreeExt.getMethodTreeNodeByCallPosition(document, rangeOfProcedureCall.start);
                 if (methodTreeNode) {
                     let procedureName: string = ALFullSyntaxTreeNodeExt.findIdentifierAndGetValueOfTreeNode(document, methodTreeNode);
