@@ -43,7 +43,8 @@ export class ObjectService {
     }
     public async getProceduresWhichCouldBeDeletedAfterwards(msg: MessageUpdate): Promise<Array<{ procedureName: string, parameterTypes: string[] }>> {
         let document: TextDocument = await workspace.openTextDocument(msg.FsPath);
-        if ([TypeChanged.Given, TypeChanged.When, TypeChanged.Then].includes(msg.Type) && [MessageState.Deleted, MessageState.Modified].includes(msg.State)) {
+        if ([TypeChanged.Given, TypeChanged.When, TypeChanged.Then].includes(msg.Type) &&
+            (msg.State == MessageState.Deleted || (msg.State == MessageState.Modified && await this.checkIfOldAndNewProcedureExists(msg)))) {
             if (!msg.ArrayIndex)
                 throw new Error('ArrayIndex not passed')
             let procedureToDelete: { procedureName: string, parameterTypes: string[] } | undefined = await this.getProcedureWhichCouldBeDeletedAfterwardsOfElement(document, msg.Scenario, msg.OldValue, msg.ArrayIndex, msg.Type);
@@ -118,7 +119,7 @@ export class ObjectService {
                             proceduresWhichCouldBeDeleted.push(procedureToDelete);
                 }
                 let handlerFunctions: ALFullSyntaxTreeNode[] = await TestMethodUtils.getHandlerFunctions(document, scenarioMethodTreeNode);
-                for(const handlerFunction of handlerFunctions){
+                for (const handlerFunction of handlerFunctions) {
                     let identifierTreeNode: ALFullSyntaxTreeNode = ALFullSyntaxTreeNodeExt.getFirstChildNodeOfKind(handlerFunction, FullSyntaxTreeNodeKind.getIdentifierName(), false) as ALFullSyntaxTreeNode;
                     let rangeOfIdentifier: Range = RangeUtils.trimRange(document, TextRangeExt.createVSCodeRange(identifierTreeNode.fullSpan));
                     let locations: Location[] | undefined = await commands.executeCommand('vscode.executeReferenceProvider', document.uri, rangeOfIdentifier.start);
