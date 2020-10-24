@@ -1,4 +1,4 @@
-import { commands, Range, RelativePattern, TextDocument, Uri, workspace, WorkspaceConfiguration } from 'vscode';
+import { commands, Range, RelativePattern, TextDocument, Uri, workspace } from 'vscode';
 import { Message, MessageState, MessageUpdate, TypeChanged } from "../../typings/types";
 import { ALFullSyntaxTreeNodeExt } from '../AL Code Outline Ext/alFullSyntaxTreeNodeExt';
 import { FullSyntaxTreeNodeKind } from '../AL Code Outline Ext/fullSyntaxTreeNodeKind';
@@ -41,7 +41,7 @@ export class ObjectService {
         }
         return messages.sort((a, b) => a.Id && b.Id ? (a.Id - b.Id) : (a.MethodName.localeCompare(b.MethodName)));
     }
-    public async getProceduresWhichCouldBeDeletedAfterwards(msg: MessageUpdate, config: WorkspaceConfiguration): Promise<Array<{ procedureName: string, parameterTypes: string[] }>> {
+    public async getProceduresWhichCouldBeDeletedAfterwards(msg: MessageUpdate): Promise<Array<{ procedureName: string, parameterTypes: string[] }>> {
         let document: TextDocument = await workspace.openTextDocument(msg.FsPath);
         if ([TypeChanged.Given, TypeChanged.When, TypeChanged.Then].includes(msg.Type) && [MessageState.Deleted, MessageState.Modified].includes(msg.State)) {
             if (!msg.ArrayIndex)
@@ -150,7 +150,7 @@ export class ObjectService {
         }
         return undefined;
     }
-    public async saveChanges(msg: MessageUpdate, config: WorkspaceConfiguration): Promise<boolean> {
+    public async saveChanges(msg: MessageUpdate): Promise<boolean> {
         switch (msg.State) {
             case MessageState.New:
                 return ElementService.addSomethingNewToCode(msg);
@@ -162,7 +162,7 @@ export class ObjectService {
                 return false;
         }
     }
-    async isChangeValid(entry: MessageUpdate, config: WorkspaceConfiguration): Promise<{ valid: boolean, reason: string }> {
+    async isChangeValid(entry: MessageUpdate): Promise<{ valid: boolean, reason: string }> {
         if (entry.Type == TypeChanged.ScenarioName && entry.State == MessageState.New) {
             let fsPath: string = await ElementService.getFSPathOfFeature(entry.Project, entry.Feature);
             let document: TextDocument = await workspace.openTextDocument(fsPath);

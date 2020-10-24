@@ -26,20 +26,18 @@ export class MiddlewareService {
         return new ObjectService().getObjects(paths);
         // return this.send(MiddlewareRequestMethod.QueryObjects, MiddlewareResponseMethod.GetObjects, false, paths) as Promise<Array<Message>>;
     }
-    async isChangeValid(item: MessageUpdate, config: any): Promise<{ valid: boolean, reason: string }> {
-        return new ObjectService().isChangeValid(item, config);
+    async isChangeValid(msg: MessageUpdate): Promise<{ valid: boolean, reason: string }> {
+        return new ObjectService().isChangeValid(msg);
     }
-    async getProceduresWhichCouldBeDeletedAfterwards(item: MessageUpdate, config: any): Promise<Array<{ procedureName: string, parameterTypes: string[] }>> {
-        return new ObjectService().getProceduresWhichCouldBeDeletedAfterwards(item, config);
-        // return this.send(MiddlewareRequestMethod.CheckSaveChanges, MiddlewareResponseMethod.CheckSaveChangesResponse, false, item, config) as Promise<boolean>;
+    async getProceduresWhichCouldBeDeletedAfterwards(msg: MessageUpdate): Promise<Array<{ procedureName: string, parameterTypes: string[] }>> {
+        return new ObjectService().getProceduresWhichCouldBeDeletedAfterwards(msg);
     }
     async checkIfOldAndNewProcedureExists(msg: MessageUpdate): Promise<boolean> {
         return new ObjectService().checkIfOldAndNewProcedureExists(msg);
     }
 
-    async saveChanges(item: MessageUpdate, config: any): Promise<boolean> {
-        return new ObjectService().saveChanges(item, config);
-        // return this.send(MiddlewareRequestMethod.SaveChanges, MiddlewareResponseMethod.SaveChangesResponse, false, item, config) as Promise<boolean>;
+    async saveChanges(msg: MessageUpdate): Promise<boolean> {
+        return new ObjectService().saveChanges(msg);
     }
 
     async check() {

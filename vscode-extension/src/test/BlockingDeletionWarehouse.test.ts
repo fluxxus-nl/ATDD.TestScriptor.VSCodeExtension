@@ -68,8 +68,7 @@ suite('Extension Test Suite', async function () {
 			FsPath: testDoc.uri.fsPath,
 			Project: 'Testing Blocking Deletion of Warehouse Shipment Lines (app)'
 		};
-		let config: any;
-		messageUpdate.ProceduresToDelete = await new ObjectService().getProceduresWhichCouldBeDeletedAfterwards(messageUpdate, config);
+		messageUpdate.ProceduresToDelete = await new ObjectService().getProceduresWhichCouldBeDeletedAfterwards(messageUpdate);
 		assert.strictEqual(messageUpdate.ProceduresToDelete.length, 1);
 		await restoreOriginalFileContent(testDoc, originalText);
 	});
@@ -86,8 +85,7 @@ suite('Extension Test Suite', async function () {
 			FsPath: testDoc.uri.fsPath,
 			Project: 'Testing Blocking Deletion of Warehouse Shipment Lines (app)'
 		};
-		let config: any;
-		messageUpdate.ProceduresToDelete = await new ObjectService().getProceduresWhichCouldBeDeletedAfterwards(messageUpdate, config);
+		messageUpdate.ProceduresToDelete = await new ObjectService().getProceduresWhichCouldBeDeletedAfterwards(messageUpdate);
 		assert.strictEqual(messageUpdate.ProceduresToDelete.length, 0);
 		await restoreOriginalFileContent(testDoc, originalText);
 	});
@@ -104,8 +102,7 @@ suite('Extension Test Suite', async function () {
 			FsPath: testDoc.uri.fsPath,
 			Project: 'Testing Blocking Deletion of Warehouse Shipment Lines (app)'
 		};
-		let config: any;
-		let successful = await new ObjectService().saveChanges(messageUpdate, config);
+		let successful = await new ObjectService().saveChanges(messageUpdate);
 		assert.strictEqual(successful, true);
 		await restoreOriginalFileContent(testDoc, originalText);
 	});
@@ -122,8 +119,7 @@ suite('Extension Test Suite', async function () {
 			FsPath: '',
 			Project: 'Testing Blocking Deletion of Warehouse Shipment Lines (app)'
 		};
-		let config: any;
-		let successful = await new ObjectService().saveChanges(messageUpdate, config);
+		let successful = await new ObjectService().saveChanges(messageUpdate);
 		assert.strictEqual(successful, true);
 		let uris: Uri[] = await workspace.findFiles('**/Cod75651.UnblockDeletionDisabledFLX.al');
 		assert.strictEqual(uris.length, 1);
@@ -159,11 +155,10 @@ suite('Extension Test Suite', async function () {
 			FsPath: '',
 			Project: 'Testing Blocking Deletion of Warehouse Shipment Lines (app)'
 		};
-		let config: any;
 		let uris: Uri[] = await workspace.findFiles('**/Cod75651.UnblockDeletionDisabledFLX.al');
 		assert.strictEqual(uris.length, 1);
 		Config.setAddInitializeFunction(false, uris[0]);
-		let successful = await new ObjectService().saveChanges(messageUpdate, config);
+		let successful = await new ObjectService().saveChanges(messageUpdate);
 		Config.setAddInitializeFunction(undefined, uris[0]);
 
 		assert.strictEqual(successful, true);
@@ -197,8 +192,7 @@ suite('Extension Test Suite', async function () {
 			FsPath: '',
 			Project: 'Testing Blocking Deletion of Warehouse Shipment Lines (app)'
 		};
-		let config: any;
-		let validationResult: { valid: boolean, reason: string } = await new ObjectService().isChangeValid(messageUpdate, config);
+		let validationResult: { valid: boolean, reason: string } = await new ObjectService().isChangeValid(messageUpdate);
 		assert.strictEqual(validationResult.valid, false);
 		await restoreOriginalFileContent(testDoc, originalText);
 	})
@@ -219,10 +213,9 @@ suite('Extension Test Suite', async function () {
 				{ procedureName: 'VerifyEmptyErrorOccurred', parameterTypes: [] }
 			]
 		};
-		let config: any;
 		let syntaxTree: SyntaxTree = await SyntaxTree.getInstance(testDoc);
 		let methodsBeforeDeletion: ALFullSyntaxTreeNode[] = syntaxTree.collectNodesOfKindXInWholeDocument(FullSyntaxTreeNodeKind.getMethodDeclaration());
-		let successful: boolean = await new ObjectService().saveChanges(messageUpdate, config);
+		let successful: boolean = await new ObjectService().saveChanges(messageUpdate);
 		syntaxTree = await SyntaxTree.getInstance(testDoc);
 		let methodsAfterDeletion: ALFullSyntaxTreeNode[] = syntaxTree.collectNodesOfKindXInWholeDocument(FullSyntaxTreeNodeKind.getMethodDeclaration());
 

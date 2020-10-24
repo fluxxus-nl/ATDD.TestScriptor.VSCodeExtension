@@ -1,5 +1,5 @@
 import { autoinject, singleton } from 'aurelia-dependency-injection';
-import { Range, Selection, TextDocument, TextEditorRevealType, ViewColumn, window, workspace, WorkspaceConfiguration } from 'vscode';
+import { Range, Selection, TextDocument, TextEditorRevealType, ViewColumn, window, workspace } from 'vscode';
 import { Application } from '../Application';
 import { IMessageBase, Message, MessageState, MessageUpdate, TypeChanged } from '../typings/types';
 import { WebPanel } from '../WebPanel';
@@ -57,25 +57,24 @@ export class WebPanelCommandService {
     }
 
     async SaveChangesCommand(message: IMessageBase) {
-        let config = Application.clone(Application.config) as any;
         let entry = message.Data as MessageUpdate;
-        let validationResult: { valid: boolean, reason: string } = await this.middlewareService.isChangeValid(entry, config);
+        let validationResult: { valid: boolean, reason: string } = await this.middlewareService.isChangeValid(entry);
         let somethingIsChanged: boolean = false;
         if (!validationResult.valid) {
             window.showErrorMessage(validationResult.reason);
         } else {
             let userResponses: { wantsToContinue: boolean, wantsProceduresToBeDeleted: Array<{ procedureName: string, parameterTypes: string[] }>, updateProcedureCall: boolean } =
-                await this.askUserForConfirmationsToProceed(entry, config);
+                await this.askUserForConfirmationsToProceed(entry);
             if (userResponses.wantsToContinue) {
                 entry.ProceduresToDelete = userResponses.wantsProceduresToBeDeleted;
                 entry.UpdateProcedureCall = userResponses.updateProcedureCall;
-                await this.middlewareService.saveChanges(entry, config);
+                await this.middlewareService.saveChanges(entry);
                 somethingIsChanged = true;
             }
         }
         WebPanel.postMessage({ Command: 'SaveChanges', Data: somethingIsChanged });
     }
-    async askUserForConfirmationsToProceed(entry: MessageUpdate, config: WorkspaceConfiguration): Promise<{ wantsToContinue: boolean, wantsProceduresToBeDeleted: Array<{ procedureName: string, parameterTypes: string[] }>, updateProcedureCall: boolean }> {
+    async askUserForConfirmationsToProceed(entry: MessageUpdate): Promise<{ wantsToContinue: boolean, wantsProceduresToBeDeleted: Array<{ procedureName: string, parameterTypes: string[] }>, updateProcedureCall: boolean }> {
         let confirmDeletionOfScenarioQuestion: string = 'Do you want to delete this scenario?';
         let confirmDeletionOfElementQuestion: string = 'Do you want to delete this element?';
         let confirmDeletionOfProcedureVariableQuestion = (procName: string) => `Do you want to delete the procedure '${procName}' ?`;
@@ -123,7 +122,7 @@ export class WebPanelCommandService {
                 let responseScenarioShouldBeDeleted: string | undefined = await window.showInformationMessage(confirmDeletionOfScenarioQuestion, optionYes, optionNo);
                 if (responseScenarioShouldBeDeleted === optionYes) {
                     let proceduresWhichCouldBeDeleted: Array<{ procedureName: string, parameterTypes: string[] }> =
-                        await this.middlewareService.getProceduresWhichCouldBeDeletedAfterwards(entry, config);
+                        await this.middlewareService.getProceduresWhichCouldBeDeletedAfterwards(entry);
                     let proceduresToDelete: Array<{ procedureName: string, parameterTypes: string[] }> = [];
                     proceduresToDelete.push(proceduresWhichCouldBeDeleted[0]);
                     for (let i = 1; i < proceduresWhichCouldBeDeleted.length; i++) { //i = 1 because scenario-Testprocedure is also inside this this array
