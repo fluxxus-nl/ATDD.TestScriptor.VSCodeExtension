@@ -42,8 +42,9 @@ export class App {
 
     this.subscriptions.push(this.eventAggregator.subscribe(AppEventPublisher.saveChanges, async (message: MessageUpdate) => {
       let result = await this.backendService.send({ Command: 'SaveChanges', Data: message });
-
-      if (!result) {
+      let userCancelledSaving: boolean = result && !result.Data;
+      
+      if (userCancelledSaving) {
         this.eventAggregator.publish(AppEventPublisher.saveChangesCancelled, message);
         return;
       }
