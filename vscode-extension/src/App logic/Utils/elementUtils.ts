@@ -9,11 +9,11 @@ import { RangeUtils } from "./rangeUtils";
 import { TestMethodUtils } from "./testMethodUtils";
 
 export class ElementUtils {
-    static async existsProcedureCallToElementValue(document: TextDocument, positionOfElementValue: Position, type: TypeChanged, elementValue: string): Promise<boolean> {
-        return (await this.getProcedureCallToElementValue(document, positionOfElementValue, type, elementValue)) != undefined;
+    static async existsAppropriateProcedureCallToElementValue(document: TextDocument, positionOfElementValue: Position, type: TypeChanged, elementValue: string): Promise<boolean> {
+        return (await this.getAppropriateProcedureCallToElementValue(document, positionOfElementValue, type, elementValue)) != undefined;
     }
 
-    static async getProcedureCallToElementValue(document: TextDocument, positionOfElementValue: Position, type: TypeChanged, elementValue: string): Promise<ALFullSyntaxTreeNode | undefined> {
+    static async getAppropriateProcedureCallToElementValue(document: TextDocument, positionOfElementValue: Position, type: TypeChanged, elementValue: string): Promise<ALFullSyntaxTreeNode | undefined> {
         let syntaxTree: SyntaxTree = await SyntaxTree.getInstance(document);
         let methodTreeNode: ALFullSyntaxTreeNode | undefined = syntaxTree.findTreeNode(positionOfElementValue, [FullSyntaxTreeNodeKind.getMethodDeclaration()]);
         if (!methodTreeNode)

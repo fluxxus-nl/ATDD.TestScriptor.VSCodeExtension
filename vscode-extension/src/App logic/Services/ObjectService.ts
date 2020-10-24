@@ -54,6 +54,31 @@ export class ObjectService {
         }
         return [];
     }
+    public async checkIfOldAndNewProcedureExists(msg: MessageUpdate): Promise<boolean> {
+        let document: TextDocument = await workspace.openTextDocument(msg.FsPath);
+        if (![TypeChanged.Given, TypeChanged.When, TypeChanged.Then].includes(msg.Type))
+            return false;
+        if (!msg.ArrayIndex)
+            throw new Error('ArrayIndex not passed')
+
+        let elementRange: Range | undefined = await ElementUtils.getRangeOfElement(document, msg.Scenario, msg.Type, msg.ArrayIndex) as Range;
+        let identifierTreeNodeOfInvocation: ALFullSyntaxTreeNode | undefined = await ElementUtils.getAppropriateProcedureCallToElementValue(document, elementRange.start, msg.Type, msg.OldValue);
+        if (!identifierTreeNodeOfInvocation)
+            return false;
+
+        let rangeOfOldIdentifier: Range = RangeUtils.trimRange(document, TextRangeExt.createVSCodeRange(identifierTreeNodeOfInvocation.fullSpan));
+        let oldMethodTreeNode: ALFullSyntaxTreeNode | undefined = await SyntaxTreeExt.getMethodTreeNodeByCallPosition(document, rangeOfOldIdentifier.end);
+
+        if (!oldMethodTreeNode)
+            return false;
+
+        let parameterTypes: string[] = TestMethodUtils.getParameterTypesOfMethod(oldMethodTreeNode, document);
+        let newProcedureName: string = TestMethodUtils.getProcedureName(msg.Type, msg.NewValue);
+        if (await TestCodeunitUtils.isProcedureAlreadyDeclared(document, newProcedureName, parameterTypes))
+            return true;
+        return false;
+    }
+
     private async getProceduresWhichCouldBeDeletedAfterwardsOfScenario(document: TextDocument, msg: MessageUpdate): Promise<Array<{ procedureName: string, parameterTypes: string[] }>> {
         let proceduresWhichCouldBeDeleted: Array<{ procedureName: string; parameterTypes: string[]; }> = [];
         let rangeOfScenario: Range | undefined = ElementUtils.getRangeOfScenario(document, msg.Scenario, msg.Id);

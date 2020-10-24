@@ -33,6 +33,9 @@ export class MiddlewareService {
         return new ObjectService().getProceduresWhichCouldBeDeletedAfterwards(item, config);
         // return this.send(MiddlewareRequestMethod.CheckSaveChanges, MiddlewareResponseMethod.CheckSaveChangesResponse, false, item, config) as Promise<boolean>;
     }
+    async checkIfOldAndNewProcedureExists(msg: MessageUpdate): Promise<boolean> {
+        return new ObjectService().checkIfOldAndNewProcedureExists(msg);
+    }
 
     async saveChanges(item: MessageUpdate, config: any): Promise<boolean> {
         return new ObjectService().saveChanges(item, config);

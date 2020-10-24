@@ -112,8 +112,8 @@ export class ElementService {
         let edit: WorkspaceEdit = new WorkspaceEdit();
         let newProcedureName = TestMethodUtils.getProcedureName(msg.Type, msg.NewValue);
         let oldProcedureName = TestMethodUtils.getProcedureName(msg.Type, msg.OldValue);
-        if (await ElementUtils.existsProcedureCallToElementValue(document, rangeOfOldElement.start, msg.Type, msg.OldValue)) {
-            let identifierOfOldProcedureCall: ALFullSyntaxTreeNode = <ALFullSyntaxTreeNode>await ElementUtils.getProcedureCallToElementValue(document, rangeOfOldElement.start, msg.Type, msg.OldValue)
+        if (await ElementUtils.existsAppropriateProcedureCallToElementValue(document, rangeOfOldElement.start, msg.Type, msg.OldValue)) {
+            let identifierOfOldProcedureCall: ALFullSyntaxTreeNode = <ALFullSyntaxTreeNode>await ElementUtils.getAppropriateProcedureCallToElementValue(document, rangeOfOldElement.start, msg.Type, msg.OldValue)
             let rangeOfOldIdentifier: Range = RangeUtils.trimRange(document, TextRangeExt.createVSCodeRange(identifierOfOldProcedureCall.fullSpan));
             let oldMethodTreeNode: ALFullSyntaxTreeNode | undefined = await SyntaxTreeExt.getMethodTreeNodeByCallPosition(document, rangeOfOldIdentifier.end);
 
@@ -139,13 +139,14 @@ export class ElementService {
             }
             //rename procedurecall and element
             edit.replace(document.uri, rangeOfOldElement, ElementUtils.getElementComment(msg.Type, msg.NewValue))
-            if (!alreadyRenamed)
+            if (!alreadyRenamed && msg.UpdateProcedureCall)
                 ElementUtils.renameProcedureCall(edit, document, rangeOfOldIdentifier, newProcedureName);
         } else {
-            edit.replace(document.uri, rangeOfOldElement, ElementUtils.getElementComment(msg.Type, msg.NewValue))
-            ElementUtils.addProcedureCall(edit, document, rangeOfOldElement.start, newProcedureName);
+            let newElementComment: string = ElementUtils.getElementComment(msg.Type, msg.NewValue);
+            edit.replace(document.uri, rangeOfOldElement, newElementComment)
+            ElementUtils.addProcedureCall(edit, document, rangeOfOldElement.start.translate(0, newElementComment.length), newProcedureName);
             if (!(await TestCodeunitUtils.isProcedureAlreadyDeclared(document, newProcedureName, [])))
-                TestCodeunitUtils.addProcedure(edit, document, newProcedureName);
+                await TestCodeunitUtils.addProcedure(edit, document, newProcedureName);
         }
         if (msg.ProceduresToDelete)
             await ElementUtils.deleteProcedures(edit, document, msg.ProceduresToDelete);

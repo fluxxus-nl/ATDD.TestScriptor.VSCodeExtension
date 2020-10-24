@@ -51,6 +51,7 @@ export interface MessageUpdate {
     FsPath: string;
     Project: string;
     ProceduresToDelete?: Array<{ procedureName: string, parameterTypes: string[] }>;
+    UpdateProcedureCall?: boolean;
     ArrayIndex?: number;
 }
 

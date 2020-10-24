@@ -64,21 +64,23 @@ export class WebPanelCommandService {
         if (!validationResult.valid) {
             window.showErrorMessage(validationResult.reason);
         } else {
-            let userResponses: { wantsToContinue: boolean, wantsProceduresToBeDeleted: Array<{ procedureName: string, parameterTypes: string[] }> } =
+            let userResponses: { wantsToContinue: boolean, wantsProceduresToBeDeleted: Array<{ procedureName: string, parameterTypes: string[] }>, updateProcedureCall: boolean } =
                 await this.askUserForConfirmationsToProceed(entry, config);
             if (userResponses.wantsToContinue) {
                 entry.ProceduresToDelete = userResponses.wantsProceduresToBeDeleted;
+                entry.UpdateProcedureCall = userResponses.updateProcedureCall;
                 await this.middlewareService.saveChanges(entry, config);
                 somethingIsChanged = true;
             }
         }
         WebPanel.postMessage({ Command: 'SaveChanges', Data: somethingIsChanged });
     }
-    async askUserForConfirmationsToProceed(entry: MessageUpdate, config: WorkspaceConfiguration): Promise<{ wantsToContinue: boolean, wantsProceduresToBeDeleted: Array<{ procedureName: string, parameterTypes: string[] }> }> {
+    async askUserForConfirmationsToProceed(entry: MessageUpdate, config: WorkspaceConfiguration): Promise<{ wantsToContinue: boolean, wantsProceduresToBeDeleted: Array<{ procedureName: string, parameterTypes: string[] }>, updateProcedureCall: boolean }> {
         let confirmDeletionOfScenarioQuestion: string = 'Do you want to delete this scenario?';
         let confirmDeletionOfElementQuestion: string = 'Do you want to delete this element?';
         let confirmDeletionOfProcedureVariableQuestion = (procName: string) => `Do you want to delete the procedure '${procName}' ?`;
         let confirmUpdateOfElementQuestion: string = 'Do you want to update this element?';
+        let askWhichProcedureToTake: string = 'To the new naming exists already a helper function with the same parameters. Which one to take?';
         let optionYes: string = 'Yes';
         let optionNo: string = 'No';
         if ([TypeChanged.Given, TypeChanged.When, TypeChanged.Then].includes(entry.Type)) {
@@ -89,19 +91,31 @@ export class WebPanelCommandService {
                 else
                     response = await window.showInformationMessage(confirmUpdateOfElementQuestion, optionYes, optionNo)
                 if (response === optionYes) {
-                    let helperFunctionsWhichCouldBeDeleted: Array<{ procedureName: string, parameterTypes: string[] }> =
-                        await this.middlewareService.getProceduresWhichCouldBeDeletedAfterwards(entry, config);
-                    let proceduresToDelete: Array<{ procedureName: string, parameterTypes: string[] }> = [];
-                    if (helperFunctionsWhichCouldBeDeleted.length == 1) {
-                        let responseHelperFunctionShouldBeDeleted: string | undefined = await window.showInformationMessage(confirmDeletionOfProcedureVariableQuestion(helperFunctionsWhichCouldBeDeleted[0].procedureName), optionYes, optionNo);
-                        if (responseHelperFunctionShouldBeDeleted === optionYes)
-                            proceduresToDelete = helperFunctionsWhichCouldBeDeleted;
-                        else
-                            proceduresToDelete = [];
+                    let useNewProcedure: boolean = true;
+                    if (entry.State == MessageState.Modified) {
+                        if (await this.middlewareService.checkIfOldAndNewProcedureExists(entry)) {
+                            let optionKeepOld: string = 'Keep old';
+                            let optionSwitchToNew: string = 'Switch to new one';
+                            response = await window.showInformationMessage(askWhichProcedureToTake, optionKeepOld, optionSwitchToNew);
+                            if (response === optionKeepOld)
+                                useNewProcedure = false;
+                        }
                     }
-                    return { wantsToContinue: true, wantsProceduresToBeDeleted: proceduresToDelete }
+                    let proceduresToDelete: Array<{ procedureName: string, parameterTypes: string[] }> = [];
+                    if (useNewProcedure) {
+                        let helperFunctionsWhichCouldBeDeleted: Array<{ procedureName: string, parameterTypes: string[] }> =
+                            await this.middlewareService.getProceduresWhichCouldBeDeletedAfterwards(entry);
+                        if (helperFunctionsWhichCouldBeDeleted.length == 1) {
+                            let responseHelperFunctionShouldBeDeleted: string | undefined = await window.showInformationMessage(confirmDeletionOfProcedureVariableQuestion(helperFunctionsWhichCouldBeDeleted[0].procedureName), optionYes, optionNo);
+                            if (responseHelperFunctionShouldBeDeleted === optionYes)
+                                proceduresToDelete = helperFunctionsWhichCouldBeDeleted;
+                            else
+                                proceduresToDelete = [];
+                        }
+                    }
+                    return { wantsToContinue: true, wantsProceduresToBeDeleted: proceduresToDelete, updateProcedureCall: useNewProcedure }
                 } else {
-                    return { wantsToContinue: false, wantsProceduresToBeDeleted: [] };
+                    return { wantsToContinue: false, wantsProceduresToBeDeleted: [], updateProcedureCall: false };
                 }
             }
         } else if (TypeChanged.ScenarioName == entry.Type) {
@@ -118,13 +132,13 @@ export class WebPanelCommandService {
                             proceduresToDelete.push(proceduresWhichCouldBeDeleted[i]);
                         }
                     }
-                    return { wantsToContinue: true, wantsProceduresToBeDeleted: proceduresToDelete };
+                    return { wantsToContinue: true, wantsProceduresToBeDeleted: proceduresToDelete, updateProcedureCall: true };
                 } else {
-                    return { wantsToContinue: false, wantsProceduresToBeDeleted: [] };
+                    return { wantsToContinue: false, wantsProceduresToBeDeleted: [], updateProcedureCall: false };
                 }
             }
         }
-        return { wantsToContinue: true, wantsProceduresToBeDeleted: [] };
+        return { wantsToContinue: true, wantsProceduresToBeDeleted: [], updateProcedureCall: true };
     }
 
     async ViewSourceCommand(message: IMessageBase) {
