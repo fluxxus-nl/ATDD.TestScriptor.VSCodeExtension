@@ -1,19 +1,17 @@
 import { TextDocument } from 'vscode';
-import { ALFullSyntaxTreeNode } from '../AL Code Outline/alFullSyntaxTreeNode';
-import { MessageImpl } from '../Entities/messageImpl';
-import { MessageDetailsImpl } from '../Entities/messageDetailsImpl';
-import { RangeUtils } from './rangeUtils';
-import { TextRangeExt } from '../AL Code Outline Ext/textRangeExt';
-import { TestCodeunitUtils } from './testCodeunitUtils';
-import { Message, MessageState, ALTestRunnerResult } from '../../typings/types';
-import { SyntaxTree } from '../AL Code Outline/syntaxTree';
+import { ALTestRunnerResult, Message, MessageState } from '../../typings/types';
 import { ALFullSyntaxTreeNodeExt } from '../AL Code Outline Ext/alFullSyntaxTreeNodeExt';
+import { TextRangeExt } from '../AL Code Outline Ext/textRangeExt';
+import { ALFullSyntaxTreeNode } from '../AL Code Outline/alFullSyntaxTreeNode';
+import { MessageDetailsImpl } from '../Entities/messageDetailsImpl';
+import { MessageImpl } from '../Entities/messageImpl';
+import { RangeUtils } from './rangeUtils';
+import { TestCodeunitUtils } from './testCodeunitUtils';
 
 export class ObjectToMessageUtils {
     public static async testMethodToMessage(document: TextDocument, testMethod: ALFullSyntaxTreeNode): Promise<Message> {
         let message: MessageImpl = new MessageImpl();
-        let syntaxTree: SyntaxTree = await SyntaxTree.getInstance(document);
-        message.Codeunit = TestCodeunitUtils.getObjectName(syntaxTree, testMethod, document);
+        message.Codeunit = await TestCodeunitUtils.getObjectName(document, TextRangeExt.createVSCodeRange(testMethod.fullSpan).start);
         ObjectToMessageUtils.getMessageDetails(document, testMethod, message);
         message.MethodName = ALFullSyntaxTreeNodeExt.findIdentifierAndGetValueOfTreeNode(document, testMethod);
         message.Project = await TestCodeunitUtils.getAppNameOfDocument(document);

@@ -71,6 +71,14 @@ export class SyntaxTree {
         ALFullSyntaxTreeNodeExt.collectChildNodes(this.fullSyntaxTreeResponse.root, searchForNodeKind, true, outList);
         return outList;
     }
+    public collectNodesOfKindXArrInWholeDocument(searchForNodeKinds: string[]): ALFullSyntaxTreeNode[] {
+        if (!this.fullSyntaxTreeResponse || !this.fullSyntaxTreeResponse.root) {
+            return [];
+        }
+        let outList: ALFullSyntaxTreeNode[] = [];
+        ALFullSyntaxTreeNodeExt.collectChildNodesOfKindArr(this.fullSyntaxTreeResponse.root, searchForNodeKinds, true, outList);
+        return outList;
+    }
     public isOutdated(documentContent: string): boolean {
         return this.documentContentOfCreation !== documentContent;
     }

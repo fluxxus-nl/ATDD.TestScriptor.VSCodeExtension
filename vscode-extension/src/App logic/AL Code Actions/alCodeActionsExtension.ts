@@ -1,5 +1,4 @@
 import * as vscode from 'vscode';
-import { isNullOrUndefined } from "util";
 import { APIInterface } from './apiInterface';
 
 export class ALCodeActionsExtension {
@@ -10,7 +9,7 @@ export class ALCodeActionsExtension {
     }
 
     public static async getInstance(): Promise<ALCodeActionsExtension> {
-        if (isNullOrUndefined(this.alCodeActionsExtension)) {
+        if (!this.alCodeActionsExtension) {
             this.setInstance();
         }
         await this.alCodeActionsExtension.activate();
@@ -19,7 +18,7 @@ export class ALCodeActionsExtension {
 
     private static setInstance() {
         let vsCodeExtension = vscode.extensions.getExtension('davidfeldhoff.al-codeactions');
-        if (isNullOrUndefined(vsCodeExtension)) {
+        if (!vsCodeExtension) {
             throw new Error('AL Code Outline has to be installed.');
         }
         this.alCodeActionsExtension = new ALCodeActionsExtension(vsCodeExtension as vscode.Extension<any>);

@@ -6,13 +6,16 @@ import { RangeUtils } from '../Utils/rangeUtils';
 
 export class ALFullSyntaxTreeNodeExt {
     public static collectChildNodes(treeNode: ALFullSyntaxTreeNode, kindOfSyntaxTreeNode: string, searchAllLevels: boolean, outList: ALFullSyntaxTreeNode[]) {
+        return this.collectChildNodesOfKindArr(treeNode, [kindOfSyntaxTreeNode], searchAllLevels, outList);
+    }
+    public static collectChildNodesOfKindArr(treeNode: ALFullSyntaxTreeNode, kindsOfSyntaxTreeNode: string[], searchAllLevels: boolean, outList: ALFullSyntaxTreeNode[]) {
         if (treeNode.childNodes) {
-            for (let i = 0; i < treeNode.childNodes.length; i++) {
-                if (treeNode.childNodes[i].kind === kindOfSyntaxTreeNode) {
-                    outList.push(treeNode.childNodes[i]);
+            for (const childnode of treeNode.childNodes) {
+                if (childnode.kind && kindsOfSyntaxTreeNode.includes(childnode.kind)) {
+                    outList.push(childnode);
                 }
                 if (searchAllLevels) {
-                    this.collectChildNodes(treeNode.childNodes[i], kindOfSyntaxTreeNode, searchAllLevels, outList);
+                    this.collectChildNodesOfKindArr(childnode, kindsOfSyntaxTreeNode, searchAllLevels, outList);
                 }
             }
         }
@@ -109,7 +112,7 @@ export class ALFullSyntaxTreeNodeExt {
     }
     public static findIdentifierAndGetValueOfTreeNode(document: vscode.TextDocument, treeNode: ALFullSyntaxTreeNode): string {
         let identifierTreeNode: ALFullSyntaxTreeNode | undefined = ALFullSyntaxTreeNodeExt.getFirstChildNodeOfKind(treeNode, FullSyntaxTreeNodeKind.getIdentifierName(), false);
-        if(!identifierTreeNode){
+        if (!identifierTreeNode) {
             throw new Error('No Identifier Tree Node found.');
         }
         return document.getText(RangeUtils.trimRange(document, TextRangeExt.createVSCodeRange(identifierTreeNode.fullSpan)));

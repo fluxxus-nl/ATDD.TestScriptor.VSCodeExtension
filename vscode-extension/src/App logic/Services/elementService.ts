@@ -60,6 +60,27 @@ export class ElementService {
         let fsPath: string = await ElementService.getFSPathOfFeature(msg.Project, msg.Feature);
         let document: TextDocument = await workspace.openTextDocument(fsPath);
 
+        let positionToInsert: Position = await ElementService.getPositionToInsertForScenario(document);
+        let edit: WorkspaceEdit = new WorkspaceEdit();
+        let addInitializeFunction: boolean = !await TestCodeunitUtils.isProcedureAlreadyDeclaredRegardlesOfParametersGenerally(document, 'Initialize');
+        if (addInitializeFunction) {
+            let codeunitName: string = await TestCodeunitUtils.getObjectName(document, positionToInsert);
+            let initializeProcAsTextArr: string[] = TestCodeunitUtils.getInitializeMethod(codeunitName);
+            let positionToInsertForInitialize: Position = await TestCodeunitUtils.getPositionToInsertForGlobalProcedure(document);
+            edit.insert(document.uri, positionToInsertForInitialize, '\r\n\r\n' + initializeProcAsTextArr.join('\r\n'));
+            let variable: ALFullSyntaxTreeNode | undefined = await TestCodeunitUtils.getGlobalVariableDeclaration(document, 'IsInitialized', 'Boolean');
+            if (!variable) {
+                let editValues: { positionToInsert: Position, textToInsert: string } = await TestCodeunitUtils.addGlobalVariable(document, 'IsInitialized', 'Boolean');
+                edit.insert(document.uri, editValues.positionToInsert, editValues.textToInsert);
+            }
+        }
+        edit.insert(document.uri, positionToInsert, '\r\n\r\n' + TestCodeunitUtils.getDefaultTestMethod(msg.Feature, msg.Id, msg.NewValue, document.uri).join('\r\n'));
+        let success = await workspace.applyEdit(edit);
+        success = success && await document.save();
+        return success;
+    }
+
+    private static async getPositionToInsertForScenario(document: TextDocument): Promise<Position> {
         let syntaxTree: SyntaxTree = await SyntaxTree.getInstance(document);
         let methodTreeNodes: ALFullSyntaxTreeNode[] = syntaxTree.collectNodesOfKindXInWholeDocument(FullSyntaxTreeNodeKind.getMethodDeclaration());
         let testMethodTreeNodes = methodTreeNodes.filter(methodTreeNode => {
@@ -71,11 +92,7 @@ export class ElementService {
         testMethodTreeNodes = testMethodTreeNodes.sort((a, b) => a.fullSpan && a.fullSpan.end && b.fullSpan && b.fullSpan.end ? a.fullSpan?.end?.line - b.fullSpan?.end?.line : 0);
         let lastTestMethodTreeNode: ALFullSyntaxTreeNode = testMethodTreeNodes[testMethodTreeNodes.length - 1];
         let positionToInsert: Position = RangeUtils.trimRange(document, TextRangeExt.createVSCodeRange(lastTestMethodTreeNode.fullSpan)).end;
-        let edit: WorkspaceEdit = new WorkspaceEdit();
-        edit.insert(document.uri, positionToInsert, '\r\n\r\n' + TestCodeunitUtils.getDefaultTestMethod(msg.Feature, msg.Id, msg.NewValue, document.uri).join('\r\n'));
-        let success = await workspace.applyEdit(edit);
-        success = success && await document.save();
-        return success;
+        return positionToInsert;
     }
 
     public static async getFSPathOfFeature(projectName: string, featureName: string): Promise<string> {
