@@ -1,17 +1,18 @@
-codeunit 50103 TestObjectWithInitializeFLX
+codeunit 50104 TestObjectWithUIHandlerFLX
 {
     Subtype = Test;
 
     trigger OnRun()
     begin
-        // [FEATURE] Test object with Initialize
+        // [FEATURE] Test object with UI Hanldler
     end;
 
     [Test]
-    procedure FourthTestFunctionWithValidGivenWhenThenStructureAndInitialize()
-    // [FEATURE] Test object with Initialize
+    [HandlerFunctions('AMessageHandler')]
+    procedure FifthTestFunctionWithValidGivenWhenThenStructureAndUIHandler()
+    // [FEATURE] Test object with UI Hanldler
     begin
-        // [SCENARIO 0004] Fourth test function with valid Given-When-Then structure and Initialize
+        // [SCENARIO 0005] Fifth test function with valid Given-When-Then structure and UI handler
         Initialize();
         // [GIVEN] Valid Given
         CreateValidGiven();
@@ -51,6 +52,11 @@ codeunit 50103 TestObjectWithInitializeFLX
     local procedure VerifyValidThen()
     begin
         Error('Procedure VerifyValidThen not yet implemented.');
+    end;
+
+    [MessageHandler]
+    procedure AMessageHandler(Msg: Text)
+    begin
     end;
 
     var
