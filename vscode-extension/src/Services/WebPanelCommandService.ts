@@ -1,5 +1,6 @@
 import { autoinject, singleton } from 'aurelia-dependency-injection';
-import { Range, Selection, TextDocument, TextEditorRevealType, ViewColumn, window, workspace } from 'vscode';
+import { Range, Selection, TextDocument, TextEditorRevealType, Uri, ViewColumn, window, workspace } from 'vscode';
+import { Config } from '../App logic/Utils/config';
 import { Application } from '../Application';
 import { IMessageBase, Message, MessageState, MessageUpdate, TypeChanged } from '../typings/types';
 import { WebPanel } from '../WebPanel';
@@ -82,6 +83,7 @@ export class WebPanelCommandService {
         let askWhichProcedureToTake: string = 'To the new naming exists already a helper function with the same parameters. Which one to take?';
         let optionYes: string = 'Yes';
         let optionNo: string = 'No';
+        let removalMode: string = Config.getRemovalMode(entry.FsPath ? Uri.file(entry.FsPath) : undefined);
         if ([TypeChanged.Given, TypeChanged.When, TypeChanged.Then].includes(entry.Type)) {
             if ([MessageState.Deleted, MessageState.Modified].includes(entry.State)) {
                 let response: string | undefined;
@@ -105,8 +107,10 @@ export class WebPanelCommandService {
                         let helperFunctionsWhichCouldBeDeleted: Array<{ procedureName: string, parameterTypes: string[] }> =
                             await this.middlewareService.getProceduresWhichCouldBeDeletedAfterwards(entry);
                         if (helperFunctionsWhichCouldBeDeleted.length == 1) {
-                            let responseHelperFunctionShouldBeDeleted: string | undefined = await window.showInformationMessage(confirmDeletionOfProcedureVariableQuestion(helperFunctionsWhichCouldBeDeleted[0].procedureName), optionYes, optionNo);
-                            if (responseHelperFunctionShouldBeDeleted === optionYes)
+                            let responseHelperFunctionShouldBeDeleted: string | undefined;
+                            if (removalMode == Config.removalModeConfirmation)
+                                responseHelperFunctionShouldBeDeleted = await window.showInformationMessage(confirmDeletionOfProcedureVariableQuestion(helperFunctionsWhichCouldBeDeleted[0].procedureName), optionYes, optionNo);
+                            if (responseHelperFunctionShouldBeDeleted === optionYes || removalMode == Config.removalModeNoConfirmationButRemoval)
                                 proceduresToDelete = helperFunctionsWhichCouldBeDeleted;
                             else
                                 proceduresToDelete = [];
@@ -126,8 +130,10 @@ export class WebPanelCommandService {
                     let proceduresToDelete: Array<{ procedureName: string, parameterTypes: string[] }> = [];
                     proceduresToDelete.push(proceduresWhichCouldBeDeleted[0]);
                     for (let i = 1; i < proceduresWhichCouldBeDeleted.length; i++) { //i = 1 because scenario-Testprocedure is also inside this this array
-                        let responseHelperFunctionShouldBeDeleted: string | undefined = await window.showInformationMessage(confirmDeletionOfProcedureVariableQuestion(proceduresWhichCouldBeDeleted[i].procedureName), optionYes, optionNo);
-                        if (responseHelperFunctionShouldBeDeleted === optionYes) {
+                        let responseHelperFunctionShouldBeDeleted: string | undefined;
+                        if (removalMode == Config.removalModeConfirmation)
+                            responseHelperFunctionShouldBeDeleted = await window.showInformationMessage(confirmDeletionOfProcedureVariableQuestion(proceduresWhichCouldBeDeleted[i].procedureName), optionYes, optionNo);
+                        if (responseHelperFunctionShouldBeDeleted === optionYes || removalMode == Config.removalModeNoConfirmationButRemoval) {
                             proceduresToDelete.push(proceduresWhichCouldBeDeleted[i]);
                         }
                     }

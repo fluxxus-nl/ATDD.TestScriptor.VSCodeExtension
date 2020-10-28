@@ -1,3 +1,4 @@
+import { readFileSync } from 'fs';
 import { Position, Range, RelativePattern, TextDocument, Uri, workspace, WorkspaceEdit, WorkspaceFolder } from 'vscode';
 import { TypeChanged } from '../../typings/types';
 import { ALFullSyntaxTreeNodeExt } from '../AL Code Outline Ext/alFullSyntaxTreeNodeExt';
@@ -18,9 +19,7 @@ export class TestCodeunitUtils {
         }
         let testUris: Uri[] = [];
         for (let i = 0; i < uris.length; i++) {
-            let document: TextDocument = await workspace.openTextDocument(uris[i].fsPath);
-            let fileContent: string = document.getText();
-            // let fileContent: string = fs.readFileSync(uris[i].fsPath, { encoding: 'utf8', flag: 'r' });
+            let fileContent: string = readFileSync(uris[i].fsPath, { encoding: 'utf8', flag: 'r' });
             let regex: RegExp = /^.*codeunit \d+.*Subtype\s+=\s+Test;.*/is;
             if (regex.test(fileContent)) {
                 testUris.push(uris[i]);

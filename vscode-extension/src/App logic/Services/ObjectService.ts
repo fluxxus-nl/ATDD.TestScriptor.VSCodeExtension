@@ -1,4 +1,5 @@
-import { commands, Range, RelativePattern, TextDocument, Uri, Location, workspace } from 'vscode';
+import { readFileSync } from 'fs';
+import { commands, Location, Range, RelativePattern, TextDocument, Uri, workspace } from 'vscode';
 import { Message, MessageState, MessageUpdate, TypeChanged } from "../../typings/types";
 import { ALFullSyntaxTreeNodeExt } from '../AL Code Outline Ext/alFullSyntaxTreeNodeExt';
 import { FullSyntaxTreeNodeKind } from '../AL Code Outline Ext/fullSyntaxTreeNodeKind';
@@ -21,8 +22,8 @@ export class ObjectService {
         for (let i = 0; i < workspace.workspaceFolders.length; i++) {
             let files: Uri[] = await workspace.findFiles(new RelativePattern(workspace.workspaceFolders[i], 'app.json'));
             for (let a = 0; a < files.length; a++) {
-                let appDoc: TextDocument = await workspace.openTextDocument(files[a]);
-                let appJson = JSON.parse(appDoc.getText());
+                let appDocText: string = readFileSync(files[a].fsPath, { encoding: 'utf8' })
+                let appJson = JSON.parse(appDocText);
                 appJson.FilePath = workspace.workspaceFolders[i].uri.fsPath;
                 appJsons.push(appJson);
             }
@@ -45,7 +46,7 @@ export class ObjectService {
         let document: TextDocument = await workspace.openTextDocument(msg.FsPath);
         if ([TypeChanged.Given, TypeChanged.When, TypeChanged.Then].includes(msg.Type) &&
             (msg.State == MessageState.Deleted || (msg.State == MessageState.Modified && await this.checkIfOldAndNewProcedureExists(msg)))) {
-            if (!msg.ArrayIndex)
+            if (!msg.ArrayIndex && msg.ArrayIndex != 0)
                 throw new Error('ArrayIndex not passed')
             let procedureToDelete: { procedureName: string, parameterTypes: string[] } | undefined = await this.getProcedureWhichCouldBeDeletedAfterwardsOfElement(document, msg.Scenario, msg.OldValue, msg.ArrayIndex, msg.Type);
             if (procedureToDelete)
@@ -59,7 +60,7 @@ export class ObjectService {
         let document: TextDocument = await workspace.openTextDocument(msg.FsPath);
         if (![TypeChanged.Given, TypeChanged.When, TypeChanged.Then].includes(msg.Type))
             return false;
-        if (!msg.ArrayIndex)
+        if (!msg.ArrayIndex && msg.ArrayIndex != 0)
             throw new Error('ArrayIndex not passed')
 
         let elementRange: Range | undefined = await ElementUtils.getRangeOfElement(document, msg.Scenario, msg.Type, msg.ArrayIndex) as Range;
@@ -174,11 +175,11 @@ export class ObjectService {
                 return false;
         }
     }
-    async isChangeValid(entry: MessageUpdate): Promise<{ valid: boolean, reason: string }> {
-        if (entry.Type == TypeChanged.ScenarioName && entry.State == MessageState.New) {
-            let fsPath: string = await ElementService.getFSPathOfFeature(entry.Project, entry.Feature);
+    async isChangeValid(msg: MessageUpdate): Promise<{ valid: boolean, reason: string }> {
+        if (msg.Type == TypeChanged.ScenarioName && msg.State == MessageState.New) {
+            let fsPath: string = await ElementService.getFSPathOfFeature(msg.Project, msg.Feature);
             let document: TextDocument = await workspace.openTextDocument(fsPath);
-            let scenarioProcedureName = TestMethodUtils.getProcedureName(TypeChanged.ScenarioName, entry.NewValue);
+            let scenarioProcedureName = TestMethodUtils.getProcedureName(TypeChanged.ScenarioName, msg.NewValue);
             if (await TestCodeunitUtils.isProcedureAlreadyDeclared(document, scenarioProcedureName, [])) {
                 return {
                     valid: false,
@@ -186,15 +187,15 @@ export class ObjectService {
                 };
             }
         }
-        if ([TypeChanged.Given, TypeChanged.When, TypeChanged.Then].includes(entry.Type) && [MessageState.Modified, MessageState.Deleted].includes(entry.State)) {
-            if (!entry.ArrayIndex)
+        if ([TypeChanged.Given, TypeChanged.When, TypeChanged.Then].includes(msg.Type) && [MessageState.Modified, MessageState.Deleted].includes(msg.State)) {
+            if (!msg.ArrayIndex && msg.ArrayIndex != 0)
                 throw new Error('ArrayIndex not passed')
-            let fsPath: string = await ElementService.getFSPathOfFeature(entry.Project, entry.Feature);
+            let fsPath: string = await ElementService.getFSPathOfFeature(msg.Project, msg.Feature);
             let document: TextDocument = await workspace.openTextDocument(fsPath);
-            if (!await ElementUtils.getRangeOfElement(document, entry.Scenario, entry.Type, entry.ArrayIndex)) {
+            if (!await ElementUtils.getRangeOfElement(document, msg.Scenario, msg.Type, msg.ArrayIndex)) {
                 return {
                     valid: false,
-                    reason: TypeChanged[TypeChanged.Given] + ' \'' + entry.OldValue + '\' not found.'
+                    reason: TypeChanged[TypeChanged.Given] + ' \'' + msg.OldValue + '\' not found.'
                 }
             }
         }

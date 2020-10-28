@@ -2,6 +2,9 @@ import { ConfigurationTarget, Uri, workspace, WorkspaceConfiguration } from "vsc
 
 export class Config {
     static app: string = 'atddTestScriptor';
+    public static removalModeConfirmation: string = 'Ask for confirmation';
+    public static removalModeNoConfirmationNoRemoval: string = 'No confirmation & no removal'
+    public static removalModeNoConfirmationButRemoval: string = 'No confirmation, but removal'
 
     public static getAddInitializeFunction(uri?: Uri): boolean {
         return this.getConfig(uri).get<boolean>('addInitializeFunction', true);
@@ -20,6 +23,9 @@ export class Config {
     }
     static getPrefixThen(uri?: Uri): string {
         return this.getConfig(uri).get<string>('prefixThen', '');
+    }
+    static getRemovalMode(uri?: Uri): string{
+        return this.getConfig(uri).get<string>('removalMode', '');
     }
     private static getConfig(uri?: Uri): WorkspaceConfiguration {
         return workspace.getConfiguration(this.app, uri);

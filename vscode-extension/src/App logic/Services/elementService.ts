@@ -109,7 +109,7 @@ export class ElementService {
     }
 
     public static async modifySomethingInCode(msg: MessageUpdate): Promise<boolean> {
-        if (!msg.ArrayIndex)
+        if (!msg.ArrayIndex && msg.ArrayIndex != 0)
             throw new Error('ArrayIndex not passed')
         let document: TextDocument = await workspace.openTextDocument(msg.FsPath);
         let scenarioRange: Range | undefined = ElementUtils.getRangeOfScenario(document, msg.Scenario);
