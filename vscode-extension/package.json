@@ -89,7 +89,7 @@
                             "Do not show confirmation message & do not remove helper functions",
                             "Do not show confirmation message, but do remove helper functions"
                         ],
-                        "default": "confirmation",
+                        "default": "Ask for confirmation",
                         "description": "Specifies if you're asked if a helper function should be deleted if it's not used anymore after 1. a removal of a given/when/then, 2. a removal of a scenario, 3. a rename of a given/when/then if a helper function to the new naming already exists and you switch to using that one"
                     }
                 }
