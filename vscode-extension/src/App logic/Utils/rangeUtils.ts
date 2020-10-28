@@ -57,7 +57,7 @@ export class RangeUtils {
         return newRange;
     }
     public static getRangeOfTextInsideRange(document: TextDocument, searchRange: Range, regexToSearch: RegExp): Range | undefined {
-        for (let searchLine = searchRange.start.line; searchLine < searchRange.end.line; searchLine++) {
+        for (let searchLine = searchRange.start.line; searchLine <= searchRange.end.line; searchLine++) {
             let characterStart = 0;
             if (searchLine == searchRange.start.line)
                 characterStart = searchRange.start.character;

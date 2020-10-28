@@ -7,12 +7,14 @@ import { SyntaxTreeExt } from '../AL Code Outline Ext/syntaxTreeExt';
 import { TextRangeExt } from '../AL Code Outline Ext/textRangeExt';
 import { ALFullSyntaxTreeNode } from '../AL Code Outline/alFullSyntaxTreeNode';
 import { SyntaxTree } from '../AL Code Outline/syntaxTree';
+import { ElementDeletionUtils } from '../Utils/elementDeletionUtils';
+import { ElementInsertionUtils } from '../Utils/elementInsertionUtils';
+import { ElementModificationUtils } from '../Utils/elementModificationUtils';
 import { ElementUtils } from '../Utils/elementUtils';
 import { ObjectToMessageUtils } from '../Utils/objectToMessageUtils';
 import { RangeUtils } from '../Utils/rangeUtils';
 import { TestCodeunitUtils } from '../Utils/testCodeunitUtils';
 import { TestMethodUtils } from '../Utils/testMethodUtils';
-import { ElementService } from './elementService';
 
 export class ObjectService {
     async getProjects(): Promise<string[]> {
@@ -166,18 +168,18 @@ export class ObjectService {
     public async saveChanges(msg: MessageUpdate): Promise<boolean> {
         switch (msg.State) {
             case MessageState.New:
-                return ElementService.addSomethingNewToCode(msg);
+                return ElementInsertionUtils.addSomethingNewToCode(msg);
             case MessageState.Modified:
-                return ElementService.modifySomethingInCode(msg);
+                return ElementModificationUtils.modifySomethingInCode(msg);
             case MessageState.Deleted:
-                return ElementService.deleteSomethingFromCode(msg);
+                return ElementDeletionUtils.deleteSomethingFromCode(msg);
             default:
                 return false;
         }
     }
     async isChangeValid(msg: MessageUpdate): Promise<{ valid: boolean, reason: string }> {
-        if (msg.Type == TypeChanged.ScenarioName && msg.State == MessageState.New) {
-            let fsPath: string = await ElementService.getFSPathOfFeature(msg.Project, msg.Feature);
+        if (msg.Type == TypeChanged.ScenarioName && [MessageState.New, MessageState.Modified].includes(msg.State)) {
+            let fsPath: string = await ElementUtils.getFSPathOfFeature(msg.Project, msg.Feature);
             let document: TextDocument = await workspace.openTextDocument(fsPath);
             let scenarioProcedureName = TestMethodUtils.getProcedureName(TypeChanged.ScenarioName, msg.NewValue);
             if (await TestCodeunitUtils.isProcedureAlreadyDeclared(document, scenarioProcedureName, [])) {
@@ -190,7 +192,7 @@ export class ObjectService {
         if ([TypeChanged.Given, TypeChanged.When, TypeChanged.Then].includes(msg.Type) && [MessageState.Modified, MessageState.Deleted].includes(msg.State)) {
             if (!msg.ArrayIndex && msg.ArrayIndex != 0)
                 throw new Error('ArrayIndex not passed')
-            let fsPath: string = await ElementService.getFSPathOfFeature(msg.Project, msg.Feature);
+            let fsPath: string = await ElementUtils.getFSPathOfFeature(msg.Project, msg.Feature);
             let document: TextDocument = await workspace.openTextDocument(fsPath);
             if (!await ElementUtils.getRangeOfElement(document, msg.Scenario, msg.Type, msg.ArrayIndex)) {
                 return {

@@ -75,6 +75,7 @@ export class TestMethodUtils {
                 edit.replace(references[i].uri, references[i].range, newProcedureName);
             }
         }
+        //replace old procedure name in comments of procedure
         let blockTreeNode: ALFullSyntaxTreeNode | undefined = ALFullSyntaxTreeNodeExt.getFirstChildNodeOfKind(oldMethodTreeNode, FullSyntaxTreeNodeKind.getBlock(), false);
         if (blockTreeNode) {
             let blockRange: Range = RangeUtils.trimRange(document, TextRangeExt.createVSCodeRange(blockTreeNode.fullSpan));
