@@ -1,4 +1,5 @@
-import { commands, Range, RelativePattern, TextDocument, Uri, Location, workspace } from 'vscode';
+import { readFileSync } from 'fs';
+import { commands, Location, Range, RelativePattern, TextDocument, Uri, workspace } from 'vscode';
 import { Message, MessageState, MessageUpdate, TypeChanged } from "../../typings/types";
 import { ALFullSyntaxTreeNodeExt } from '../AL Code Outline Ext/alFullSyntaxTreeNodeExt';
 import { FullSyntaxTreeNodeKind } from '../AL Code Outline Ext/fullSyntaxTreeNodeKind';
@@ -21,8 +22,8 @@ export class ObjectService {
         for (let i = 0; i < workspace.workspaceFolders.length; i++) {
             let files: Uri[] = await workspace.findFiles(new RelativePattern(workspace.workspaceFolders[i], 'app.json'));
             for (let a = 0; a < files.length; a++) {
-                let appDoc: TextDocument = await workspace.openTextDocument(files[a]);
-                let appJson = JSON.parse(appDoc.getText());
+                let appDocText: string = readFileSync(files[a].fsPath, { encoding: 'utf8' })
+                let appJson = JSON.parse(appDocText);
                 appJson.FilePath = workspace.workspaceFolders[i].uri.fsPath;
                 appJsons.push(appJson);
             }
