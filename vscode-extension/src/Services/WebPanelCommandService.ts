@@ -79,6 +79,7 @@ export class WebPanelCommandService {
         let confirmDeletionOfScenarioQuestion: string = 'Do you want to delete this scenario?';
         let confirmDeletionOfElementQuestion: string = 'Do you want to delete this element?';
         let confirmDeletionOfProcedureVariableQuestion = (procName: string) => `Do you want to delete the procedure '${procName}' ?`;
+        let confirmUpdateOfScenarioQuestion: string = 'Do you want to update this scenario?';
         let confirmUpdateOfElementQuestion: string = 'Do you want to update this element?';
         let askWhichProcedureToTake: string = 'To the new naming exists already a helper function with the same parameters. Which one to take?';
         let optionYes: string = 'Yes';
@@ -139,6 +140,11 @@ export class WebPanelCommandService {
                     }
                     return { wantsToContinue: true, wantsProceduresToBeDeleted: proceduresToDelete, updateProcedureCall: true };
                 } else {
+                    return { wantsToContinue: false, wantsProceduresToBeDeleted: [], updateProcedureCall: false };
+                }
+            } else if (entry.State == MessageState.Modified) {
+                let responseScenarioShouldBeModified: string | undefined = await window.showInformationMessage(confirmUpdateOfScenarioQuestion, optionYes, optionNo);
+                if (responseScenarioShouldBeModified === optionNo) {
                     return { wantsToContinue: false, wantsProceduresToBeDeleted: [], updateProcedureCall: false };
                 }
             }
