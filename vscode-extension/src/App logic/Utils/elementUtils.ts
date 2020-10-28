@@ -160,7 +160,7 @@ export class ElementUtils {
 
 
     public static async deleteElementWithProcedureCall(edit: WorkspaceEdit, msg: MessageUpdate, document: TextDocument) {
-        if (!msg.ArrayIndex)
+        if (!msg.ArrayIndex && msg.ArrayIndex != 0)
             throw new Error('ArrayIndex not passed')
         let rangeOfElement: Range | undefined = await ElementUtils.getRangeOfElement(document, msg.Scenario, msg.Type, msg.ArrayIndex);
         if (!rangeOfElement)
