@@ -7,13 +7,11 @@ import { ALFullSyntaxTreeNode } from "../AL Code Outline/alFullSyntaxTreeNode";
 import { SyntaxTree } from "../AL Code Outline/syntaxTree";
 import { Config } from "./config";
 import { RangeUtils } from "./rangeUtils";
+import { StringUtils } from "./stringUtils";
 
 export class TestMethodUtils {
     public static getProcedureName(type: TypeChanged, name: string): string {
-        let nameTitleCase: string = name.replace(/\w+/g, function (txt) {
-            return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-        });
-        nameTitleCase = nameTitleCase.replace(/[^\w]/g, '');
+        let nameTitleCase: string = new StringUtils(name).titleCase().removeSpecialChars().value();
 
         let prefix: string = '';
         let uri: Uri | undefined = window.activeTextEditor?.document.uri;

@@ -1,30 +1,42 @@
 import { writeFileSync } from "fs-extra";
-import { Position, Range, TextDocument, workspace, WorkspaceEdit } from "vscode";
+import { join } from "path";
+import { Position, Range, TextDocument, workspace, WorkspaceEdit, WorkspaceFolder } from "vscode";
 import { MessageUpdate, TypeChanged } from "../../typings/types";
 import { ALFullSyntaxTreeNodeExt } from "../AL Code Outline Ext/alFullSyntaxTreeNodeExt";
 import { FullSyntaxTreeNodeKind } from "../AL Code Outline Ext/fullSyntaxTreeNodeKind";
 import { TextRangeExt } from "../AL Code Outline Ext/textRangeExt";
 import { ALFullSyntaxTreeNode } from "../AL Code Outline/alFullSyntaxTreeNode";
 import { SyntaxTree } from "../AL Code Outline/syntaxTree";
+import { Config } from "./config";
 import { ElementUtils } from "./elementUtils";
 import { RangeUtils } from "./rangeUtils";
+import { StringUtils } from "./stringUtils";
 import { TestCodeunitUtils } from "./testCodeunitUtils";
 import { TestMethodUtils } from "./testMethodUtils";
+import { WorkspaceUtils } from "./workspaceUtils";
 
 export class ElementInsertionUtils {
     public static async addSomethingNewToCode(msg: MessageUpdate): Promise<boolean> {
         if (msg.Type == TypeChanged.Feature) {
-            writeFileSync(msg.FsPath, TestCodeunitUtils.getDefaultTestCodeunit(msg.NewValue), { encoding: 'utf8' });
-            return true;
+            return ElementInsertionUtils.addNewFeatureToCode(msg);
         } else if (msg.Type == TypeChanged.ScenarioName) {
-            //TODO: Get the workspacefolder using the msg.Project, search for the feature and add the scenario there.
-            //msg.Id will contain the next ID of the Feature
             return await ElementInsertionUtils.addNewScenarioToCode(msg);
         }
         else {
             return await ElementInsertionUtils.addNewElementToCode(msg);
         }
     }
+    
+    private static addNewFeatureToCode(msg: MessageUpdate): boolean {
+        let srcFolder: string | undefined = Config.getTestSrcFolder();
+        if (!srcFolder)
+            throw new Error('Please specify the source folder for your tests in the settings.');
+        let fileName: string = new StringUtils(msg.NewValue).titleCase().removeSpecialChars().value() + '.al';
+        let fsPath: string = WorkspaceUtils.getFullFsPathOfRelativePath(srcFolder, fileName);
+        writeFileSync(fsPath, TestCodeunitUtils.getDefaultTestCodeunit(msg.NewValue), { encoding: 'utf8' });
+        return true;
+    }
+
     static async addNewElementToCode(msg: MessageUpdate): Promise<boolean> {
         if (msg.FsPath == '' && msg.Feature !== '' && msg.Project !== '')
             msg.FsPath = await ElementUtils.getFSPathOfFeature(msg.Project, msg.Feature);
@@ -130,7 +142,7 @@ export class ElementInsertionUtils {
         }
         return { addEmptyLine: true, endPositionOfPreviousLine: scenarioRange.end };
     }
-    
+
     public static addElement(edit: WorkspaceEdit, document: TextDocument, positionToInsert: Position, type: TypeChanged, elementValue: string) {
         let textToAdd: string = '\r\n';
         textToAdd += '        ' + ElementUtils.getElementComment(type, elementValue);

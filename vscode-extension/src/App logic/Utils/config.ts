@@ -24,8 +24,11 @@ export class Config {
     static getPrefixThen(uri?: Uri): string {
         return this.getConfig(uri).get<string>('prefixThen', '');
     }
-    static getRemovalMode(uri?: Uri): string{
+    static getRemovalMode(uri?: Uri): string {
         return this.getConfig(uri).get<string>('removalMode', '');
+    }
+    static getTestSrcFolder(): string | undefined {
+        return this.getConfig().get<string>('testDirectory');
     }
     private static getConfig(uri?: Uri): WorkspaceConfiguration {
         return workspace.getConfiguration(this.app, uri);
