@@ -1,3 +1,4 @@
+import { unlinkSync } from "fs-extra";
 import { Range, WorkspaceEdit, TextDocument, workspace } from "vscode";
 import { MessageUpdate, TypeChanged } from "../../typings/types";
 import { ALFullSyntaxTreeNodeExt } from "../AL Code Outline Ext/alFullSyntaxTreeNodeExt";
@@ -9,18 +10,23 @@ import { ElementUtils } from "./elementUtils";
 import { RangeUtils } from "./rangeUtils";
 import { TestMethodUtils } from "./testMethodUtils";
 
-export class ElementDeletionUtils{
+export class ElementDeletionUtils {
     public static async deleteSomethingFromCode(msg: MessageUpdate): Promise<boolean> {
-        let edit: WorkspaceEdit = new WorkspaceEdit();
-        let document: TextDocument = await workspace.openTextDocument(msg.FsPath);
-        if ([TypeChanged.Given, TypeChanged.When, TypeChanged.Then].includes(msg.Type))
-            await ElementDeletionUtils.deleteElementWithProcedureCall(edit, msg, document);
-        else if (TypeChanged.ScenarioName == msg.Type && msg.ProceduresToDelete)
-            await ElementDeletionUtils.deleteProcedures(edit, document, msg.ProceduresToDelete);
+        if (msg.Type == TypeChanged.Feature) {
+            unlinkSync(msg.FsPath);
+            return true;
+        } else {
+            let edit: WorkspaceEdit = new WorkspaceEdit();
+            let document: TextDocument = await workspace.openTextDocument(msg.FsPath);
+            if ([TypeChanged.Given, TypeChanged.When, TypeChanged.Then].includes(msg.Type))
+                await ElementDeletionUtils.deleteElementWithProcedureCall(edit, msg, document);
+            else if (TypeChanged.ScenarioName == msg.Type && msg.ProceduresToDelete)
+                await ElementDeletionUtils.deleteProcedures(edit, document, msg.ProceduresToDelete);
 
-        let successful: boolean = await workspace.applyEdit(edit);
-        await document.save();
-        return successful;
+            let successful: boolean = await workspace.applyEdit(edit);
+            await document.save();
+            return successful;
+        }
     }
     public static async deleteElementWithProcedureCall(edit: WorkspaceEdit, msg: MessageUpdate, document: TextDocument) {
         if (!msg.ArrayIndex && msg.ArrayIndex != 0)
@@ -58,7 +64,7 @@ export class ElementDeletionUtils{
         methodTreeNodes = methodTreeNodes.sort((a, b) => a.fullSpan && a.fullSpan.start && b.fullSpan && b.fullSpan.start ? b.fullSpan.start.line - a.fullSpan.start.line : 0);
         methodTreeNodes.forEach(method => edit.delete(document.uri, TextRangeExt.createVSCodeRange(method.fullSpan)));
     }
-    
+
     public static async deleteElement(edit: WorkspaceEdit, document: TextDocument, rangeToDelete: Range) {
         edit.delete(document.uri, rangeToDelete);
     }
