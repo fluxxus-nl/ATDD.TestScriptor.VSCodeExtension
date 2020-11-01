@@ -102,9 +102,9 @@ export class AppService {
             .orderByDescending(o => o.Id)
             .firstOrDefault();
 
-        let newId = 1;
+        let newId: number = 1;
         if (currEntry) {
-            return newId += currEntry.Id;
+            newId = Number(currEntry.Id) + newId;
         }
 
         return newId;

@@ -8,7 +8,7 @@
                 <ag-grid-column header-name="Project" field="Project" tooltip-field="Project" editable.bind="false"></ag-grid-column>
                 <ag-grid-column header-name="Feature" field="Feature" tooltip-field="Feature" editable.bind="false">
                 </ag-grid-column>
-                <ag-grid-column header-name="Id" field="ID" width.bind="100" editable.bind="false">
+                <ag-grid-column header-name="Id" field="ID" width.bind="100" editable.bind="false" type.bind="'numericColumn'">
                     <ag-cell-template>
                         ${params.data.Id}
                     </ag-cell-template>
