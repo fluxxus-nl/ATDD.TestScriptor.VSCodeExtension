@@ -9,7 +9,11 @@ export class NewFeatureCommand implements ICommand {
     }
 
     async execute(payload: any): Promise<void> {
-        this.appService.editMode = AppEditMode.Feature;
+        if (this.appService.editMode == AppEditMode.Feature) {
+            this.appService.editMode = AppEditMode.Scenario;
+        } else {
+            this.appService.editMode = AppEditMode.Feature;
+        }
         console.log('NewFeature Command', this.appService.editMode);
     }
 

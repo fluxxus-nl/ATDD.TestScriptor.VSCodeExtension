@@ -14,9 +14,9 @@
                     </optgroup>
                 </select>
                 <label for="formGroupExampleInput">&num; ID</label>
-                <input type="text" class="form-control" value.bind="scenario.Id" placeholder="Scenario ID...">
+                <input type="text" class="form-control" value.bind="scenario.Id & debounce:300" placeholder="Scenario ID...">
                 <label for="formGroupExampleInput">Scenario</label>
-                <input type="text" class="form-control" value.bind="scenario.Scenario" placeholder="Scenario Name...">
+                <input type="text" class="form-control" value.bind="scenario.Scenario & debounce:300" placeholder="Scenario Name...">
             </div>
 
             <div show.bind="scenario">
