@@ -125,7 +125,14 @@ export class EntryFormGroup {
         console.log('savechangeEventHandler', message, cancelled, this.type);
 
         if (cancelled !== true) {
-            this.entries.splice(message.ArrayIndex, 1);
+            switch (message.State) {
+                case MessageState.Deleted:
+                    this.entries.splice(message.ArrayIndex, 1);
+                    break;
+                case MessageState.Modified:
+                    this.entries.splice(message.ArrayIndex, 1, message.NewValue);
+                    break;
+            }
         } else {
             let originalValue: string = message.OldValue;
             this.entries.splice(message.ArrayIndex, 1, originalValue);

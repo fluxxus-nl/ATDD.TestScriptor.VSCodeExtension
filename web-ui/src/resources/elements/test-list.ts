@@ -48,7 +48,7 @@ export class TestList {
         }));
 
         this.subscriptions.push(this.eventAggregator.subscribe(AppEventPublisher.saveChangesOK, async (message: MessageUpdate) => {
-            if (!message.ArrayIndex) {
+            if (Number.isInteger(message.ArrayIndex) !== true || message.ArrayIndex < 0) {
                 return;
             }
 
@@ -56,6 +56,12 @@ export class TestList {
                 this.entries.splice(message.ArrayIndex, 1);
                 this.listChanged();
                 this.focusRow(message.ArrayIndex - 1);
+            } else {
+                let entry = this.entries[message.ArrayIndex];
+                if (entry && (!entry.FsPath || entry.FsPath == '')) {
+                    entry.FsPath = message.FsPath;
+                    this.entries.splice(message.ArrayIndex, 1, entry);
+                }
             }
         }));
 
