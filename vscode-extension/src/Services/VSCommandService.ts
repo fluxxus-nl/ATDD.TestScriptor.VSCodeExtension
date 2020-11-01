@@ -3,7 +3,7 @@ import { singleton } from 'aurelia-dependency-injection';
 import { WebPanel } from "../WebPanel";
 import { WebPanelCommandService } from './WebPanelCommandService';
 import { MiddlewareService } from './MiddlewareService';
-import { commands } from 'vscode';
+import { commands, Uri } from 'vscode';
 
 @singleton(true)
 export class VSCommandService {
@@ -39,13 +39,28 @@ export class VSCommandService {
     }
 }
 
-export async function localObjectWatcher() {
+export async function localObjectWatcher(uri: Uri, type: ATDDFileChangeType) {
+    // skip re-discovery when Test Panel is active and file change happens,
+    // this is most likely a change event caused by our component
+    if (Application.panelActive === true && type == ATDDFileChangeType.Change) {
+        let check = WebPanel.testList.find(f => f.FsPath == uri.fsPath);
+        if (check) {
+            return;
+        }
+    }
+
     let webPanelService = Application.container.get(WebPanelCommandService);
     await webPanelService.LoadTestsCommand();
 }
 
 export enum VSDependency {
     ALTestRunner = 'jamespearson.al-test-runner'
+}
+
+export enum ATDDFileChangeType {
+    Add = 'Add',
+    Change = 'Change',
+    Unlink = 'Unlink'
 }
 
 export enum VSCommandType {

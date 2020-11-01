@@ -42,21 +42,19 @@ export class App {
 
     this.subscriptions.push(this.eventAggregator.subscribe(AppEventPublisher.saveChanges, async (message: MessageUpdate) => {
       let result = await this.backendService.send({ Command: 'SaveChanges', Data: message });
-      let userCancelledSaving: boolean = result && !result.Data;
-      
-      if (userCancelledSaving) {
+      let userCancelledSaving: boolean = result === false;
+      //console.log('saveChanges', result, userCancelledSaving);
+      if (userCancelledSaving === true) {
         this.eventAggregator.publish(AppEventPublisher.saveChangesCancelled, message);
-        return;
+      } else {
+        this.eventAggregator.publish(AppEventPublisher.saveChangesOK, message);
       }
-
-      this.eventAggregator.publish(AppEventPublisher.saveChangesOK, message);
     }));
 
   }
 
   async attached() {
-    let eventData = await this.backendService.send({ Command: 'LoadTests' });
-    this.entries = eventData.Data;
+    this.entries = await this.backendService.send({ Command: 'LoadTests' });
 
     this.appService.updateSidebarLinks(this.entries);
 
@@ -80,7 +78,7 @@ export class App {
         this.entries = [];
         this.entries = e.data.Data;
         this.appService.entries = this.entries;
-        console.log('entries updated', e.data.Data);
+        //console.log('entries updated', e.data.Data);
       }
     });
   }

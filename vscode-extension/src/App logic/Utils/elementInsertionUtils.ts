@@ -1,6 +1,5 @@
 import { writeFileSync } from "fs-extra";
-import { join } from "path";
-import { Position, Range, TextDocument, workspace, WorkspaceEdit, WorkspaceFolder } from "vscode";
+import { Position, Range, TextDocument, workspace, WorkspaceEdit } from "vscode";
 import { MessageUpdate, TypeChanged } from "../../typings/types";
 import { ALFullSyntaxTreeNodeExt } from "../AL Code Outline Ext/alFullSyntaxTreeNodeExt";
 import { FullSyntaxTreeNodeKind } from "../AL Code Outline Ext/fullSyntaxTreeNodeKind";

@@ -3,13 +3,14 @@ import { WebPanel } from './WebPanel';
 import { LogService } from './Services/LogService';
 import { MiddlewareService } from './Services/MiddlewareService';
 import { BackendService } from './Services/BackendService';
-import { localObjectWatcher, VSCommandType, VSCommandService } from './Services/VSCommandService';
+import { localObjectWatcher, VSCommandType, VSCommandService, ATDDFileChangeType } from './Services/VSCommandService';
 import { UIService } from './Services/UIService';
 import { commands, ExtensionContext, workspace, WorkspaceFolder, extensions } from 'vscode';
 import { readFile } from 'fs-extra';
 const packageConfig: any = require('../package.json');
 
 export class Application {
+    private _panelActive: boolean = false;
     private _container: Container;
     private _context!: ExtensionContext;
     private _extensionName: string;
@@ -78,6 +79,14 @@ export class Application {
         return Application._instance._uiService;
     }
 
+    static get panelActive() {
+        return Application._instance._panelActive;
+    }
+
+    static set panelActive(newVal: boolean) {
+        Application._instance._panelActive = newVal;
+    }
+
     static async activate() {
         await Application.instance._activate();
     }
@@ -97,9 +106,9 @@ export class Application {
 
     registerFileWatcher() {
         let watcher = workspace.createFileSystemWatcher('**/*.al');
-        this._context.subscriptions.push(watcher.onDidCreate(localObjectWatcher));
-        this._context.subscriptions.push(watcher.onDidChange(localObjectWatcher));
-        this._context.subscriptions.push(watcher.onDidDelete(localObjectWatcher));
+        this._context.subscriptions.push(watcher.onDidCreate((e) => localObjectWatcher(e, ATDDFileChangeType.Add)));
+        this._context.subscriptions.push(watcher.onDidChange((e) => localObjectWatcher(e, ATDDFileChangeType.Change)));
+        this._context.subscriptions.push(watcher.onDidDelete((e) => localObjectWatcher(e, ATDDFileChangeType.Unlink)));
     }
 
     async registerBackend() {

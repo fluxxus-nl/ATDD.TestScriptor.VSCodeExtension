@@ -39,6 +39,9 @@ export class WebPanel {
 
         // events
         this.panel.onDidDispose(() => this.dispose(), null, this._disposables);
+        this.panel.onDidChangeViewState((e) => {
+            Application.panelActive = e.webviewPanel.active === true;
+        }, null, this._disposables);
 
         // Handle messages from the webview
         this.panel.webview.onDidReceiveMessage((async (messages: Array<IMessageBase>) => {
@@ -93,7 +96,8 @@ export class WebPanel {
 
     public dispose() {
         (WebPanel.instance as any) = null;
-
+        Application.panelActive = false;
+        
         // Clean up our resources
         this.panel.dispose();
 

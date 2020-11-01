@@ -19,7 +19,8 @@ export class EntryFormGroup {
     singleEntry: boolean;
 
     @bindable()
-    type: MessageDetailType;
+    type: string;
+
     subscriptions: any = [];
 
     maxInputLength: number;
@@ -95,13 +96,12 @@ export class EntryFormGroup {
     }
 
     async savechangeEventHandler(message: MessageUpdate, cancelled: boolean = false) {        
-        console.log('savechangeEventHandler', message, cancelled, this.type);
 
-        if (!message.ArrayIndex) {
+        if (Number.isInteger(message.ArrayIndex) === false || message.ArrayIndex < 0) {
             return;
         }
 
-        if (![TypeChanged.Given, TypeChanged.When, TypeChanged.Then].indexOf(message.Type)) {
+        if ([TypeChanged.Given, TypeChanged.When, TypeChanged.Then].indexOf(message.Type) == -1) {
             return;
         }
 
@@ -118,9 +118,11 @@ export class EntryFormGroup {
                 break;
         }
 
-        if (type !== this.type) {
+        if (type != MessageDetailType[this.type]) {
             return;
-        }
+        }        
+
+        console.log('savechangeEventHandler', message, cancelled, this.type);
 
         if (cancelled !== true) {
             this.entries.splice(message.ArrayIndex, 1);

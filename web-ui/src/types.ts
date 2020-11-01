@@ -77,7 +77,7 @@ export enum MessageState {
     Deleted
 }
 
-export enum MessageDetailType {
+export enum MessageDetailType {    
     Given = 'Given',
     When = 'When',
     Then = 'Then'
