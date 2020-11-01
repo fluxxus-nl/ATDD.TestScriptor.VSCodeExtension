@@ -1,6 +1,6 @@
 import { transient } from 'aurelia-framework';
 import { AppService } from 'services/app-service';
-import { AppEditMode } from 'types';
+import { AppEditMode, Message, MessageState, TypeChanged } from 'types';
 import dragula from 'dragula';
 
 @transient()
@@ -36,7 +36,7 @@ export class FeatureList {
             moves: (el: Element, source: Element, handle: Element, sibling: Element) => {
                 return true; // elements are always draggable by default
             },
-            accepts: (el: Element, target: Element, source: Element, sibling: Element) => {                
+            accepts: (el: Element, target: Element, source: Element, sibling: Element) => {
                 return true;
             },
             invalid: (el: Element, handle: Element) => {
@@ -66,16 +66,35 @@ export class FeatureList {
     }
 
     add(parent: any) {
-        /*if (this.entries) {
-            this.entries.splice(this.entries.length, 0, '');
-        } else {
-            this.entries = [''];
-        }*/
+        if (this.entries) {
+            let i = this.entries.indexOf(parent);
+            if (i != -1) {
+                parent.children.splice(parent.children.length, 0, '');
+                this.entries.splice(i, 1, parent);
+            }
+        }
 
         //this.eventAggregator.publish(AppEventPublisher.entryFormEdited);
     }
 
-    update(index: number, newValue: any) {
+    update(index: number, parent: any, newValue: any) {
+        if (this.entries) {
+            let i = this.entries.indexOf(parent);
+            if (i != -1) {
+                let oldValue = parent.children[index];
+
+                parent.children.splice(index, 0, newValue);
+                this.entries.splice(i, 1, parent);
+
+                let message: Message = new Message();
+                message.ArrayIndex = index;
+
+                let newState = !oldValue || oldValue.length == 0 ? MessageState.New : MessageState.Modified;
+                this.appService.sendChangeNotification(TypeChanged.Feature, newState, newValue, oldValue, message);
+            }
+        }
+
+
         /*if (index !== -1)
             this.entries.splice(index, 1, newValue);
 
