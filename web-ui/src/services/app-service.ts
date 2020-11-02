@@ -61,7 +61,7 @@ export class AppService {
         }];
 
         for (let project of this._projects) {
-            let features = [...new Set(entries.filter(f => f.Project == project).map(item => item.Feature))].filter(m => m.length > 0);
+            let features = [...new Set(entries.filter(f => f.Project == project).map(item => item.Feature))].filter(m => (m && m.length > 0));
             this._sidebarLinks.push({
                 name: project,
                 active: false,
