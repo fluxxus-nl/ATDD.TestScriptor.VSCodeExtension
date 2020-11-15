@@ -6,18 +6,10 @@
                 Scenario to edit.'}
             </h5>
             <div show.bind="scenario" class="form-group mb-2">
-                <label for="formGroupExampleInput">Feature</label>
-                <!-- editable list is out of scope for now
-                <select class="custom-select" value.bind="scenario.Feature">
-                    <option value="">-- None --</option>
-                    <optgroup repeat.for="link of sidebarLinks" label="${link.name}" if.bind="link.name != 'All'">
-                        <option repeat.for="sublink of link.children" value.bind="sublink">${sublink}</option>
-                    </optgroup>
-                </select>
-                -->
-                <div class="form-control" disabled>${scenario.Feature}</div>
-                <label for="formGroupExampleInput">&num; ID</label>
-                <input type="text" class="form-control" value.bind="scenario.Id & debounce:300" placeholder="Scenario ID...">
+                <label for="formGroupExampleInput">Feature</label>                
+                <div class="form-control">${scenario.Feature}</div>
+                <label for="formGroupExampleInput">ID</label>
+                <div class="form-control">${scenario.Id}</div>
                 <label for="formGroupExampleInput">Scenario</label>
                 <input type="text" class="form-control" value.bind="scenario.Scenario & debounce:300" placeholder="Scenario Name...">
             </div>

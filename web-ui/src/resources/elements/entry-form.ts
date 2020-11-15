@@ -7,6 +7,19 @@ import { Message, MessageState, AppEventPublisher, TypeChanged } from 'types';
 @autoinject()
 export class EntryForm {
 
+    /*
+    <!-- editable feature and ID are out of scope for now
+    <select class="custom-select" value.bind="scenario.Feature">
+        <option value="">-- None --</option>
+        <optgroup repeat.for="link of sidebarLinks" label="${link.name}" if.bind="link.name != 'All'">
+            <option repeat.for="sublink of link.children" value.bind="sublink">${sublink}</option>
+        </optgroup>
+    </select>
+
+    <input type="text" class="form-control" value.bind="scenario.Id & debounce:300" placeholder="Scenario ID...">
+    -->
+    */
+
     @bindable()
     scenario: Message;
 
