@@ -54,8 +54,7 @@ export class TestList {
 
             console.log('saveChangesOK', message);
             if (message.Type == TypeChanged.ScenarioName && message.State == MessageState.Deleted) {
-                this.entries.splice(message.ArrayIndex, 1);
-                this.listChanged();
+                this.entries.splice(message.ArrayIndex, 1);                
                 this.focusRow(message.ArrayIndex - 1);
             } else {
                 let entry = this.entries[message.ArrayIndex];
@@ -65,6 +64,8 @@ export class TestList {
                     this.entries.splice(message.ArrayIndex, 1, entry);
                 }
             }
+
+            this.listChanged();
         }));
 
 

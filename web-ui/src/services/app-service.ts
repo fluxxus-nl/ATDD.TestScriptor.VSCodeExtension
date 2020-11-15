@@ -99,8 +99,10 @@ export class AppService {
         let currEntry = Enumerable
             .from(this._entries)
             .where(w => w.Feature == featureName)
-            .orderByDescending(o => o.Id)
-            .firstOrDefault();
+            .orderBy(o => o.Id)
+            .lastOrDefault();
+
+        console.log('getNextScenarioID', featureName, currEntry);
 
         let newId: number = 1;
         if (currEntry) {
