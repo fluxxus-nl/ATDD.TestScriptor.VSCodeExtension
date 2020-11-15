@@ -44,13 +44,7 @@ export class TestList {
 
         this.subscriptions.push(this.eventAggregator.subscribe(AppEventPublisher.onDeleteScenario, (scenario: Message) => {
             scenario.ArrayIndex = this.entries.indexOf(scenario);
-            this.appService.sendChangeNotification(TypeChanged.ScenarioName, MessageState.Deleted, scenario.Scenario, null, scenario);
-
-            if (scenario.ArrayIndex != -1) {
-                this.entries.splice(scenario.ArrayIndex, 1);
-                this.listChanged();
-                this.focusRow(this.entries.length - 1);
-            }
+            this.appService.sendChangeNotification(TypeChanged.ScenarioName, MessageState.Deleted, null, scenario.Scenario, scenario);
         }));
 
         this.subscriptions.push(this.eventAggregator.subscribe(AppEventPublisher.saveChangesOK, async (message: MessageUpdate) => {
@@ -58,6 +52,7 @@ export class TestList {
                 return;
             }
 
+            console.log('saveChangesOK', message);
             if (message.Type == TypeChanged.ScenarioName && message.State == MessageState.Deleted) {
                 this.entries.splice(message.ArrayIndex, 1);
                 this.listChanged();
