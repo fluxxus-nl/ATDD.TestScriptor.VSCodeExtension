@@ -61,6 +61,7 @@ export class TestList {
                 let entry = this.entries[message.ArrayIndex];
                 if (entry && (!entry.FsPath || entry.FsPath == '')) {
                     entry.FsPath = message.FsPath;
+                    entry.MethodName = message.MethodName;
                     this.entries.splice(message.ArrayIndex, 1, entry);
                 }
             }

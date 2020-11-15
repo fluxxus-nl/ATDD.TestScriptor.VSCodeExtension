@@ -30,6 +30,7 @@ export class ElementModificationUtils{
             edit = await ElementModificationUtils.modifyElement(document, methodRange, msg);
         } else if (msg.Type == TypeChanged.ScenarioName) {
             edit = await ElementModificationUtils.modifyScenario(document, methodTreeNode, msg);
+            msg.MethodName = TestMethodUtils.getProcedureName(TypeChanged.ScenarioName, msg.NewValue);
         } else {
             throw new Error('Unexpected type that\'s modified.');
         }

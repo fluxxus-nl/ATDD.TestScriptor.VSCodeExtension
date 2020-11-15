@@ -48,6 +48,7 @@ export class App {
         this.eventAggregator.publish(AppEventPublisher.saveChangesCancelled, message);
       } else {
         message.FsPath = result.fsPath;
+        message.MethodName = result.methodName;
         this.eventAggregator.publish(AppEventPublisher.saveChangesOK, message);
       }
     }));

@@ -52,6 +52,7 @@ export class MessageUpdate {
     Project: string;
     DeleteProcedure: boolean;
     ArrayIndex?: number;
+    MethodName?: string;
 }
 
 export enum TypeChanged {

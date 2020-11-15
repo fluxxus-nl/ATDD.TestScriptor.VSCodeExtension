@@ -73,7 +73,7 @@ export class WebPanelCommandService {
                 somethingIsChanged = true;
             }
         }
-        WebPanel.postMessage({ Command: 'SaveChanges', Data: { success: somethingIsChanged, fsPath: entry.FsPath } });
+        WebPanel.postMessage({ Command: 'SaveChanges', Data: { success: somethingIsChanged, fsPath: entry.FsPath, methodName: entry.MethodName } });
     }
     async askUserForConfirmationsToProceed(entry: MessageUpdate): Promise<{ wantsToContinue: boolean, wantsProceduresToBeDeleted: Array<{ procedureName: string, parameterTypes: string[] }>, updateProcedureCall: boolean }> {
         let confirmDeletionOfScenarioQuestion: string = 'Do you want to delete this scenario?';

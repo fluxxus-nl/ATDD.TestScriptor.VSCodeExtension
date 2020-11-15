@@ -53,6 +53,7 @@ export interface MessageUpdate {
     ProceduresToDelete?: Array<{ procedureName: string, parameterTypes: string[] }>;
     UpdateProcedureCall?: boolean;
     ArrayIndex?: number;
+    MethodName?: string;
 }
 
 export enum TypeChanged {

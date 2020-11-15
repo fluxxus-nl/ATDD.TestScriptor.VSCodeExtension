@@ -84,6 +84,7 @@ export class ElementInsertionUtils {
             }
         }
         edit.insert(document.uri, positionToInsert, '\r\n\r\n' + TestCodeunitUtils.getDefaultTestMethod(msg.Feature, msg.Id, msg.NewValue, document.uri).join('\r\n'));
+        msg.MethodName = TestMethodUtils.getProcedureName(TypeChanged.ScenarioName, msg.NewValue);
         msg.FsPath = fsPath;
         let success = await workspace.applyEdit(edit);
         success = success && await document.save();
