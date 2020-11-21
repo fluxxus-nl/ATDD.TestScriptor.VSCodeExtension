@@ -6,7 +6,7 @@
     "author": {
         "name": "fluxxus-nl"
     },
-    "icon": "media/ATDDTestScriptorIcon.png",    
+    "icon": "images/ATDDTestScriptorIcon.png",    
     "repository": {
         "type": "github",
         "url": "https://github.com/fluxxus-nl/ATDD.TestScriptor.VSCodeExtension.git"
