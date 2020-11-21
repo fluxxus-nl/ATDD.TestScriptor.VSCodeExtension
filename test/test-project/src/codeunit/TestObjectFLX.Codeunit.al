@@ -8,7 +8,7 @@ codeunit 50100 TestObjectFLX
     end;
 
     [Test]
-    procedure ValidTestFunction()
+    procedure FirstTestFunctionWithValidGivenWhenThenstructure()
     // [FEATURE] First test object
     begin
         // [SCENARIO 0001] First test function with valid Given-When-Then structure
