@@ -8,7 +8,7 @@ codeunit 50101 DuplicateTestObjectFLX
     end;
 
     [Test]
-    procedure ValidTestFunction()
+    procedure SecondTestFunctionWithValidGivenWhenThenStructure()
     // [FEATURE] Duplicate test object
     begin
         // [SCENARIO 0002] Second test function with valid Given-When-Then structure
@@ -21,7 +21,7 @@ codeunit 50101 DuplicateTestObjectFLX
     end;
 
     [Test]
-    procedure AnotherValidTestFunction()
+    procedure ThirdTestFunctionWithValidGivenWhenThenStructure()
     // [FEATURE] Duplicate test object
     begin
         // [SCENARIO 0003] Third test function with valid Given-When-Then structure
