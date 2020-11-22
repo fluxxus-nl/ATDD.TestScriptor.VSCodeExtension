@@ -57,7 +57,10 @@ export class ElementModificationUtils {
             //add procedure similar to old one
             if (oldMethodTreeNode) {
                 let parameterTypes: string[] = TestMethodUtils.getParameterTypesOfMethod(oldMethodTreeNode, document);
-                if (!(await TestCodeunitUtils.isProcedureAlreadyDeclared(document, newProcedureName, parameterTypes))) {
+                let procedureDeclaredResult: { alreadyDeclared: boolean, procedureName: string } = await TestCodeunitUtils.isProcedureOfElementAlreadyDeclared(document, msg.Type, msg.NewValue, parameterTypes)
+                if (procedureDeclaredResult.alreadyDeclared)
+                    newProcedureName = procedureDeclaredResult.procedureName
+                else {
                     let references: Location[] | undefined = await commands.executeCommand('vscode.executeReferenceProvider', document.uri, rangeOfOldIdentifier.end);
                     if (references && references.length == 2) {
                         await TestMethodUtils.renameMethod(edit, oldMethodTreeNode, document, newProcedureName);
@@ -71,7 +74,10 @@ export class ElementModificationUtils {
                 }
             } else {
                 //only happens if procedure call to old procedure exists, but no implementation to that one.
-                if (!(await TestCodeunitUtils.isProcedureAlreadyDeclared(document, newProcedureName, [])))
+                let procedureDeclaredResult: { alreadyDeclared: boolean, procedureName: string } = await TestCodeunitUtils.isProcedureOfElementAlreadyDeclared(document, msg.Type, msg.NewValue, [])
+                if (procedureDeclaredResult.alreadyDeclared)
+                    newProcedureName = procedureDeclaredResult.procedureName
+                else
                     TestCodeunitUtils.addProcedure(edit, document, newProcedureName);
             }
             //rename procedurecall and element
@@ -81,9 +87,12 @@ export class ElementModificationUtils {
         } else {
             let newElementComment: string = ElementUtils.getElementComment(msg.Type, msg.NewValue);
             edit.replace(document.uri, rangeOfOldElement, newElementComment);
-            ElementInsertionUtils.addProcedureCall(edit, document, rangeOfOldElement.start.translate(0, newElementComment.length), newProcedureName);
-            if (!(await TestCodeunitUtils.isProcedureAlreadyDeclared(document, newProcedureName, [])))
+            let procedureDeclaredResult: { alreadyDeclared: boolean, procedureName: string } = await TestCodeunitUtils.isProcedureOfElementAlreadyDeclared(document, msg.Type, msg.NewValue, [])
+            if (procedureDeclaredResult.alreadyDeclared)
+                newProcedureName = procedureDeclaredResult.procedureName
+            else
                 await TestCodeunitUtils.addProcedure(edit, document, newProcedureName);
+            ElementInsertionUtils.addProcedureCall(edit, document, rangeOfOldElement.start.translate(0, newElementComment.length), newProcedureName);
         }
         if (msg.ProceduresToDelete)
             await ElementDeletionUtils.deleteProcedures(edit, document, msg.ProceduresToDelete);

@@ -114,6 +114,21 @@ export class TestCodeunitUtils {
         return procedureDeclarations;
     }
 
+    public static async isProcedureOfElementAlreadyDeclared(document: TextDocument, elementType: TypeChanged, elementName: string, parameterTypesToSearch: string[]): Promise<{ alreadyDeclared: boolean, procedureName: string }> {
+        let newProcedureName: string = TestMethodUtils.getProcedureName(elementType, elementName);
+        let procedureAlreadyDeclared: boolean = await TestCodeunitUtils.isProcedureAlreadyDeclared(document, newProcedureName, parameterTypesToSearch)
+        if (!procedureAlreadyDeclared) {
+            let possibleProcedureNamesHistorical: string[] = TestMethodUtils.getProcedureNameHistory(elementType, elementName);
+            for (const possibleProcedureNameHistorical of possibleProcedureNamesHistorical) {
+                if (await TestCodeunitUtils.isProcedureAlreadyDeclared(document, possibleProcedureNameHistorical, parameterTypesToSearch)) {
+                    newProcedureName = possibleProcedureNameHistorical
+                    procedureAlreadyDeclared = true
+                    break
+                }
+            }
+        }
+        return { alreadyDeclared: procedureAlreadyDeclared, procedureName: newProcedureName };
+    }
     public static async isProcedureAlreadyDeclared(document: TextDocument, procedureNameToSearch: string, parameterTypesToSearch: string[]): Promise<boolean> {
         let procedureDeclarations: Map<string, Array<string[]>> = await this.getProcedureDeclarations(document);
         let procedureNameExisting: string | undefined = Array.from(procedureDeclarations.keys()).find(procedureName => procedureName.toLowerCase() == procedureNameToSearch.toLowerCase());

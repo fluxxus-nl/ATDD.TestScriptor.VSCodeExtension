@@ -90,9 +90,13 @@ export class ObjectService {
 
         let parameterTypes: string[] = TestMethodUtils.getParameterTypesOfMethod(oldMethodTreeNode, document);
         let newProcedureName: string = TestMethodUtils.getProcedureName(msg.Type, msg.NewValue);
-        //TODO: Should the historical procedurenames be considered?
         if (await TestCodeunitUtils.isProcedureAlreadyDeclared(document, newProcedureName, parameterTypes))
             return true;
+        let newHistoricalProcedureNames: string[] = TestMethodUtils.getProcedureNameHistory(msg.Type, msg.NewValue)
+        for (const newHistoricalProcedureName of newHistoricalProcedureNames) {
+            if (await TestCodeunitUtils.isProcedureAlreadyDeclared(document, newHistoricalProcedureName, parameterTypes))
+                return true;
+        }
         return false;
     }
 
