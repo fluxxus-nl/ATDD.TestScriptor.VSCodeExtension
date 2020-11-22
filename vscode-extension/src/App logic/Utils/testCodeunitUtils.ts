@@ -1,5 +1,5 @@
 import { readFileSync } from 'fs-extra';
-import { Position, Range, RelativePattern, TextDocument, Uri, workspace, WorkspaceEdit, WorkspaceFolder } from 'vscode';
+import { commands, CompletionItem, CompletionItemKind, CompletionList, Position, Range, RelativePattern, TextDocument, Uri, workspace, WorkspaceEdit, WorkspaceFolder } from 'vscode';
 import { TypeChanged } from '../../typings/types';
 import { ALFullSyntaxTreeNodeExt } from '../AL Code Outline Ext/alFullSyntaxTreeNodeExt';
 import { FullSyntaxTreeNodeKind } from '../AL Code Outline Ext/fullSyntaxTreeNodeKind';
@@ -209,10 +209,12 @@ export class TestCodeunitUtils {
         let regexFeature: RegExp = new RegExp('\\[Feature\\]\\s*' + feature + '\\s*\\\\r\\\\n', 'i');
         return regexFeature.test(fileContent);
     }
-    public static getDefaultTestCodeunit(elementValue: string): string[] {
+    public static async getDefaultTestCodeunit(elementValue: string): Promise<string[]> {
+        let nextCodeunitId: string | undefined = await this.getNextCodeunitId();
+
         let codeunitName: string = elementValue.includes(' ') ? '"' + elementValue + '"' : elementValue;
         return [
-            'codeunit 0 ' + codeunitName,
+            'codeunit ' + (nextCodeunitId ? nextCodeunitId : 0) + ' ' + codeunitName,
             '{',
             '    Subtype = Test;',
             '',
@@ -222,13 +224,33 @@ export class TestCodeunitUtils {
             '    end;',
             '',
             '    [Test]',
-            '    local procedure NewTestProcedure()',
+            '    procedure NewTestProcedure()',
             '    // [Feature] ' + elementValue,
             '    begin',
             '        // [Scenario #0001] New Test Procedure',
             '    end;',
             '}'
         ];
+    }
+    static async getNextCodeunitId(fsPath?: string): Promise<string | undefined> {
+        if (!fsPath)
+            //TODO: create API of Andrzejs extension
+            return undefined;
+        let document: TextDocument = await workspace.openTextDocument(fsPath);
+        let nextIDCompletionItem: CompletionItem | undefined;
+        let timeStarted: Date = new Date();
+        do {
+            let completionList: CompletionList | undefined = await commands.executeCommand('vscode.executeCompletionItemProvider', document.uri, new Position(0, 'codeunit '.length));
+            if (!completionList)
+                return undefined;
+            nextIDCompletionItem = completionList.items.find(item => item.kind && item.kind == CompletionItemKind.Reference)
+            let currentTime: Date = new Date()
+            let millisecondsAlreadyRan: number = currentTime.getTime() - timeStarted.getTime();
+            let secondsRan: number = millisecondsAlreadyRan / 1000
+            if (secondsRan > 5)
+                break;
+        } while (!nextIDCompletionItem);
+        return nextIDCompletionItem?.label;
     }
     public static getDefaultTestMethod(feature: string, id: number | undefined, scenario: string, uri: Uri): string[] {
         let scenarioNameTitleCase: string = TestMethodUtils.getProcedureName(TypeChanged.ScenarioName, scenario);

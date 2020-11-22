@@ -1,4 +1,4 @@
-import { writeFileSync } from "fs-extra";
+import { readFileSync, writeFileSync } from "fs-extra";
 import { Position, Range, TextDocument, workspace, WorkspaceEdit } from "vscode";
 import { MessageUpdate, TypeChanged } from "../../typings/types";
 import { ALFullSyntaxTreeNodeExt } from "../AL Code Outline Ext/alFullSyntaxTreeNodeExt";
@@ -17,7 +17,7 @@ import { WorkspaceUtils } from "./workspaceUtils";
 export class ElementInsertionUtils {
     public static async addSomethingNewToCode(msg: MessageUpdate): Promise<boolean> {
         if (msg.Type == TypeChanged.Feature) {
-            return ElementInsertionUtils.addNewFeatureToCode(msg);
+            return await ElementInsertionUtils.addNewFeatureToCode(msg);
         } else if (msg.Type == TypeChanged.ScenarioName) {
             return await ElementInsertionUtils.addNewScenarioToCode(msg);
         }
@@ -25,14 +25,22 @@ export class ElementInsertionUtils {
             return await ElementInsertionUtils.addNewElementToCode(msg);
         }
     }
-    
-    private static addNewFeatureToCode(msg: MessageUpdate): boolean {
+
+    private static async addNewFeatureToCode(msg: MessageUpdate): Promise<boolean> {
         let srcFolder: string | undefined = Config.getTestSrcFolder();
         if (!srcFolder)
             throw new Error('Please specify the source folder for your tests in the settings.');
         let fileName: string = new StringUtils(msg.NewValue).titleCase().removeSpecialChars().value() + '.al';
         let fsPath: string = WorkspaceUtils.getFullFsPathOfRelativePath(srcFolder, fileName);
-        writeFileSync(fsPath, TestCodeunitUtils.getDefaultTestCodeunit(msg.NewValue), { encoding: 'utf8' });
+        writeFileSync(fsPath, (await TestCodeunitUtils.getDefaultTestCodeunit(msg.NewValue)).join('\r\n'), { encoding: 'utf8' });
+        let id: string | undefined = await TestCodeunitUtils.getNextCodeunitId(fsPath);
+        if (id) {
+            //TODO: Can be removed if API of Andrzej existts
+            let fileContent = readFileSync(fsPath, { encoding: 'utf8' });
+            fileContent = 'codeunit ' + id + fileContent.substr('codeunit 0'.length)
+            writeFileSync(fsPath, fileContent, { encoding: 'utf8' });
+        }
+
         return true;
     }
 
