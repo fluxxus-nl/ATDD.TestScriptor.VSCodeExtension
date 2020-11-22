@@ -30,6 +30,32 @@ export class TestMethodUtils {
         }
         return prefix + nameTitleCase;
     }
+    public static getProcedureNameHistory(type: TypeChanged, name: string): string[] {
+        let nameTitleCase: string = new StringUtils(name).titleCase().removeSpecialChars().value();
+
+        let procedureNames: string[] = []
+        let prefix: string = '';
+        let prefixHistoryList: string[] = []
+        let uri: Uri | undefined = window.activeTextEditor?.document.uri;
+        switch (type) {
+            case TypeChanged.Given:
+                prefix = Config.getPrefixGiven(uri);
+                prefixHistoryList = Config.getPrefixGivenHistory(uri)
+                break;
+            case TypeChanged.When:
+                prefix = Config.getPrefixWhen(uri);
+                prefixHistoryList = Config.getPrefixWhenHistory(uri)
+                break;
+            case TypeChanged.Then:
+                prefix = Config.getPrefixThen(uri);
+                prefixHistoryList = Config.getPrefixThenHistory(uri)
+                break;
+        }
+        procedureNames.push(prefix + nameTitleCase)
+        for (const prefixHistoryEntry of prefixHistoryList)
+            procedureNames.push(prefixHistoryEntry + nameTitleCase)
+        return procedureNames;
+    }
     public static getProcedureHeaderOfMethod(method: ALFullSyntaxTreeNode, document: TextDocument) {
         let identifierOfMethod: ALFullSyntaxTreeNode = <ALFullSyntaxTreeNode>ALFullSyntaxTreeNodeExt.getFirstChildNodeOfKind(method, FullSyntaxTreeNodeKind.getIdentifierName(), false);
         let fullRangeOfIdentifier: Range = TextRangeExt.createVSCodeRange(identifierOfMethod.fullSpan);

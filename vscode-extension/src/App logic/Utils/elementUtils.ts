@@ -20,7 +20,11 @@ export class ElementUtils {
         if (!methodTreeNode)
             throw new Error('The comment is expected to be inside a procedure.');
 
-        let procedureNameToSearch: string = TestMethodUtils.getProcedureName(type, elementValue);
+        let procedureNamesToSearch: string[] = []
+        procedureNamesToSearch.push(TestMethodUtils.getProcedureName(type, elementValue).toLowerCase());
+        let procedureNameHistoryList: string[] = TestMethodUtils.getProcedureNameHistory(type, elementValue)
+        for (const procedureNameHistoryEntry of procedureNameHistoryList)
+            procedureNamesToSearch.push(procedureNameHistoryEntry.toLowerCase())
 
         let invocationExpressions: ALFullSyntaxTreeNode[] = [];
         ALFullSyntaxTreeNodeExt.collectChildNodes(methodTreeNode, FullSyntaxTreeNodeKind.getInvocationExpression(), true, invocationExpressions);
@@ -37,14 +41,14 @@ export class ElementUtils {
 
             let rangeOfInvocation: Range = TextRangeExt.createVSCodeRange(identifierOfProcedureCall.fullSpan);
             let identifierName: string = document.getText(RangeUtils.trimRange(document, rangeOfInvocation));
-            if (procedureNameToSearch.toLowerCase() == identifierName.toLowerCase() &&
+            if (procedureNamesToSearch.includes(identifierName.toLowerCase()) &&
                 (rangeOfInvocation.contains(positionOfElementValue) || rangeOfInvocation.start.isAfterOrEqual(positionOfElementValue))) {
                 return identifierOfProcedureCall;
             }
         }
         return undefined;
     }
-    
+
     public static async getRangeOfElement(document: TextDocument, scenarioValue: string, type: TypeChanged, elementId: number): Promise<Range | undefined> {
         let rangeOfScenario: Range | undefined = this.getRangeOfScenario(document, scenarioValue);
         if (!rangeOfScenario)

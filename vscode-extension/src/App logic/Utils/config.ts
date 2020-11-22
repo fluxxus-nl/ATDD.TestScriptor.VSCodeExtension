@@ -24,6 +24,15 @@ export class Config {
     static getPrefixThen(uri?: Uri): string {
         return this.getConfig(uri).get<string>('prefixThen', '');
     }
+    static getPrefixGivenHistory(uri: Uri | undefined): string[] {
+        return this.getConfig(uri).get<string[]>('prefixGivenHistory', []);
+    }
+    static getPrefixWhenHistory(uri: Uri | undefined): string[] {
+        return this.getConfig(uri).get<string[]>('prefixWhenHistory', []);
+    }
+    static getPrefixThenHistory(uri: Uri | undefined): string[] {
+        return this.getConfig(uri).get<string[]>('prefixThenHistory', []);
+    }
     static getRemovalMode(uri?: Uri): string {
         return this.getConfig(uri).get<string>('removalMode', '');
     }

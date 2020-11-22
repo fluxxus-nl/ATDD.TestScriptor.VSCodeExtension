@@ -6,7 +6,7 @@
     "author": {
         "name": "fluxxus-nl"
     },
-    "icon": "images/ATDDTestScriptorIcon.png",    
+    "icon": "images/ATDDTestScriptorIcon.png",
     "repository": {
         "type": "github",
         "url": "https://github.com/fluxxus-nl/ATDD.TestScriptor.VSCodeExtension.git"
@@ -63,15 +63,27 @@
                         "default": "Create",
                         "description": "Adds a prefix to the created helper functions."
                     },
+                    "atddTestScriptor.prefixGivenHistory": {
+                        "type": "array",
+                        "description": "List of prefixes you used earlier for given elements, so that procedures with these prefixes are considered while modifying or deleting elements"
+                    },
                     "atddTestScriptor.prefixWhen": {
                         "type": "string",
                         "default": "",
                         "description": "Adds a prefix to the created helper functions."
                     },
+                    "atddTestScriptor.prefixWhenHistory": {
+                        "type": "array",
+                        "description": "List of prefixes you used earlier for when elements, so that procedures with these prefixes are considered while modifying or deleting elements"
+                    },
                     "atddTestScriptor.prefixThen": {
                         "type": "string",
                         "default": "Verify",
                         "description": "Adds a prefix to the created helper functions."
+                    },
+                    "atddTestScriptor.prefixThenHistory": {
+                        "type": "array",
+                        "description": "List of prefixes you used earlier for then elements, so that procedures with these prefixes are considered while modifying or deleting elements"
                     },
                     "atddTestScriptor.testDirectory": {
                         "type": "string",
@@ -143,6 +155,6 @@
         "reflect-metadata": "^0.1.13"
     },
     "extensionDependencies": [
-        "davidfeldhoff.al-codeactions"
+        "andrzejzwierzchowski.al-code-outline"
     ]
 }

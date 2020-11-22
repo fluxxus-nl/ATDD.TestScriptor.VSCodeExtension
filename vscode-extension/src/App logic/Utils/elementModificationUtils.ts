@@ -1,5 +1,6 @@
 import { commands, Range, TextDocument, workspace, WorkspaceEdit } from "vscode";
 import { MessageUpdate, TypeChanged } from "../../typings/types";
+import { ALFullSyntaxTreeNodeExt } from "../AL Code Outline Ext/alFullSyntaxTreeNodeExt";
 import { SyntaxTreeExt } from "../AL Code Outline Ext/syntaxTreeExt";
 import { TextRangeExt } from "../AL Code Outline Ext/textRangeExt";
 import { ALFullSyntaxTreeNode } from "../AL Code Outline/alFullSyntaxTreeNode";
@@ -11,7 +12,7 @@ import { RangeUtils } from "./rangeUtils";
 import { TestCodeunitUtils } from "./testCodeunitUtils";
 import { TestMethodUtils } from "./testMethodUtils";
 
-export class ElementModificationUtils{
+export class ElementModificationUtils {
     public static async modifySomethingInCode(msg: MessageUpdate): Promise<boolean> {
         let document: TextDocument = await workspace.openTextDocument(msg.FsPath);
         let scenarioName: string = msg.Type == TypeChanged.ScenarioName ? msg.OldValue : msg.Scenario
@@ -46,8 +47,7 @@ export class ElementModificationUtils{
             throw new Error('Element to be renamed wasn\'t found.');
 
         let edit: WorkspaceEdit = new WorkspaceEdit();
-        let newProcedureName = TestMethodUtils.getProcedureName(msg.Type, msg.NewValue);
-        let oldProcedureName = TestMethodUtils.getProcedureName(msg.Type, msg.OldValue);
+        let newProcedureName: string = TestMethodUtils.getProcedureName(msg.Type, msg.NewValue);
         if (await ElementUtils.existsAppropriateProcedureCallToElementValue(document, rangeOfOldElement.start, msg.Type, msg.OldValue)) {
             let identifierOfOldProcedureCall: ALFullSyntaxTreeNode = <ALFullSyntaxTreeNode>await ElementUtils.getAppropriateProcedureCallToElementValue(document, rangeOfOldElement.start, msg.Type, msg.OldValue);
             let rangeOfOldIdentifier: Range = RangeUtils.trimRange(document, TextRangeExt.createVSCodeRange(identifierOfOldProcedureCall.fullSpan));
@@ -64,6 +64,7 @@ export class ElementModificationUtils{
                         alreadyRenamed = true;
                     } else {
                         let procedureHeaderOfOldMethod = TestMethodUtils.getProcedureHeaderOfMethod(oldMethodTreeNode, document);
+                        let oldProcedureName: string = ALFullSyntaxTreeNodeExt.findIdentifierAndGetValueOfTreeNode(document, oldMethodTreeNode);
                         let procedureHeaderOfNewMethod: string = procedureHeaderOfOldMethod.replace(new RegExp("procedure " + oldProcedureName, 'i'), 'procedure ' + newProcedureName);
                         await TestCodeunitUtils.addProcedureWithSpecificHeader(edit, document, newProcedureName, procedureHeaderOfNewMethod);
                     }

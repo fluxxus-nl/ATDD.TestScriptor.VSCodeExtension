@@ -66,11 +66,11 @@ export class ObjectService {
             throw new Error('ArrayIndex not passed')
 
         let elementRange: Range | undefined = await ElementUtils.getRangeOfElement(document, msg.Scenario, msg.Type, msg.ArrayIndex) as Range;
-        let identifierTreeNodeOfInvocation: ALFullSyntaxTreeNode | undefined = await ElementUtils.getAppropriateProcedureCallToElementValue(document, elementRange.start, msg.Type, msg.OldValue);
-        if (!identifierTreeNodeOfInvocation)
+        let identifierTreeNodeOfOldInvocation: ALFullSyntaxTreeNode | undefined = await ElementUtils.getAppropriateProcedureCallToElementValue(document, elementRange.start, msg.Type, msg.OldValue);
+        if (!identifierTreeNodeOfOldInvocation)
             return false;
 
-        let rangeOfOldIdentifier: Range = RangeUtils.trimRange(document, TextRangeExt.createVSCodeRange(identifierTreeNodeOfInvocation.fullSpan));
+        let rangeOfOldIdentifier: Range = RangeUtils.trimRange(document, TextRangeExt.createVSCodeRange(identifierTreeNodeOfOldInvocation.fullSpan));
         let oldMethodTreeNode: ALFullSyntaxTreeNode | undefined = await SyntaxTreeExt.getMethodTreeNodeByCallPosition(document, rangeOfOldIdentifier.end);
 
         if (!oldMethodTreeNode)
@@ -78,6 +78,7 @@ export class ObjectService {
 
         let parameterTypes: string[] = TestMethodUtils.getParameterTypesOfMethod(oldMethodTreeNode, document);
         let newProcedureName: string = TestMethodUtils.getProcedureName(msg.Type, msg.NewValue);
+        //TODO: Should the historical procedurenames be considered?
         if (await TestCodeunitUtils.isProcedureAlreadyDeclared(document, newProcedureName, parameterTypes))
             return true;
         return false;
