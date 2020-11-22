@@ -42,7 +42,15 @@ export class ObjectService {
             for (let a = 0; a < testMethods.length; a++)
                 messages.push(await ObjectToMessageUtils.testMethodToMessage(document, testMethods[a]));
         }
-        return messages.sort((a, b) => a.Id && b.Id ? (a.Id - b.Id) : (a.MethodName.localeCompare(b.MethodName)));
+        return messages.sort((a, b) => {
+            if (a.Project != b.Project)
+                return a.Project.localeCompare(b.Project)
+            if (a.Feature != b.Feature)
+                return a.Feature.localeCompare(b.Feature)
+            if (a.Id && b.Id)
+                return a.Id - b.Id
+            return a.Scenario.localeCompare(b.Scenario)
+        });
     }
     public async getProceduresWhichCouldBeDeletedAfterwards(msg: MessageUpdate): Promise<Array<{ procedureName: string, parameterTypes: string[] }>> {
         let document: TextDocument = await workspace.openTextDocument(msg.FsPath);
