@@ -26,7 +26,7 @@ export class ElementModificationUtils{
         let methodRange: Range = RangeUtils.trimRange(document, TextRangeExt.createVSCodeRange(methodTreeNode.fullSpan));
 
         let edit: WorkspaceEdit
-        if ([TypeChanged.Given, TypeChanged.When, TypeChanged.When].includes(msg.Type)) {
+        if ([TypeChanged.Given, TypeChanged.When, TypeChanged.Then].includes(msg.Type)) {
             edit = await ElementModificationUtils.modifyElement(document, methodRange, msg);
         } else if (msg.Type == TypeChanged.ScenarioName) {
             edit = await ElementModificationUtils.modifyScenario(document, methodTreeNode, msg);

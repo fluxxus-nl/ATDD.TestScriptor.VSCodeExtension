@@ -1,4 +1,4 @@
-import { readFileSync } from 'fs';
+import { readFileSync } from 'fs-extra';
 import { Position, Range, RelativePattern, TextDocument, Uri, workspace, WorkspaceEdit, WorkspaceFolder } from 'vscode';
 import { TypeChanged } from '../../typings/types';
 import { ALFullSyntaxTreeNodeExt } from '../AL Code Outline Ext/alFullSyntaxTreeNodeExt';
@@ -17,15 +17,28 @@ export class TestCodeunitUtils {
         for (let i = 0; i < paths.length; i++) {
             uris = uris.concat(await workspace.findFiles(new RelativePattern(paths[i], '**/*.al')))
         }
-        let testUris: Uri[] = [];
+        let allTestUris: Uri[] = [];
+        let checkUriPromiseArr: Promise<{ uri: Uri, isTestCodeunit: boolean }>[] = [];
         for (let i = 0; i < uris.length; i++) {
-            let fileContent: string = readFileSync(uris[i].fsPath, { encoding: 'utf8', flag: 'r' });
-            let regex: RegExp = /^.*codeunit \d+.*Subtype\s+=\s+Test;.*/is;
-            if (regex.test(fileContent)) {
-                testUris.push(uris[i]);
+            checkUriPromiseArr.push(this.checkIfUriIsTestCodeunit(uris[i]));
+            if (checkUriPromiseArr.length > 100) {
+                allTestUris = allTestUris.concat(await this.resolvePromiseSAndReturnTestUris(checkUriPromiseArr))
+                checkUriPromiseArr = []
             }
         }
-        return testUris;
+        allTestUris = allTestUris.concat(await this.resolvePromiseSAndReturnTestUris(checkUriPromiseArr))
+        checkUriPromiseArr = []
+        return allTestUris;
+    }
+    private static async checkIfUriIsTestCodeunit(uri: Uri): Promise<{ uri: Uri, isTestCodeunit: boolean }> {
+        let regex: RegExp = /^.*codeunit \d+.*Subtype\s+=\s+Test;.*/is;
+        let fileContent: string = readFileSync(uri.fsPath, { encoding: 'utf8', flag: 'r' });
+        let isTestCodeunit: boolean = regex.test(fileContent);
+        return { uri: uri, isTestCodeunit: isTestCodeunit };
+    }
+    private static async resolvePromiseSAndReturnTestUris(checkUriPromiseArr: Promise<{ uri: Uri; isTestCodeunit: boolean; }>[]): Promise<Uri[]> {
+        let checkUriResults: { uri: Uri, isTestCodeunit: boolean }[] = await Promise.all(checkUriPromiseArr);
+        return checkUriResults.filter(checkUriResult => checkUriResult.isTestCodeunit).map(checkUriResult => checkUriResult.uri);
     }
     public static async getTestMethodsOfDocument(document: TextDocument): Promise<ALFullSyntaxTreeNode[]> {
         let syntaxTree: SyntaxTree = await SyntaxTree.getInstance(document);
