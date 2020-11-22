@@ -39,8 +39,12 @@ export class ObjectService {
         for (let i = 0; i < testUris.length; i++) {
             let document: TextDocument = await workspace.openTextDocument(testUris[i].fsPath);
             let testMethods: ALFullSyntaxTreeNode[] = await TestCodeunitUtils.getTestMethodsOfDocument(document);
+            let featureCodeunitLevel: string | undefined
+            if (testMethods.length > 0) {
+                featureCodeunitLevel = ObjectToMessageUtils.getUniqueFeature(document, testMethods[0]);
+            }
             for (let a = 0; a < testMethods.length; a++)
-                messages.push(await ObjectToMessageUtils.testMethodToMessage(document, testMethods[a]));
+                messages.push(await ObjectToMessageUtils.testMethodToMessage(document, testMethods[a], featureCodeunitLevel));
         }
         return messages.sort((a, b) => {
             if (a.Project != b.Project)

@@ -20,8 +20,6 @@ export interface Message {
 }
 
 export interface MessageDetails {
-    feature: string;
-    name: string;
     given: Array<string>;
     when: Array<string>;
     then: Array<string>;
