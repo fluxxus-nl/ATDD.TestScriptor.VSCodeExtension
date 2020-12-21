@@ -1,6 +1,6 @@
 import { AppService } from 'services/app-service';
 import { EventAggregator } from 'aurelia-event-aggregator';
-import { autoinject, bindable } from 'aurelia-framework';
+import { autoinject, bindable, Disposable } from 'aurelia-framework';
 import { AppEventPublisher, Message, MessageDetailType, TypeChanged, MessageState, MessageUpdate } from 'types';
 
 @autoinject()
@@ -21,7 +21,7 @@ export class EntryFormGroup {
     @bindable()
     type: string;
 
-    subscriptions: any = [];
+    subscriptions: Array<Disposable> = [];
 
     maxInputLength: number;
 
@@ -42,7 +42,7 @@ export class EntryFormGroup {
     }
 
     detached() {
-
+        this.subscriptions.map(m => m.dispose());
     }
 
     add() {

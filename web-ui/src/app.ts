@@ -59,6 +59,7 @@ export class App {
     this.entries = await this.backendService.send({ Command: 'LoadTests' });
 
     this.appService.updateSidebarLinks(this.entries);
+    this.appService.entries = this.entries;
 
     Split(['#test-col-1', '#test-col-2'], {
       sizes: [60, 40],

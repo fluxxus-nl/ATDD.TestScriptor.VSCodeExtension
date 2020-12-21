@@ -69,7 +69,7 @@
     "defaults"
   ],
   "scripts": {
-    "build": "au build --env prod && au copy-files",
+    "build": "au build --env prod",
     "start": "au run",
     "test": "au test",
     "docker:build": "docker build -t atdd-web-ui:0.1.0 -t atdd-web-ui:latest .",

@@ -2,7 +2,7 @@ import { AppService } from 'services/app-service';
 import { EventAggregator } from 'aurelia-event-aggregator';
 import { autoinject, bindable, observable, BindingEngine, Disposable } from 'aurelia-framework';
 import { DeepObserver } from 'services/deep-observable';
-import { Message, MessageState, AppEventPublisher, TypeChanged } from 'types';
+import { Message, MessageState, AppEventPublisher, TypeChanged, MessageUpdate, MessageDetailType } from 'types';
 
 @autoinject()
 export class EntryForm {
@@ -26,8 +26,16 @@ export class EntryForm {
     @bindable()
     sidebarLinks: Array<any> = [];
 
+    subscriptions: Array<Disposable> = [];
+
+    skipObserverChangeEmitting: boolean = false;
+
     constructor(private eventAggregator: EventAggregator, private appService: AppService, private deepobserver: DeepObserver, private bindingEngine: BindingEngine) {
         this.deepobserver.observe(this, 'scenario', (n, o, p) => {
+            if (this.skipObserverChangeEmitting === true) {
+                return;
+            }
+
             if (['scenario', 'scenario.Id', 'scenario.Feature', 'scenario.Scenario'].indexOf(p) != -1 && o != n) {
                 this.scenarioItemChanged(p, n, o);
             }
@@ -43,7 +51,13 @@ export class EntryForm {
     }
 
     attached() {
+        this.subscriptions.push(this.eventAggregator.subscribe(AppEventPublisher.saveChangesOK, async (message: MessageUpdate) => {
+            this.savechangeEventHandler(message, false);
+        }));
 
+        this.subscriptions.push(this.eventAggregator.subscribe(AppEventPublisher.saveChangesCancelled, async (message: MessageUpdate) => {
+            this.savechangeEventHandler(message, true);
+        }));
     }
 
     detached() {
@@ -90,5 +104,46 @@ export class EntryForm {
             case 'scenario.Scenario':
                 return TypeChanged.ScenarioName;
         }
+    }
+
+    async savechangeEventHandler(message: MessageUpdate, cancelled: boolean = false) {
+        console.log('savechangeEventHandler', message, cancelled, this.scenario);
+
+        if ([TypeChanged.ScenarioFeature, TypeChanged.ScenarioName, TypeChanged.ScenarioId].indexOf(message.Type) == -1) {
+            return;
+        }
+
+        this.skipObserverChangeEmitting = true;
+        if (cancelled === true) {
+            switch (message.Type) {
+                case TypeChanged.ScenarioName:
+                    this.scenario.Scenario = message.OldValue;
+                    this.scenario.MethodName = message.MethodName;
+                    break;
+                case TypeChanged.ScenarioId:
+                    this.scenario.Id = Number(message.OldValue);
+                    break;
+                case TypeChanged.ScenarioFeature:
+                    this.scenario.Feature = message.OldValue;
+                    break;
+            }
+        } else {
+            switch (message.Type) {
+                case TypeChanged.ScenarioName:
+                    this.scenario.MethodName = message.MethodName;
+                    this.scenario.FsPath = message.FsPath;
+                    break;
+                case TypeChanged.ScenarioId:
+                    // no processing is required yet
+                    break;
+                case TypeChanged.ScenarioFeature:
+                    // no processing is required yet
+                    break;
+            }            
+        }
+        
+        setTimeout(() => {
+            this.skipObserverChangeEmitting = false;
+        }, 50);
     }
 }

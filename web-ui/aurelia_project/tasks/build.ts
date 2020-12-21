@@ -16,10 +16,10 @@ let build = gulp.series(
     processMarkup,
     processJson,
     processCSS,
-    cssBundle,
-    copyFiles
+    cssBundle    
   ),
-  writeBundles
+  writeBundles,
+  copyFiles
 );
 
 let main;

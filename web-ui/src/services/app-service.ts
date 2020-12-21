@@ -96,17 +96,16 @@ export class AppService {
     }
 
     public getNextScenarioID(featureName: string) {
-        let currEntry = Enumerable
-            .from(this._entries)
+        let entryCount = Enumerable
+            .from(this.entries)
             .where(w => w.Feature == featureName)
-            .orderBy(o => o.Id)
-            .lastOrDefault();
+            .count();
 
-        console.log('getNextScenarioID', featureName, currEntry);
+        console.log('getNextScenarioID', featureName, entryCount);
 
         let newId: number = 1;
-        if (currEntry) {
-            newId = Number(currEntry.Id) + newId;
+        if (entryCount && !isNaN(entryCount)) {
+            newId = entryCount + 1;
         }
 
         return newId;
