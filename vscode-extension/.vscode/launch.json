@@ -30,8 +30,8 @@
             "request": "launch",
             "runtimeExecutable": "${execPath}",
             "args": [
-                // "${workspaceFolder}/../test/test-project", //load test-project
-                "${workspaceFolder}/../../Test-Automation-Examples/VSCode/Blocking Deletion of Warehouse Shipment Lines/Blocking Deletion of Warehouse Shipment Lines.code-workspace", //load test-project
+                "${workspaceFolder}/../test/test-project", //load test-project
+                // "${workspaceFolder}/../../Test-Automation-Examples/VSCode/Blocking Deletion of Warehouse Shipment Lines/Blocking Deletion of Warehouse Shipment Lines.code-workspace", //load test-project
                 "--extensionDevelopmentPath=${workspaceFolder}",
                 "--extensionTestsPath=${workspaceFolder}/out/test"
             ],

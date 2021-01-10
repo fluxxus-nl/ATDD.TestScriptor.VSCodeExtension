@@ -1,0 +1,51 @@
+codeunit 50100 TestObjectFLX
+{
+    Subtype = Test;
+
+    trigger OnRun()
+    begin
+        // [FEATURE] First test object
+    end;
+
+    [Test]
+    procedure FirstTestFunctionWithValidGivenWhenThenstructure()
+    // [FEATURE] First test object
+    begin
+        // [SCENARIO 0001] First test function with valid Given-When-Then structure
+        // [GIVEN] Valid Given
+        CreateValidGiven();
+        // [Given] New Given
+        CreateNewGiven();
+        // [Given] New Given 2
+        CreateNewGiven2();
+        // [WHEN] Valid When
+        ValidWhen();
+        // [THEN] Valid Then
+        VerifyValidThen();
+    end;
+
+    local procedure CreateValidGiven()
+    begin
+        Error('Procedure CreateValidGiven not yet implemented.');
+    end;
+
+    local procedure ValidWhen()
+    begin
+        Error('Procedure ValidWhen not yet implemented.');
+    end;
+
+    local procedure VerifyValidThen()
+    begin
+        Error('Procedure VerifyValidThen not yet implemented.');
+    end;
+
+    local procedure CreateNewGiven()
+    begin
+        Error('Procedure CreateNewGiven not yet implemented.');
+    end;
+
+    local procedure CreateNewGiven2()
+    begin
+        Error('Procedure CreateNewGiven2 not yet implemented.');
+    end;
+}

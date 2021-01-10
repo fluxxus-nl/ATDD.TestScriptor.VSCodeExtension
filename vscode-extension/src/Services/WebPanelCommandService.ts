@@ -1,6 +1,7 @@
 import { autoinject, singleton } from 'aurelia-dependency-injection';
 import { Range, Selection, TextDocument, TextEditorRevealType, Uri, ViewColumn, window, workspace } from 'vscode';
 import { Config } from '../App logic/Utils/config';
+import { InformationOutput, VSCodeInformationOutput } from '../App logic/Utils/informationsOutput';
 import { Application } from '../Application';
 import { IMessageBase, Message, MessageState, MessageUpdate, TypeChanged } from '../typings/types';
 import { WebPanel } from '../WebPanel';
@@ -75,7 +76,7 @@ export class WebPanelCommandService {
         }
         WebPanel.postMessage({ Command: 'SaveChanges', Data: { success: somethingIsChanged, fsPath: entry.FsPath, methodName: entry.MethodName } });
     }
-    async askUserForConfirmationsToProceed(entry: MessageUpdate): Promise<{ wantsToContinue: boolean, wantsProceduresToBeDeleted: Array<{ procedureName: string, parameterTypes: string[] }>, updateProcedureCall: boolean }> {
+    async askUserForConfirmationsToProceed(entry: MessageUpdate, informationOutput: InformationOutput = new VSCodeInformationOutput()): Promise<{ wantsToContinue: boolean, wantsProceduresToBeDeleted: Array<{ procedureName: string, parameterTypes: string[] }>, updateProcedureCall: boolean }> {
         let confirmDeletionOfScenarioQuestion: string = 'Do you want to delete this scenario?';
         let confirmDeletionOfElementQuestion: string = 'Do you want to delete this element?';
         let confirmDeletionOfProcedureVariableQuestion = (procName: string) => `Do you want to delete the procedure '${procName}' ?`;
@@ -89,16 +90,16 @@ export class WebPanelCommandService {
             if ([MessageState.Deleted, MessageState.Modified].includes(entry.State)) {
                 let response: string | undefined;
                 if (entry.State == MessageState.Deleted)
-                    response = await window.showInformationMessage(confirmDeletionOfElementQuestion, optionYes, optionNo)
+                    response = await informationOutput.ask(confirmDeletionOfElementQuestion, [optionYes, optionNo])
                 else
-                    response = await window.showInformationMessage(confirmUpdateOfElementQuestion, optionYes, optionNo)
+                    response = await informationOutput.ask(confirmUpdateOfElementQuestion, [optionYes, optionNo])
                 if (response === optionYes) {
                     let useNewProcedure: boolean = true;
                     if (entry.State == MessageState.Modified) {
                         if (await this.middlewareService.checkIfOldAndNewProcedureExists(entry)) {
                             let optionKeepOld: string = 'Keep old';
                             let optionSwitchToNew: string = 'Switch to new one';
-                            response = await window.showInformationMessage(askWhichProcedureToTake, optionKeepOld, optionSwitchToNew);
+                            response = await informationOutput.ask(askWhichProcedureToTake, [optionKeepOld, optionSwitchToNew])
                             if (response === optionKeepOld)
                                 useNewProcedure = false;
                         }
@@ -110,7 +111,7 @@ export class WebPanelCommandService {
                         if (helperFunctionsWhichCouldBeDeleted.length == 1) {
                             let responseHelperFunctionShouldBeDeleted: string | undefined;
                             if (removalMode == Config.removalModeConfirmation)
-                                responseHelperFunctionShouldBeDeleted = await window.showInformationMessage(confirmDeletionOfProcedureVariableQuestion(helperFunctionsWhichCouldBeDeleted[0].procedureName), optionYes, optionNo);
+                                responseHelperFunctionShouldBeDeleted = await informationOutput.ask(confirmDeletionOfProcedureVariableQuestion(helperFunctionsWhichCouldBeDeleted[0].procedureName), [optionYes, optionNo]);
                             if (responseHelperFunctionShouldBeDeleted === optionYes || removalMode == Config.removalModeNoConfirmationButRemoval)
                                 proceduresToDelete = helperFunctionsWhichCouldBeDeleted;
                             else
@@ -124,7 +125,7 @@ export class WebPanelCommandService {
             }
         } else if (TypeChanged.ScenarioName == entry.Type) {
             if (entry.State == MessageState.Deleted) {
-                let responseScenarioShouldBeDeleted: string | undefined = await window.showInformationMessage(confirmDeletionOfScenarioQuestion, optionYes, optionNo);
+                let responseScenarioShouldBeDeleted: string | undefined = await informationOutput.ask(confirmDeletionOfScenarioQuestion, [optionYes, optionNo]);
                 if (responseScenarioShouldBeDeleted === optionYes) {
                     let proceduresWhichCouldBeDeleted: Array<{ procedureName: string, parameterTypes: string[] }> =
                         await this.middlewareService.getProceduresWhichCouldBeDeletedAfterwards(entry);
@@ -133,7 +134,7 @@ export class WebPanelCommandService {
                     for (let i = 1; i < proceduresWhichCouldBeDeleted.length; i++) { //i = 1 because scenario-Testprocedure is also inside this this array
                         let responseHelperFunctionShouldBeDeleted: string | undefined;
                         if (removalMode == Config.removalModeConfirmation)
-                            responseHelperFunctionShouldBeDeleted = await window.showInformationMessage(confirmDeletionOfProcedureVariableQuestion(proceduresWhichCouldBeDeleted[i].procedureName), optionYes, optionNo);
+                            responseHelperFunctionShouldBeDeleted = await informationOutput.ask(confirmDeletionOfProcedureVariableQuestion(proceduresWhichCouldBeDeleted[i].procedureName), [optionYes, optionNo]);
                         if (responseHelperFunctionShouldBeDeleted === optionYes || removalMode == Config.removalModeNoConfirmationButRemoval) {
                             proceduresToDelete.push(proceduresWhichCouldBeDeleted[i]);
                         }
@@ -143,7 +144,7 @@ export class WebPanelCommandService {
                     return { wantsToContinue: false, wantsProceduresToBeDeleted: [], updateProcedureCall: false };
                 }
             } else if (entry.State == MessageState.Modified) {
-                let responseScenarioShouldBeModified: string | undefined = await window.showInformationMessage(confirmUpdateOfScenarioQuestion, optionYes, optionNo);
+                let responseScenarioShouldBeModified: string | undefined = await informationOutput.ask(confirmUpdateOfScenarioQuestion, [optionYes, optionNo]);
                 if (responseScenarioShouldBeModified === optionNo) {
                     return { wantsToContinue: false, wantsProceduresToBeDeleted: [], updateProcedureCall: false };
                 }
