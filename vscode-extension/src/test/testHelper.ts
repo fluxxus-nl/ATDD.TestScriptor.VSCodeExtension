@@ -13,10 +13,10 @@ export class TestHelper {
 	static pathOfTestProject: string = join(__dirname, '..', '..', '..', 'test', 'test-project')
 	static pathOfTestResults: string = join(__dirname, '..', '..', 'src', 'test', 'results')
 
-	public static async verifyChangeIsValid(messageUpdate: MessageUpdate) {
+	public static async verifyChangeIsValid(messageUpdate: MessageUpdate, isValid: boolean = true) {
 		//Then change is valid
 		let validResult: { valid: boolean; reason: string; } = await new ObjectService().isChangeValid(messageUpdate);
-		assert.strictEqual(validResult.valid, true, 'Change should be valid');
+		assert.strictEqual(validResult.valid, isValid, isValid ? 'Change should be valid' : 'Change should be invalid');
 	}
 	public static async verifyUserQuestions(messageUpdate: MessageUpdate, informationOutput: TestInformationOutput): Promise<boolean> {
 		Application.instance;
@@ -59,7 +59,7 @@ export class TestHelper {
 	public static getFsPathOfResults(filename: string): string {
 		return join(TestHelper.pathOfTestResults, filename)
 	}
-	
+
 
 	public static async resetFiles(): Promise<void> {
 		let orgsFolder: string = join(__dirname, '..', '..', 'src', 'test', 'orgs')

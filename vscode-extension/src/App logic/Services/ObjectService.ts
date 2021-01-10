@@ -102,7 +102,7 @@ export class ObjectService {
 
     private async getProceduresWhichCouldBeDeletedAfterwardsOfScenario(document: TextDocument, msg: MessageUpdate): Promise<Array<{ procedureName: string, parameterTypes: string[] }>> {
         let proceduresWhichCouldBeDeleted: Array<{ procedureName: string; parameterTypes: string[]; }> = [];
-        let rangeOfScenario: Range | undefined = ElementUtils.getRangeOfScenario(document, msg.Scenario, msg.Id);
+        let rangeOfScenario: Range | undefined = ElementUtils.getRangeOfScenario(document, msg.OldValue, msg.Id);
         if (rangeOfScenario) {
             let syntaxTree: SyntaxTree = await SyntaxTree.getInstance(document);
             let scenarioMethodTreeNode: ALFullSyntaxTreeNode | undefined = SyntaxTreeExt.getMethodOrTriggerTreeNodeOfCurrentPosition(syntaxTree, rangeOfScenario.start);
