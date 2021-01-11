@@ -1,3 +1,4 @@
+import * as CRSApi from 'crs-al-language-extension-api';
 import { readFileSync, renameSync, writeFileSync } from "fs-extra";
 import { Extension, extensions, Position, Range, TextDocument, workspace, WorkspaceEdit } from "vscode";
 import { MessageUpdate, TypeChanged } from "../../typings/types";
@@ -43,7 +44,7 @@ export class ElementInsertionUtils {
         }
         let waldosExtension: Extension<any> | undefined = extensions.getExtension('waldo.crs-al-language-extension');
         if (waldosExtension && waldosExtension.isActive) {
-            let waldosApi: any = waldosExtension.exports;
+            let waldosApi: CRSApi.ICRSExtensionPublicApi = waldosExtension.exports;
             let newFilename: string = waldosApi.ObjectNamesApi.GetObjectFileName('codeunit', id ? id : '', objectName)
             let newFileFullname: string = WorkspaceUtils.getFullFsPathOfRelativePath(srcFolder, newFilename);
             renameSync(msg.FsPath, newFileFullname)
