@@ -1,4 +1,3 @@
-import { Uri, workspace } from 'vscode';
 import { ObjectService } from '../App logic/Services/ObjectService';
 import { MessageState, MessageUpdate, TypeChanged } from '../typings/types';
 import { TestHelper } from './testHelper';
@@ -29,7 +28,7 @@ suite('Extension Test Suite', async function () {
 		}
 		//Then
 		await TestHelper.verifyChangeIsValid(messageUpdate);
-		await TestHelper.verifyResult(messageUpdate, 'scenario055.al', fsPath);
+		await TestHelper.verifyResult(messageUpdate, 'scenario055.al');
 	})
 	test('Scenario073', async () => {
 		//Given Result from scenario 55
@@ -48,7 +47,7 @@ suite('Extension Test Suite', async function () {
 		}
 		//Then
 		await TestHelper.verifyChangeIsValid(messageUpdate);
-		await TestHelper.verifyResult(messageUpdate, 'scenario073.al', fsPath);
+		await TestHelper.verifyResult(messageUpdate, 'scenario073.al');
 	})
 	test('Scenario078', async () => {
 		//Given Test function with valid Given-When-Then structure
@@ -86,7 +85,7 @@ suite('Extension Test Suite', async function () {
 		messageUpdate.NewValue = 'New Then'
 		//Then
 		await TestHelper.verifyChangeIsValid(messageUpdate);
-		await TestHelper.verifyResult(messageUpdate, 'scenario078.al', fsPath);
+		await TestHelper.verifyResult(messageUpdate, 'scenario078.al');
 	})
 	test('Scenario079', async () => {
 		//Given Test function with valid Given-When-Then structure
@@ -123,7 +122,7 @@ suite('Extension Test Suite', async function () {
 		messageUpdate.NewValue = 'New Then'
 		//Then
 		await TestHelper.verifyChangeIsValid(messageUpdate);
-		await TestHelper.verifyResult(messageUpdate, 'scenario079.al', fsPath);
+		await TestHelper.verifyResult(messageUpdate, 'scenario079.al');
 	})
 });
 

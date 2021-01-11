@@ -1,7 +1,7 @@
 import assert = require("assert");
-import { copyFileSync, readdirSync, readFileSync } from "fs";
+import { copyFileSync, existsSync, readdirSync, readFileSync } from "fs";
 import { join } from "path";
-import { Uri, workspace, WorkspaceEdit, Range } from "vscode";
+import { Range, Uri, workspace, WorkspaceEdit } from "vscode";
 import { SyntaxTree } from "../App logic/AL Code Outline/syntaxTree";
 import { ObjectService } from "../App logic/Services/ObjectService";
 import { TestInformationOutput } from "../App logic/Utils/informationsOutput";
@@ -30,14 +30,14 @@ export class TestHelper {
 		assert.strictEqual(informationOutput.validate(), true, 'configured questions should match with the questions which popped up')
 		return result.wantsToContinue;
 	}
-	public static async verifyResult(messageUpdate: MessageUpdate, resultFsPath: string, fsPath: string) {
+	public static async verifyResult(messageUpdate: MessageUpdate, resultFsPath: string) {
 		//Then save changes is valid
 		let successful: boolean = await new ObjectService().saveChanges(messageUpdate);
 		assert.strictEqual(successful, true, 'saveChanges() should run successfully.');
 		//Then File content is as expected.
 		let resultFilename: string = TestHelper.getFsPathOfResults(resultFsPath);
 		let expectedResult: string = readFileSync(resultFilename, { encoding: 'utf8' });
-		let actualResult: string = readFileSync(fsPath, { encoding: 'utf8' });
+		let actualResult: string = readFileSync(messageUpdate.FsPath, { encoding: 'utf8' });
 		assert.strictEqual(actualResult, expectedResult, 'fileContent should be identical.');
 	}
 	public static async resetConfigurations(): Promise<void> {
@@ -52,6 +52,7 @@ export class TestHelper {
 		await config.update('addException', true)
 		await config.update('addInitializeFunction', true)
 		await config.update('removalMode', 'Ask for confirmation')
+		await config.update('testDirectory', 'src')
 	}
 	public static getFsPathOfTestProject(filename: string): string {
 		return join(TestHelper.pathOfTestProject, 'src', 'codeunit', filename);
@@ -72,6 +73,8 @@ export class TestHelper {
 			copyFileSync(join(orgsFolder, fileName), join(actualFolder, fileName))
 
 		for (const textDoc of workspace.textDocuments) {
+			if (!existsSync(textDoc.uri.fsPath))
+				continue
 			let edit = new WorkspaceEdit();
 			edit.replace(textDoc.uri,
 				new Range(0, 0, textDoc.lineCount - 1, textDoc.lineAt(textDoc.lineCount - 1).text.length),

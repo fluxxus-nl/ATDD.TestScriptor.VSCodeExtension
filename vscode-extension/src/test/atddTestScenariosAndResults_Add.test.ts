@@ -26,7 +26,7 @@ suite('Extension Test Suite', async function () {
 			Project: 'Test Project' //name of project in app.json
 		}
 		//Then
-		await TestHelper.verifyResult(messageUpdate, 'scenario001.al', fsPath);
+		await TestHelper.verifyResult(messageUpdate, 'scenario001.al');
 	})
 	test('Scenario002', async () => {
 		//Given Result from scenario 1
@@ -43,7 +43,7 @@ suite('Extension Test Suite', async function () {
 			Project: 'Test Project' //name of project in app.json
 		}
 		//Then
-		await TestHelper.verifyResult(messageUpdate, 'scenario002.al', fsPath);
+		await TestHelper.verifyResult(messageUpdate, 'scenario002.al');
 	})
 	test('Scenario003', async () => {
 		//Given Test function with valid Given-When-Then structure
@@ -61,7 +61,7 @@ suite('Extension Test Suite', async function () {
 			Project: 'Test Project' //name of project in app.json
 		}
 		//Then
-		await TestHelper.verifyResult(messageUpdate, 'scenario003.al', fsPath);
+		await TestHelper.verifyResult(messageUpdate, 'scenario003.al');
 	})
 	test('Scenario010', async () => {
 		//Given Test function with valid Given-When-Then structure
@@ -80,7 +80,7 @@ suite('Extension Test Suite', async function () {
 			Project: 'Test Project' //name of project in app.json
 		}
 		//Then
-		await TestHelper.verifyResult(messageUpdate, 'scenario010.al', fsPath);
+		await TestHelper.verifyResult(messageUpdate, 'scenario010.al');
 	})
 	test('Scenario012', async () => {
 		//Given Test function with valid Given-When-Then structure
@@ -99,7 +99,7 @@ suite('Extension Test Suite', async function () {
 			Project: 'Test Project' //name of project in app.json
 		}
 		//Then
-		await TestHelper.verifyResult(messageUpdate, 'scenario012.al', fsPath);
+		await TestHelper.verifyResult(messageUpdate, 'scenario012.al');
 	})
 	test('Scenario014', async () => {
 		//Given Test function with valid Given-When-Then structure
@@ -121,7 +121,7 @@ suite('Extension Test Suite', async function () {
 			Project: 'Test Project' //name of project in app.json
 		}
 		//Then
-		await TestHelper.verifyResult(messageUpdate, 'scenario014.al', fsPath);
+		await TestHelper.verifyResult(messageUpdate, 'scenario014.al');
 	})
 	test('Scenario061', async () => {
 		//Given Test function with valid Given-When-Then structure
@@ -143,7 +143,7 @@ suite('Extension Test Suite', async function () {
 			Project: 'Test Project' //name of project in app.json
 		}
 		//Then
-		await TestHelper.verifyResult(messageUpdate, 'scenario061.al', fsPath);
+		await TestHelper.verifyResult(messageUpdate, 'scenario061.al');
 	})
 	test('Scenario004', async () => {
 		//Given Test function with valid Given-When-Then structure
@@ -163,7 +163,7 @@ suite('Extension Test Suite', async function () {
 			Project: 'Test Project' //name of project in app.json
 		}
 		//Then
-		await TestHelper.verifyResult(messageUpdate, 'scenario004.al', fsPath);
+		await TestHelper.verifyResult(messageUpdate, 'scenario004.al');
 	})
 	test('Scenario005', async () => {
 		//Given Result from scenario 4
@@ -181,7 +181,7 @@ suite('Extension Test Suite', async function () {
 			Project: 'Test Project' //name of project in app.json
 		}
 		//Then
-		await TestHelper.verifyResult(messageUpdate, 'scenario005.al', fsPath);
+		await TestHelper.verifyResult(messageUpdate, 'scenario005.al');
 	})
 	test('Scenario011', async () => {
 		//Given Test function with valid Given-When-Then structure
@@ -200,7 +200,7 @@ suite('Extension Test Suite', async function () {
 			Project: 'Test Project' //name of project in app.json
 		}
 		//Then
-		await TestHelper.verifyResult(messageUpdate, 'scenario011.al', fsPath);
+		await TestHelper.verifyResult(messageUpdate, 'scenario011.al');
 	})
 	test('Scenario013', async () => {
 		//Given Test function with valid Given-When-Then structure
@@ -219,7 +219,7 @@ suite('Extension Test Suite', async function () {
 			Project: 'Test Project' //name of project in app.json
 		}
 		//Then
-		await TestHelper.verifyResult(messageUpdate, 'scenario013.al', fsPath);
+		await TestHelper.verifyResult(messageUpdate, 'scenario013.al');
 	})
 	test('Scenario015', async () => {
 		//Given Test function with valid Given-When-Then structure
@@ -240,7 +240,7 @@ suite('Extension Test Suite', async function () {
 			Project: 'Test Project' //name of project in app.json
 		}
 		//Then
-		await TestHelper.verifyResult(messageUpdate, 'scenario015.al', fsPath);
+		await TestHelper.verifyResult(messageUpdate, 'scenario015.al');
 	})
 	test('Scenario062', async () => {
 		//Given Test function with valid Given-When-Then structure
@@ -261,7 +261,7 @@ suite('Extension Test Suite', async function () {
 			Project: 'Test Project' //name of project in app.json
 		}
 		//Then
-		await TestHelper.verifyResult(messageUpdate, 'scenario062.al', fsPath);
+		await TestHelper.verifyResult(messageUpdate, 'scenario062.al');
 	})
 });
 

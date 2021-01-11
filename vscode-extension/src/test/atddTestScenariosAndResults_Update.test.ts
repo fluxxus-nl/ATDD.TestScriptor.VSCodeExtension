@@ -60,7 +60,7 @@ suite('Extension Test Suite', async function () {
 		informationOutput.configure(confirmUpdateOfElementQuestion, 'Yes')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
 		if (await TestHelper.verifyUserQuestions(messageUpdate, informationOutput))
-			await TestHelper.verifyResult(messageUpdate, 'scenario017.al', fsPath)
+			await TestHelper.verifyResult(messageUpdate, 'scenario017.al')
 	})
 	test('Scenario019', async () => {
 		//Given Result from scenario 16
@@ -84,7 +84,7 @@ suite('Extension Test Suite', async function () {
 		informationOutput.configure(confirmUpdateOfElementQuestion, 'Yes')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
 		if (await TestHelper.verifyUserQuestions(messageUpdate, informationOutput))
-			await TestHelper.verifyResult(messageUpdate, 'scenario019.al', fsPath)
+			await TestHelper.verifyResult(messageUpdate, 'scenario019.al')
 	})
 	test('Scenario044', async () => {
 		//Given Test function with valid Given-When-Then structure
@@ -113,7 +113,7 @@ suite('Extension Test Suite', async function () {
 		informationOutput.configure(confirmUpdateOfElementQuestion, 'Yes')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
 		if (await TestHelper.verifyUserQuestions(messageUpdate, informationOutput))
-			await TestHelper.verifyResult(messageUpdate, 'scenario044.al', fsPath)
+			await TestHelper.verifyResult(messageUpdate, 'scenario044.al')
 	})
 	test('Scenario087', async () => {
 		//Given Test function with valid Given-When-Then structure
@@ -142,7 +142,7 @@ suite('Extension Test Suite', async function () {
 		informationOutput.configure(confirmUpdateOfElementQuestion, 'Yes')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
 		if (await TestHelper.verifyUserQuestions(messageUpdate, informationOutput))
-			await TestHelper.verifyResult(messageUpdate, 'scenario087.al', fsPath)
+			await TestHelper.verifyResult(messageUpdate, 'scenario087.al')
 	})
 	test('Scenario051', async () => {
 		//Given Test function with valid Given-When-Then structure
@@ -180,7 +180,7 @@ suite('Extension Test Suite', async function () {
 		informationOutput.configure(confirmUpdateOfElementQuestion, 'Yes')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
 		if (await TestHelper.verifyUserQuestions(messageUpdate, informationOutput))
-			await TestHelper.verifyResult(messageUpdate, 'scenario051.al', fsPath)
+			await TestHelper.verifyResult(messageUpdate, 'scenario051.al')
 	})
 	test('Scenario021', async () => {
 		//Given Test function with valid Given-When-Then structure
@@ -205,7 +205,7 @@ suite('Extension Test Suite', async function () {
 		informationOutput.configure(confirmUpdateOfElementQuestion, 'Yes')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
 		if (await TestHelper.verifyUserQuestions(messageUpdate, informationOutput))
-			await TestHelper.verifyResult(messageUpdate, 'scenario021.al', fsPath)
+			await TestHelper.verifyResult(messageUpdate, 'scenario021.al')
 	})
 	test('Scenario023', async () => {
 		//Given Result from scenario 21
@@ -229,7 +229,7 @@ suite('Extension Test Suite', async function () {
 		informationOutput.configure(confirmUpdateOfElementQuestion, 'Yes')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
 		if (await TestHelper.verifyUserQuestions(messageUpdate, informationOutput))
-			await TestHelper.verifyResult(messageUpdate, 'scenario023.al', fsPath)
+			await TestHelper.verifyResult(messageUpdate, 'scenario023.al')
 	})
 	test('Scenario047', async () => {
 		//Given Test function with valid Given-When-Then structure
@@ -279,7 +279,7 @@ suite('Extension Test Suite', async function () {
 		informationOutput.configure(confirmUpdateOfElementQuestion, 'Yes')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
 		if (await TestHelper.verifyUserQuestions(messageUpdate, informationOutput))
-			await TestHelper.verifyResult(messageUpdate, 'scenario025.al', fsPath)
+			await TestHelper.verifyResult(messageUpdate, 'scenario025.al')
 	})
 	test('Scenario027', async () => {
 		//Given Result from scenario 25
@@ -303,7 +303,7 @@ suite('Extension Test Suite', async function () {
 		informationOutput.configure(confirmUpdateOfElementQuestion, 'Yes')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
 		if (await TestHelper.verifyUserQuestions(messageUpdate, informationOutput))
-			await TestHelper.verifyResult(messageUpdate, 'scenario027.al', fsPath)
+			await TestHelper.verifyResult(messageUpdate, 'scenario027.al')
 	})
 	test('Scenario048', async () => {
 		//Given Test function with valid Given-When-Then structure
@@ -356,7 +356,7 @@ suite('Extension Test Suite', async function () {
 		informationOutput.configure(confirmUpdateOfElementQuestion, 'Yes')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
 		if (await TestHelper.verifyUserQuestions(messageUpdate, informationOutput))
-			await TestHelper.verifyResult(messageUpdate, 'scenario049.al', fsPath)
+			await TestHelper.verifyResult(messageUpdate, 'scenario049.al')
 	})
 	test('Scenario088', async () => {
 		//Given Test function with Valid Given-When-Then structure
@@ -385,7 +385,7 @@ suite('Extension Test Suite', async function () {
 		informationOutput.configure(confirmUpdateOfElementQuestion, 'Yes')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
 		if (await TestHelper.verifyUserQuestions(messageUpdate, informationOutput))
-			await TestHelper.verifyResult(messageUpdate, 'scenario088.al', fsPath)
+			await TestHelper.verifyResult(messageUpdate, 'scenario088.al')
 	})
 	test('Scenario053', async () => {
 		//Given Test function with valid Given-When-Then structure
@@ -423,7 +423,7 @@ suite('Extension Test Suite', async function () {
 		informationOutput.configure(confirmUpdateOfElementQuestion, 'Yes')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
 		if (await TestHelper.verifyUserQuestions(messageUpdate, informationOutput))
-			await TestHelper.verifyResult(messageUpdate, 'scenario053.al', fsPath)
+			await TestHelper.verifyResult(messageUpdate, 'scenario053.al')
 	})
 });
 

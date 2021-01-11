@@ -1,5 +1,5 @@
-import { readFileSync, writeFileSync } from "fs-extra";
-import { Position, Range, TextDocument, workspace, WorkspaceEdit } from "vscode";
+import { readFileSync, renameSync, writeFileSync } from "fs-extra";
+import { Extension, extensions, Position, Range, TextDocument, workspace, WorkspaceEdit } from "vscode";
 import { MessageUpdate, TypeChanged } from "../../typings/types";
 import { ALFullSyntaxTreeNodeExt } from "../AL Code Outline Ext/alFullSyntaxTreeNodeExt";
 import { FullSyntaxTreeNodeKind } from "../AL Code Outline Ext/fullSyntaxTreeNodeKind";
@@ -30,15 +30,24 @@ export class ElementInsertionUtils {
         let srcFolder: string | undefined = Config.getTestSrcFolder();
         if (!srcFolder)
             throw new Error('Please specify the source folder for your tests in the settings.');
-        let fileName: string = new StringUtils(msg.NewValue).titleCase().removeSpecialChars().value() + '.al';
-        let fsPath: string = WorkspaceUtils.getFullFsPathOfRelativePath(srcFolder, fileName);
-        writeFileSync(fsPath, (await TestCodeunitUtils.getDefaultTestCodeunit(msg.NewValue)).join('\r\n'), { encoding: 'utf8' });
-        let id: string | undefined = await TestCodeunitUtils.getNextCodeunitId(fsPath);
+        let objectName: string = new StringUtils(msg.NewValue).titleCase().removeSpecialChars().value();
+        let fileName: string = objectName + '.al';
+        msg.FsPath = WorkspaceUtils.getFullFsPathOfRelativePath(srcFolder, fileName);
+        writeFileSync(msg.FsPath, (await TestCodeunitUtils.getDefaultTestCodeunit(msg.NewValue)).join('\r\n'), { encoding: 'utf8' });
+        let id: string | undefined = await TestCodeunitUtils.getNextCodeunitId(msg.FsPath);
         if (id) {
-            //TODO: Can be removed if API of Andrzej existts
-            let fileContent = readFileSync(fsPath, { encoding: 'utf8' });
+            //TODO: Can be removed if API of Andrzej exists
+            let fileContent = readFileSync(msg.FsPath, { encoding: 'utf8' });
             fileContent = 'codeunit ' + id + fileContent.substr('codeunit 0'.length)
-            writeFileSync(fsPath, fileContent, { encoding: 'utf8' });
+            writeFileSync(msg.FsPath, fileContent, { encoding: 'utf8' });
+        }
+        let waldosExtension: Extension<any> | undefined = extensions.getExtension('waldo.crs-al-language-extension');
+        if (waldosExtension && waldosExtension.isActive) {
+            let waldosApi: any = waldosExtension.exports;
+            let newFilename: string = waldosApi.ObjectNamesApi.GetObjectFileName('codeunit', id ? id : '', objectName)
+            let newFileFullname: string = WorkspaceUtils.getFullFsPathOfRelativePath(srcFolder, newFilename);
+            renameSync(msg.FsPath, newFileFullname)
+            msg.FsPath = newFileFullname
         }
 
         return true;

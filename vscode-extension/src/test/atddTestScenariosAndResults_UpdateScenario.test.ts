@@ -1,4 +1,3 @@
-import { Uri, workspace } from 'vscode';
 import { ObjectService } from '../App logic/Services/ObjectService';
 import { TestInformationOutput } from '../App logic/Utils/informationsOutput';
 import { MessageState, MessageUpdate, TypeChanged } from '../typings/types';
@@ -34,7 +33,7 @@ suite('Extension Test Suite', async function () {
 		informationOutput.configure(confirmUpdateOfScenarioQuestion, 'Yes')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
 		if (await TestHelper.verifyUserQuestions(messageUpdate, informationOutput))
-			await TestHelper.verifyResult(messageUpdate, 'scenario081.al', fsPath);
+			await TestHelper.verifyResult(messageUpdate, 'scenario081.al');
 	})
 	test('Scenario082', async () => {
 		//Given Test function with valid Given-When-Then structure
@@ -110,7 +109,7 @@ suite('Extension Test Suite', async function () {
 		informationOutput.configure(confirmUpdateOfScenarioQuestion, 'Yes')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
 		if (await TestHelper.verifyUserQuestions(messageUpdate, informationOutput))
-			await TestHelper.verifyResult(messageUpdate, 'scenario084.al', fsPath)
+			await TestHelper.verifyResult(messageUpdate, 'scenario084.al')
 	})
 
 });

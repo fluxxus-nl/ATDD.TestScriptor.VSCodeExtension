@@ -1,5 +1,4 @@
 import { Uri, workspace } from 'vscode';
-import { ObjectService } from '../App logic/Services/ObjectService';
 import { TestInformationOutput } from '../App logic/Utils/informationsOutput';
 import { MessageState, MessageUpdate, TypeChanged } from '../typings/types';
 import { TestHelper } from './testHelper';
@@ -37,7 +36,7 @@ suite('Extension Test Suite', async function () {
 		informationOutput.configure(confirmDeletionOfProcedureVariableQuestion('VerifyValidThen'), 'Yes')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
 		if (await TestHelper.verifyUserQuestions(messageUpdate, informationOutput))
-			await TestHelper.verifyResult(messageUpdate, 'scenario058.al', fsPath);
+			await TestHelper.verifyResult(messageUpdate, 'scenario058.al');
 	})
 	test('Scenario059', async () => {
 		//Given Test function with valid Given-When-Then structure
@@ -86,7 +85,7 @@ suite('Extension Test Suite', async function () {
 		informationOutput.configure(confirmDeletionOfProcedureVariableQuestion('VerifyValidThen'), 'No')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
 		if (await TestHelper.verifyUserQuestions(messageUpdate, informationOutput))
-			await TestHelper.verifyResult(messageUpdate, 'scenario060.al', fsPath);
+			await TestHelper.verifyResult(messageUpdate, 'scenario060.al');
 	})
 	test('Scenario068', async () => {
 		//Given Test codeunit with one test function with valid Given-When-Then structure and call to Initialize
@@ -114,7 +113,7 @@ suite('Extension Test Suite', async function () {
 		informationOutput.configure(confirmDeletionOfProcedureVariableQuestion('VerifyValidThen'), 'Yes')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
 		if (await TestHelper.verifyUserQuestions(messageUpdate, informationOutput))
-			await TestHelper.verifyResult(messageUpdate, 'scenario068.al', fsPath);
+			await TestHelper.verifyResult(messageUpdate, 'scenario068.al');
 	})
 	test('Scenario069', async () => {
 		//Given Test codeunit with one test function with valid Given-When-Then structure and UI Handler
@@ -143,7 +142,7 @@ suite('Extension Test Suite', async function () {
 		informationOutput.configure(confirmDeletionOfProcedureVariableQuestion('AMessageHandler'), 'Yes')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
 		if (await TestHelper.verifyUserQuestions(messageUpdate, informationOutput))
-			await TestHelper.verifyResult(messageUpdate, 'scenario069.al', fsPath);
+			await TestHelper.verifyResult(messageUpdate, 'scenario069.al');
 	})
 	test('Scenario070', async () => {
 		//Given Test codeunit with one test function with valid Given-When-Then structure and UI Handler
@@ -172,7 +171,7 @@ suite('Extension Test Suite', async function () {
 		informationOutput.configure(confirmDeletionOfProcedureVariableQuestion('AMessageHandler'), 'No')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
 		if (await TestHelper.verifyUserQuestions(messageUpdate, informationOutput))
-			await TestHelper.verifyResult(messageUpdate, 'scenario070.al', fsPath);
+			await TestHelper.verifyResult(messageUpdate, 'scenario070.al');
 	})
 	test('Scenario071', async () => {
 		//Given Test codeunit with one test function with valid Given-When-Then structure and call to Initialize
@@ -199,7 +198,7 @@ suite('Extension Test Suite', async function () {
 		informationOutput.configure(confirmDeletionOfScenarioQuestion, 'Yes')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
 		if (await TestHelper.verifyUserQuestions(messageUpdate, informationOutput))
-			await TestHelper.verifyResult(messageUpdate, 'scenario071.al', fsPath);
+			await TestHelper.verifyResult(messageUpdate, 'scenario071.al');
 	})
 	test('Scenario072', async () => {
 		//Given Test codeunit with one test function with valid Given-When-Then structure and call to Initialize
@@ -226,7 +225,7 @@ suite('Extension Test Suite', async function () {
 		informationOutput.configure(confirmDeletionOfScenarioQuestion, 'Yes')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
 		if (await TestHelper.verifyUserQuestions(messageUpdate, informationOutput))
-			await TestHelper.verifyResult(messageUpdate, 'scenario072.al', fsPath);
+			await TestHelper.verifyResult(messageUpdate, 'scenario072.al');
 	})
 });
 

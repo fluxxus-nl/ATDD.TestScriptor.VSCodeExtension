@@ -38,7 +38,7 @@ suite('Extension Test Suite', async function () {
 		informationOutput.configure(confirmDeletionOfProcedureVariableQuestion('CreateValidGiven'), 'Yes')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
 		if (await TestHelper.verifyUserQuestions(messageUpdate, informationOutput))
-			await TestHelper.verifyResult(messageUpdate, 'scenario030.al', fsPath)
+			await TestHelper.verifyResult(messageUpdate, 'scenario030.al')
 	})
 	test('Scenario036', async () => {
 		//Given Test function with valid Given-When-Then structure
@@ -89,7 +89,7 @@ suite('Extension Test Suite', async function () {
 		informationOutput.configure(confirmDeletionOfProcedureVariableQuestion('CreateValidGiven'), 'No')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
 		if (await TestHelper.verifyUserQuestions(messageUpdate, informationOutput))
-			await TestHelper.verifyResult(messageUpdate, 'scenario032.al', fsPath)
+			await TestHelper.verifyResult(messageUpdate, 'scenario032.al')
 	})
 	test('Scenario038', async () => {
 		//Given Test function with valid Given-When-Then structure
@@ -127,7 +127,7 @@ suite('Extension Test Suite', async function () {
 		informationOutput.configure(confirmDeletionOfElementQuestion, 'Yes')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
 		if (await TestHelper.verifyUserQuestions(messageUpdate, informationOutput))
-			await TestHelper.verifyResult(messageUpdate, 'scenario038.al', fsPath)
+			await TestHelper.verifyResult(messageUpdate, 'scenario038.al')
 	})
 	test('Scenario040', async () => {
 		//Given Test function with valid Given-When-Then structure
@@ -167,7 +167,7 @@ suite('Extension Test Suite', async function () {
 		informationOutput.configure(confirmDeletionOfProcedureVariableQuestion('CreateNewGiven'), 'Yes')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
 		if (await TestHelper.verifyUserQuestions(messageUpdate, informationOutput))
-			await TestHelper.verifyResult(messageUpdate, 'scenario040.al', fsPath)
+			await TestHelper.verifyResult(messageUpdate, 'scenario040.al')
 	})
 	test('Scenario041', async () => {
 		//Given Test function with valid Given-When-Then structure
@@ -205,7 +205,7 @@ suite('Extension Test Suite', async function () {
 		informationOutput.configure(confirmDeletionOfElementQuestion, 'No')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
 		if (await TestHelper.verifyUserQuestions(messageUpdate, informationOutput))
-			await TestHelper.verifyResult(messageUpdate, 'scenario041.al', fsPath)
+			await TestHelper.verifyResult(messageUpdate, 'scenario041.al')
 	})
 
 
@@ -234,7 +234,7 @@ suite('Extension Test Suite', async function () {
 		informationOutput.configure(confirmDeletionOfProcedureVariableQuestion('VerifyValidThen'), 'Yes')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
 		if (await TestHelper.verifyUserQuestions(messageUpdate, informationOutput))
-			await TestHelper.verifyResult(messageUpdate, 'scenario035.al', fsPath)
+			await TestHelper.verifyResult(messageUpdate, 'scenario035.al')
 	})
 	test('Scenario036', async () => {
 		//Given Test function with valid Given-When-Then structure
@@ -285,7 +285,7 @@ suite('Extension Test Suite', async function () {
 		informationOutput.configure(confirmDeletionOfProcedureVariableQuestion('VerifyValidThen'), 'No')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
 		if (await TestHelper.verifyUserQuestions(messageUpdate, informationOutput))
-			await TestHelper.verifyResult(messageUpdate, 'scenario037.al', fsPath)
+			await TestHelper.verifyResult(messageUpdate, 'scenario037.al')
 	})
 	test('Scenario039', async () => {
 		//Given Test function with valid Given-When-Then structure
@@ -323,7 +323,7 @@ suite('Extension Test Suite', async function () {
 		informationOutput.configure(confirmDeletionOfElementQuestion, 'Yes')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
 		if (await TestHelper.verifyUserQuestions(messageUpdate, informationOutput))
-			await TestHelper.verifyResult(messageUpdate, 'scenario039.al', fsPath)
+			await TestHelper.verifyResult(messageUpdate, 'scenario039.al')
 	})
 	test('Scenario042', async () => {
 		//Given Test function with valid Given-When-Then structure
@@ -363,7 +363,7 @@ suite('Extension Test Suite', async function () {
 		informationOutput.configure(confirmDeletionOfProcedureVariableQuestion('VerifyNewThen'), 'Yes')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
 		if (await TestHelper.verifyUserQuestions(messageUpdate, informationOutput))
-			await TestHelper.verifyResult(messageUpdate, 'scenario042.al', fsPath)
+			await TestHelper.verifyResult(messageUpdate, 'scenario042.al')
 	})
 	test('Scenario043', async () => {
 		//Given Test function with valid Given-When-Then structure
