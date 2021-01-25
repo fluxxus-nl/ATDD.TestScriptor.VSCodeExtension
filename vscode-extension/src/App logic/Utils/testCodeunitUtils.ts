@@ -224,11 +224,11 @@ export class TestCodeunitUtils {
         let regexFeature: RegExp = new RegExp('\\[Feature\\]\\s*' + feature + '\\s*\\\\r\\\\n', 'i');
         return regexFeature.test(fileContent);
     }
-    public static async getDefaultTestCodeunit(elementValue: string): Promise<string[]> {
+    public static async getDefaultTestCodeunit(elementValue: string, uri: Uri): Promise<string[]> {
         let nextCodeunitId: string | undefined = await this.getNextCodeunitId();
 
         let codeunitName: string = elementValue.includes(' ') ? '"' + elementValue + '"' : elementValue;
-        return [
+        let defaultCodeunit: string[] = [
             'codeunit ' + (nextCodeunitId ? nextCodeunitId : 0) + ' ' + codeunitName,
             '{',
             '    Subtype = Test;',
@@ -240,12 +240,21 @@ export class TestCodeunitUtils {
             '',
             '    [Test]',
             '    procedure NewTestProcedure()',
-            '    // [Feature] ' + elementValue,
             '    begin',
             '        // [Scenario #0001] New Test Procedure',
             '    end;',
             '}'
         ];
+        if (Config.getAddInitializeFunction(uri)) {
+            defaultCodeunit.splice(13, 0, '        Initialize();');
+            defaultCodeunit.splice(9, 0, '    var', '        IsInitialized: Boolean;', '')
+            let initializeProcAsTextArr: string[] = TestCodeunitUtils.getInitializeMethod(codeunitName);
+            defaultCodeunit.pop()
+            defaultCodeunit.push('')
+            defaultCodeunit = defaultCodeunit.concat(initializeProcAsTextArr)
+            defaultCodeunit.push('}')
+        }
+        return defaultCodeunit;
     }
     static async getNextCodeunitId(fsPath?: string): Promise<string | undefined> {
         if (!fsPath)
@@ -275,13 +284,12 @@ export class TestCodeunitUtils {
         let procedure: string[] = [
             '    [Test]',
             '    procedure ' + scenarioNameTitleCase + '()',
-            '    // [Feature] ' + feature,
             '    begin',
             '        // [Scenario' + idAsString + '] ' + scenario,
             '    end;'
         ];
         if (Config.getAddInitializeFunction(uri))
-            procedure.splice(5, 0, '        Initialize();');
+            procedure.splice(4, 0, '        Initialize();');
         return procedure;
     }
     static getInitializeMethod(nameOfCodeunit: string): string[] {
@@ -291,15 +299,15 @@ export class TestCodeunitUtils {
             '        LibraryTestInitialize: Codeunit "Library - Test Initialize";',
             '    begin',
             '        LibraryTestInitialize.OnTestInitialize(Codeunit::' + nameOfCodeunit + ');',
-
+            '        ',
             '        if IsInitialized then',
             '            exit;',
-
+            '        ',
             '        LibraryTestInitialize.OnBeforeTestSuiteInitialize(Codeunit::' + nameOfCodeunit + ');',
-
-            '        IsInitialized:= true;',
+            '        ',
+            '        IsInitialized := true;',
             '        Commit();',
-
+            '        ',
             '        LibraryTestInitialize.OnAfterTestSuiteInitialize(Codeunit::' + nameOfCodeunit + ');',
             '    end;'
         ]

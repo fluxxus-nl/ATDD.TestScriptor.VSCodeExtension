@@ -1,6 +1,6 @@
 import * as CRSApi from 'crs-al-language-extension-api';
 import { readFileSync, renameSync, writeFileSync } from "fs-extra";
-import { Extension, extensions, Position, Range, TextDocument, workspace, WorkspaceEdit } from "vscode";
+import { Extension, extensions, Position, Range, TextDocument, Uri, workspace, WorkspaceEdit } from "vscode";
 import { MessageUpdate, TypeChanged } from "../../typings/types";
 import { ALFullSyntaxTreeNodeExt } from "../AL Code Outline Ext/alFullSyntaxTreeNodeExt";
 import { FullSyntaxTreeNodeKind } from "../AL Code Outline Ext/fullSyntaxTreeNodeKind";
@@ -34,7 +34,7 @@ export class ElementInsertionUtils {
         let objectName: string = new StringUtils(msg.NewValue).titleCase().removeSpecialChars().value();
         let fileName: string = objectName + '.al';
         msg.FsPath = WorkspaceUtils.getFullFsPathOfRelativePath(srcFolder, fileName);
-        writeFileSync(msg.FsPath, (await TestCodeunitUtils.getDefaultTestCodeunit(msg.NewValue)).join('\r\n'), { encoding: 'utf8' });
+        writeFileSync(msg.FsPath, (await TestCodeunitUtils.getDefaultTestCodeunit(msg.NewValue, Uri.file(msg.FsPath))).join('\r\n'), { encoding: 'utf8' });
         let id: string | undefined = await TestCodeunitUtils.getNextCodeunitId(msg.FsPath);
         if (id) {
             //TODO: Can be removed if API of Andrzej exists
@@ -89,17 +89,9 @@ export class ElementInsertionUtils {
 
         let positionToInsert: Position = await ElementInsertionUtils.getPositionToInsertForScenario(document);
         let edit: WorkspaceEdit = new WorkspaceEdit();
-        let addInitializeFunction: boolean = !await TestCodeunitUtils.isProcedureAlreadyDeclaredRegardlesOfParametersGenerally(document, 'Initialize');
-        if (addInitializeFunction) {
-            let codeunitName: string = await TestCodeunitUtils.getObjectName(document, positionToInsert);
-            let initializeProcAsTextArr: string[] = TestCodeunitUtils.getInitializeMethod(codeunitName);
-            let positionToInsertForInitialize: Position = await TestCodeunitUtils.getPositionToInsertForGlobalProcedure(document);
-            edit.insert(document.uri, positionToInsertForInitialize, '\r\n\r\n' + initializeProcAsTextArr.join('\r\n'));
-            let variable: ALFullSyntaxTreeNode | undefined = await TestCodeunitUtils.getGlobalVariableDeclaration(document, 'IsInitialized', 'Boolean');
-            if (!variable) {
-                let editValues: { positionToInsert: Position, textToInsert: string } = await TestCodeunitUtils.addGlobalVariable(document, 'IsInitialized', 'Boolean');
-                edit.insert(document.uri, editValues.positionToInsert, editValues.textToInsert);
-            }
+        
+        if (Config.getAddInitializeFunction(document.uri)) {
+            await ElementInsertionUtils.addInitializeProcedureToDocument(document, positionToInsert, edit);
         }
         edit.insert(document.uri, positionToInsert, '\r\n\r\n' + TestCodeunitUtils.getDefaultTestMethod(msg.Feature, msg.Id, msg.NewValue, document.uri).join('\r\n'));
         msg.MethodName = TestMethodUtils.getProcedureName(TypeChanged.ScenarioName, msg.NewValue);
@@ -107,6 +99,21 @@ export class ElementInsertionUtils {
         let success = await workspace.applyEdit(edit);
         success = success && await document.save();
         return success;
+    }
+
+    private static async addInitializeProcedureToDocument(document: TextDocument, positionInsideDocument: Position, edit: WorkspaceEdit) {
+        let addInitializeFunction: boolean = !await TestCodeunitUtils.isProcedureAlreadyDeclaredRegardlesOfParametersGenerally(document, 'Initialize');
+        if (addInitializeFunction) {
+            let codeunitName: string = await TestCodeunitUtils.getObjectName(document, positionInsideDocument);
+            let initializeProcAsTextArr: string[] = TestCodeunitUtils.getInitializeMethod(codeunitName);
+            let positionToInsertForInitialize: Position = await TestCodeunitUtils.getPositionToInsertForGlobalProcedure(document);
+            edit.insert(document.uri, positionToInsertForInitialize, '\r\n\r\n' + initializeProcAsTextArr.join('\r\n'));
+            let variable: ALFullSyntaxTreeNode | undefined = await TestCodeunitUtils.getGlobalVariableDeclaration(document, 'IsInitialized', 'Boolean');
+            if (!variable) {
+                let editValues: { positionToInsert: Position; textToInsert: string; } = await TestCodeunitUtils.addGlobalVariable(document, 'IsInitialized', 'Boolean');
+                edit.insert(document.uri, editValues.positionToInsert, editValues.textToInsert);
+            }
+        }
     }
 
     private static async getPositionToInsertForScenario(document: TextDocument): Promise<Position> {
