@@ -15,6 +15,9 @@ export class ObjectToMessageUtils {
         message.Codeunit = await TestCodeunitUtils.getObjectName(document, TextRangeExt.createVSCodeRange(testMethod.fullSpan).start);
         ObjectToMessageUtils.getMessageDetails(document, testMethod, message, featureCodeunitLevel);
         message.MethodName = ALFullSyntaxTreeNodeExt.findIdentifierAndGetValueOfTreeNode(document, testMethod);
+        //TODO: Should be done by Marton
+        if (!message.Scenario)
+            message.Scenario = message.MethodName
         message.Project = await TestCodeunitUtils.getAppNameOfDocument(document);
         message.FsPath = document.uri.fsPath;
         message.IsDirty = false;
