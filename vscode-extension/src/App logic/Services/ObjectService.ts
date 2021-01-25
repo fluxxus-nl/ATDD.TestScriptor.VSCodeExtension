@@ -48,12 +48,12 @@ export class ObjectService {
         }
         return messages.sort((a, b) => {
             if (a.Project != b.Project)
-                return a.Project.localeCompare(b.Project)
+                return a.Project && b.Project ? a.Project.localeCompare(b.Project) : a.Project ? -1 : 1
             if (a.Feature != b.Feature)
-                return a.Feature.localeCompare(b.Feature)
-            if (a.Id && b.Id)
-                return a.Id - b.Id
-            return a.Scenario.localeCompare(b.Scenario)
+                return a.Feature && b.Feature ? a.Feature.localeCompare(b.Feature) : a.Feature ? -1 : 1
+            if (a.Id || b.Id)
+                return a.Id && b.Id ? a.Id - b.Id : a.Id ? -1 : 1
+            return a.Scenario && b.Scenario ? a.Scenario.localeCompare(b.Scenario) : a.Scenario ? -1 : 1
         });
     }
     public async getProceduresWhichCouldBeDeletedAfterwards(msg: MessageUpdate): Promise<Array<{ procedureName: string, parameterTypes: string[] }>> {
