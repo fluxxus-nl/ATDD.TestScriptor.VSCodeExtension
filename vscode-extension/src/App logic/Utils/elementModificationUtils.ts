@@ -1,6 +1,7 @@
-import { commands, Range, TextDocument, workspace, WorkspaceEdit } from "vscode";
+import { commands, Position, Range, TextDocument, workspace, WorkspaceEdit } from "vscode";
 import { MessageUpdate, TypeChanged } from "../../typings/types";
 import { ALFullSyntaxTreeNodeExt } from "../AL Code Outline Ext/alFullSyntaxTreeNodeExt";
+import { FullSyntaxTreeNodeKind } from "../AL Code Outline Ext/fullSyntaxTreeNodeKind";
 import { SyntaxTreeExt } from "../AL Code Outline Ext/syntaxTreeExt";
 import { TextRangeExt } from "../AL Code Outline Ext/textRangeExt";
 import { ALFullSyntaxTreeNode } from "../AL Code Outline/alFullSyntaxTreeNode";
@@ -15,19 +16,13 @@ import { TestMethodUtils } from "./testMethodUtils";
 export class ElementModificationUtils {
     public static async modifySomethingInCode(msg: MessageUpdate): Promise<boolean> {
         let document: TextDocument = await workspace.openTextDocument(msg.FsPath);
-        let scenarioName: string = msg.Type == TypeChanged.ScenarioName ? msg.OldValue : msg.Scenario
-        let scenarioRange: Range | undefined = ElementUtils.getRangeOfScenario(document, scenarioName);
-        if (!scenarioRange)
-            return false;
-
-        let syntaxTree: SyntaxTree = await SyntaxTree.getInstance(document);
-        let methodTreeNode: ALFullSyntaxTreeNode | undefined = SyntaxTreeExt.getMethodOrTriggerTreeNodeOfCurrentPosition(syntaxTree, scenarioRange.start);
+        let methodTreeNode: ALFullSyntaxTreeNode | undefined = await ElementModificationUtils.getMethodTreeNode(msg, document);
         if (!methodTreeNode)
             return false;
-        let methodRange: Range = RangeUtils.trimRange(document, TextRangeExt.createVSCodeRange(methodTreeNode.fullSpan));
 
         let edit: WorkspaceEdit
         if ([TypeChanged.Given, TypeChanged.When, TypeChanged.Then].includes(msg.Type)) {
+            let methodRange: Range = RangeUtils.trimRange(document, TextRangeExt.createVSCodeRange(methodTreeNode.fullSpan));
             edit = await ElementModificationUtils.modifyElement(document, methodRange, msg);
         } else if (msg.Type == TypeChanged.ScenarioName) {
             edit = await ElementModificationUtils.modifyScenario(document, methodTreeNode, msg);
@@ -39,6 +34,7 @@ export class ElementModificationUtils {
         await document.save();
         return successful;
     }
+
     private static async modifyElement(document: TextDocument, methodRange: Range, msg: MessageUpdate): Promise<WorkspaceEdit> {
         if (!msg.ArrayIndex && msg.ArrayIndex != 0)
             throw new Error('ArrayIndex not passed')
@@ -103,11 +99,24 @@ export class ElementModificationUtils {
         let edit: WorkspaceEdit = new WorkspaceEdit();
         await TestMethodUtils.renameMethod(edit, methodTreeNode, document, newScenarioName);
 
-        ElementModificationUtils.renameScenarioComment(methodTreeNode, document, edit, msg);
+        ElementModificationUtils.renameOrAddScenarioComment(methodTreeNode, document, edit, msg);
         return edit;
     }
 
-    private static renameScenarioComment(methodTreeNode: ALFullSyntaxTreeNode, document: TextDocument, edit: WorkspaceEdit, msg: MessageUpdate): void {
+    private static async getMethodTreeNode(msg: MessageUpdate, document: TextDocument): Promise<ALFullSyntaxTreeNode | undefined> {
+        let methodTreeNode: ALFullSyntaxTreeNode | undefined
+        let scenarioName: string = msg.Type == TypeChanged.ScenarioName ? msg.OldValue : msg.Scenario;
+        let scenarioRange: Range | undefined = ElementUtils.getRangeOfScenario(document, scenarioName);
+        if (scenarioRange) {
+            let syntaxTree: SyntaxTree = await SyntaxTree.getInstance(document);
+            methodTreeNode = SyntaxTreeExt.getMethodOrTriggerTreeNodeOfCurrentPosition(syntaxTree, scenarioRange.start);
+        } else if (msg.Type == TypeChanged.ScenarioName) {
+            let syntaxTree: SyntaxTree = await SyntaxTree.getInstance(document);
+            methodTreeNode = syntaxTree.collectNodesOfKindXInWholeDocument(FullSyntaxTreeNodeKind.getMethodDeclaration()).find(node => node.name == msg.OldValue);
+        }
+        return methodTreeNode;
+    }
+    private static renameOrAddScenarioComment(methodTreeNode: ALFullSyntaxTreeNode, document: TextDocument, edit: WorkspaceEdit, msg: MessageUpdate): void {
         let methodRange: Range = TextRangeExt.createVSCodeRange(methodTreeNode.fullSpan);
         let regexScenario: RegExp = /\[Scenario\s*(?:#?(?<id>\d+))?\]\s*(?<content>.+)\s*/i;
         let commentOfScenarioRange: Range | undefined = RangeUtils.getRangeOfTextInsideRange(document, methodRange, regexScenario);
@@ -117,6 +126,10 @@ export class ElementModificationUtils {
                 scenarioTextRange = scenarioTextRange.with(scenarioTextRange.start.translate(0, 1));
                 edit.replace(document.uri, scenarioTextRange, ' ' + msg.NewValue);
             }
+        } else {
+            let blockNode: ALFullSyntaxTreeNode = ALFullSyntaxTreeNodeExt.getFirstChildNodeOfKind(methodTreeNode, FullSyntaxTreeNodeKind.getBlock(), false)!
+            let blockRange: Range = RangeUtils.trimRange(document, TextRangeExt.createVSCodeRange(blockNode.fullSpan))
+            edit.insert(document.uri, new Position(blockRange.start.line + 1, 0), ''.padStart(8, ' ') + '// [Scenario] ' + msg.NewValue + '\r\n')
         }
     }
     public static renameProcedureCall(edit: WorkspaceEdit, document: TextDocument, rangeToReplace: Range, newProcedureName: string) {
