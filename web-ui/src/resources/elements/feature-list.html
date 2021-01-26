@@ -11,10 +11,10 @@
                     <div class="input-group mb-2 sortable-group" repeat.for="sublink of link.children">
                         <input type="text" class="form-control" placeholder="" aria-label=""
                             aria-describedby="button-addon2" value.bind="sublink" maxlength="30"
-                            change.delegate="update($index, link, sublink)">
+                            blur.trigger="update($index, link, sublink)">
                         <div hidden.bind="singleEntry" class="input-group-append">
                             <button class="btn btn-outline-danger" type="button"
-                                click.delegate="remove($index, $event)"><i class="fas fa-trash-alt"></i></button>
+                                click.delegate="remove($index, link, sublink)"><i class="fas fa-trash-alt"></i></button>
                         </div>
                     </div>
                     <button class="btn btn-outline-success" type="button" click.delegate="$parent.add(link)"><i

@@ -18,7 +18,7 @@ export class FeatureList {
     }
 
     attached() {
-        this.setupDragula();
+        //this.setupDragula();
     }
 
     setupDragula() {
@@ -53,7 +53,6 @@ export class FeatureList {
     trackDrop(dragApi: any) {
         dragApi.on('drop', async (el, container, source, sibling) => {
             //console.log('drop', el, source);
-
         });
     }
 
@@ -70,11 +69,8 @@ export class FeatureList {
             let i = this.entries.indexOf(parent);
             if (i != -1) {
                 parent.children.splice(parent.children.length, 0, '');
-                this.entries.splice(i, 1, parent);
             }
         }
-
-        //this.eventAggregator.publish(AppEventPublisher.entryFormEdited);
     }
 
     update(index: number, parent: any, newValue: any) {
@@ -83,8 +79,8 @@ export class FeatureList {
             if (i != -1) {
                 let oldValue = parent.children[index];
 
-                parent.children.splice(index, 0, newValue);
-                this.entries.splice(i, 1, parent);
+                parent.children.splice(index, 1, newValue);
+                //this.entries.splice(i, 1, parent);
 
                 let message: Message = new Message();
                 message.ArrayIndex = index;
@@ -93,21 +89,18 @@ export class FeatureList {
                 this.appService.sendChangeNotification(TypeChanged.Feature, newState, newValue, oldValue, message);
             }
         }
-
-
-        /*if (index !== -1)
-            this.entries.splice(index, 1, newValue);
-
-        console.log('features changed', index, newValue, this.entries);*/
-
-        //this.eventAggregator.publish(AppEventPublisher.entryFormEdited);
     }
 
-    remove(index: number, e: MouseEvent) {
-        /*if (index !== -1)
-            this.entries.splice(index, 1);*/
-
-        //this.eventAggregator.publish(AppEventPublisher.entryFormEdited);
+    remove(index: number, parent: any, link: any) {
+        if (index !== -1) {
+            let i = this.entries.indexOf(parent);
+            if (i != -1) {
+                let message: Message = new Message();
+                message.ArrayIndex = index;
+                this.appService.sendChangeNotification(TypeChanged.Feature, MessageState.Deleted, '', link, message);
+                parent.children.splice(index, 1);
+            }
+        }
     }
 
 }
