@@ -15,6 +15,9 @@ import { TestMethodUtils } from "./testMethodUtils";
 
 export class ElementModificationUtils {
     public static async modifySomethingInCode(msg: MessageUpdate): Promise<boolean> {
+        if (msg.Type == TypeChanged.Feature) {
+            throw new Error('Not supported yet to rename a feature.')
+        }
         let document: TextDocument = await workspace.openTextDocument(msg.FsPath);
         let methodTreeNode: ALFullSyntaxTreeNode | undefined = await ElementModificationUtils.getMethodTreeNode(msg, document);
         if (!methodTreeNode)

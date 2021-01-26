@@ -1,3 +1,4 @@
+import { dirname } from "path";
 import { Position, Range, TextDocument } from "vscode";
 import { Message, TypeChanged } from "../../typings/types";
 import { ALFullSyntaxTreeNodeExt } from "../AL Code Outline Ext/alFullSyntaxTreeNodeExt";
@@ -112,7 +113,7 @@ export class ElementUtils {
         let projects: any[] = await new ObjectService().getProjects();
         let project: any = projects.find(project => project.name == projectName);
 
-        let basePath = (project.FilePath as string).substr(0, (project.FilePath as string).lastIndexOf('\\'));
+        let basePath = dirname(project.FilePath)
         let objects: Message[] = await new ObjectService().getObjects([basePath]);
         let object: Message | undefined = objects.find(object => object.Feature == featureName);
         if (!object) {
