@@ -11,7 +11,7 @@
                 <label for="formGroupExampleInput">ID</label>
                 <div class="form-control">${scenario.Id}</div>
                 <label for="formGroupExampleInput">Scenario</label>
-                <input type="text" class="form-control" value.bind="scenario.Scenario & debounce:300" placeholder="Scenario Name...">
+                <input type="text" class="form-control" value.bind="scenario.Scenario & updateTrigger:'blur'" placeholder="Scenario Name...">
             </div>
 
             <div show.bind="scenario">

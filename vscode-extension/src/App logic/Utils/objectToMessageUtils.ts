@@ -15,6 +15,9 @@ export class ObjectToMessageUtils {
         message.Codeunit = await TestCodeunitUtils.getObjectName(document, TextRangeExt.createVSCodeRange(testMethod.fullSpan).start);
         ObjectToMessageUtils.getMessageDetails(document, testMethod, message, featureCodeunitLevel);
         message.MethodName = ALFullSyntaxTreeNodeExt.findIdentifierAndGetValueOfTreeNode(document, testMethod);
+        //TODO: Should be done by Marton
+        if (!message.Scenario)
+            message.Scenario = message.MethodName
         message.Project = await TestCodeunitUtils.getAppNameOfDocument(document);
         message.FsPath = document.uri.fsPath;
         message.IsDirty = false;
@@ -52,15 +55,15 @@ export class ObjectToMessageUtils {
 
         let matchArr: RegExpMatchArray | null = methodText.match(regexFeature);
         if (matchArr && matchArr.groups)
-            message.Feature = matchArr.groups['content'];
+            message.Feature = matchArr.groups['content'].trim();
         else if (featureCodeunitLevel)
             message.Feature = featureCodeunitLevel
 
         matchArr = methodText.match(regexScenario);
         if (matchArr && matchArr.groups) {
-            message.Scenario = matchArr.groups['content'];
+            message.Scenario = matchArr.groups['content'].trim();
             if (matchArr.length == 3 && matchArr.groups['id']) //0, id and content
-                message.Id = Number(matchArr.groups['id']);
+                message.Id = Number(matchArr.groups['id'].trim());
         }
 
         //Given
@@ -69,13 +72,13 @@ export class ObjectToMessageUtils {
             matchArr.forEach(match => {
                 let matchArr2: RegExpMatchArray | null = match.match(givenPattern);
                 if (matchArr2 && matchArr2.groups)
-                    message.Details.given.push(matchArr2.groups['content'])
+                    message.Details.given.push(matchArr2.groups['content'].trim())
             });
         }
         //When
         matchArr = methodText.match(regexWhen);
         if (matchArr && matchArr.groups)
-            message.Details.when.push(matchArr.groups['content']);
+            message.Details.when.push(matchArr.groups['content'].trim());
         else
             message.Details.when.push('');
         //Then
@@ -84,7 +87,7 @@ export class ObjectToMessageUtils {
             matchArr.forEach(match => {
                 let matchArr2: RegExpMatchArray | null = match.match(thenPattern);
                 if (matchArr2 && matchArr2.groups)
-                    message.Details.then.push(matchArr2.groups['content'])
+                    message.Details.then.push(matchArr2.groups['content'].trim())
             });
         }
     }

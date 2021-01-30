@@ -11,6 +11,7 @@ import { ElementDeletionUtils } from '../Utils/elementDeletionUtils';
 import { ElementInsertionUtils } from '../Utils/elementInsertionUtils';
 import { ElementModificationUtils } from '../Utils/elementModificationUtils';
 import { ElementUtils } from '../Utils/elementUtils';
+import { MessageParser } from '../Utils/messageParser';
 import { ObjectToMessageUtils } from '../Utils/objectToMessageUtils';
 import { RangeUtils } from '../Utils/rangeUtils';
 import { TestCodeunitUtils } from '../Utils/testCodeunitUtils';
@@ -36,26 +37,26 @@ export class ObjectService {
     public async getObjects(paths: string[]): Promise<Message[]> {
         let messages: Message[] = [];
         let testUris: Uri[] = await TestCodeunitUtils.getTestUrisOfWorkspaces(paths);
+        let newMessagePromises: Promise<Message[]>[] = []
         for (let i = 0; i < testUris.length; i++) {
-            let document: TextDocument = await workspace.openTextDocument(testUris[i].fsPath);
-            let testMethods: ALFullSyntaxTreeNode[] = await TestCodeunitUtils.getTestMethodsOfDocument(document);
-            let featureCodeunitLevel: string | undefined
-            if (testMethods.length > 0) {
-                featureCodeunitLevel = ObjectToMessageUtils.getUniqueFeature(document, testMethods[0]);
-            }
-            for (let a = 0; a < testMethods.length; a++)
-                messages.push(await ObjectToMessageUtils.testMethodToMessage(document, testMethods[a], featureCodeunitLevel));
+            newMessagePromises.push(MessageParser.extractMessageObjectFromTestUris(testUris, i))
         }
-        return messages.sort((a, b) => {
+        let newMessagesPerFile: Message[][] = await Promise.all(newMessagePromises);
+        for (const newMessages of newMessagesPerFile)
+            messages = messages.concat(newMessages)
+        messages = messages.sort((a, b) => {
             if (a.Project != b.Project)
-                return a.Project.localeCompare(b.Project)
+                return a.Project && b.Project ? a.Project.localeCompare(b.Project) : a.Project ? -1 : 1
             if (a.Feature != b.Feature)
-                return a.Feature.localeCompare(b.Feature)
-            if (a.Id && b.Id)
-                return a.Id - b.Id
-            return a.Scenario.localeCompare(b.Scenario)
+                return a.Feature && b.Feature ? a.Feature.localeCompare(b.Feature) : a.Feature ? -1 : 1
+            if (a.Id || b.Id)
+                return a.Id && b.Id ? a.Id - b.Id : a.Id ? -1 : 1
+            return a.Scenario && b.Scenario ? a.Scenario.localeCompare(b.Scenario) : a.Scenario ? -1 : 1
         });
+        console.log(messages);
+        return messages
     }
+
     public async getProceduresWhichCouldBeDeletedAfterwards(msg: MessageUpdate): Promise<Array<{ procedureName: string, parameterTypes: string[] }>> {
         let document: TextDocument = await workspace.openTextDocument(msg.FsPath);
         if ([TypeChanged.Given, TypeChanged.When, TypeChanged.Then].includes(msg.Type) &&
