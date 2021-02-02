@@ -65,6 +65,8 @@ To open the TestScriptor page type `ATDD.TestScriptor` in the command pallette a
 
 As a result the TestScriptor page displays each FEATURE/SCENARIO combination as a line enabling you with a hyperlinked scenario name to jump to the related AL test function.
 
+![Opening ATDD.TestScriptor](media/Opening%20ATDD.TestScriptor.gif)
+
 # Basic Rules
 ## Abstracting ATDD information
 To be able to abstract ATDD information from a test codeunit the following rules apply.
@@ -92,6 +94,8 @@ When entering ATDD information in the TestScriptor page the following rules appl
     - ``prefixThen`` (default: ``Make``)
   - it will by default contain a _Not yet implemented_ error statement including the name of the helper function; you can change this by changing the ``atddTestScriptor`` setting ``addException`` to ``false``
 - The maximum length of the name of the functions created for the **SCENARIO**, **GIVEN**, **WHEN** and **THEN** tags is controled by the ``atddTestScriptor`` setting ``maxLengthOfDescription``. Its default value is ``120``
+
+![Converting ATDD information](media/Converting%20ATDD%20information.gif)
 
 ## Removing  ATDD information
 When removing ATDD information ATDD.TestScriptor will ask you in various cases to confirm your changes. You can change this behaviour by means of the ``atddTestScriptor`` setting ``removalMode``.
