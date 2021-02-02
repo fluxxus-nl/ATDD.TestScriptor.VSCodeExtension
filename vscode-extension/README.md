@@ -2,18 +2,20 @@
 
 VSCode extension for Acceptance Test-Driven Development test scriptor aka ATDD.TestScriptor V2 as follow up on [ATDD.TestScriptor](https://github.com/fluxxus-nl/ATDD.TestScriptor).
 
-The Acceptance Test-Driven Development test scriptor allows the user to define in a managed matter ATDD test scenarios and convert it into an AL code structure to facilate fast test code development.
+The Acceptance Test-Driven Development test scriptor allows the user to define in a managed matter ATDD test scenarios and convert them into an AL code structure to facilate fast test code development.
 
+## ATDD Tags
 The ATDD pattern is defined by so called tags:
 
 *	**FEATURE**: defines what feature(s) the test or collection of test cases is testing
-*	**SCENARIO**: defines for a single test the scenario being teste
+*	**SCENARIO**: defines for a single test the scenario being tested
 *	**GIVEN**: defines what data setup is needed; a test case can have **multiple** GIVEN tags when data setup is more complex
 *	**WHEN**: defines the action under test; each test case should have **only one** WHEN tag
 *	**THEN**: defines the result of the action, or more specifically the verification of the result; if multiple results apply, **multiple** THEN tags will be needed
 
 ## Features
 At this point in time *ATDD.TestScriptor for AL* allows you to:
+
 - **abstract** ATDD definitions from AL test codeunits
 - **create** ATDD definitions in AL test codeunits
 - **remove** ATDD definitions from AL test codeunits
@@ -21,18 +23,21 @@ At this point in time *ATDD.TestScriptor for AL* allows you to:
 
 ## Issues
 ### Known Issues
-As this is a _beta_ version no listing is made for known issues. Have a look at the [issues](https://github.com/fluxxus-nl/ATDD.TestScriptor.VSCodeExtension/issues) on the GitHub repository.
+As this is a _beta_ version no listing is made for known issues. Have a look at the beta related [issues](https://github.com/fluxxus-nl/ATDD.TestScriptor.VSCodeExtension/issues?q=is%3Aopen+is%3Aissue+milestone%3A%22beta+release%22) on the GitHub repository.
 
 ### Issue reporting
-and of course, be more than welcome to report any issue you come accross on our [GitHub repository](https://github.com/fluxxus-nl/ATDD.TestScriptor.VSCodeExtension).
+And of course, be more than welcome to report any issue you come accross on our [GitHub repository](https://github.com/fluxxus-nl/ATDD.TestScriptor.VSCodeExtension/issues).
 ## Contributors
 A big thanx to [@martonsagi](https://github.com/martonsagi) and [@DavidFeldhoff](https://github.com/DavidFeldhoff) for their development power.
 
 # Requirements overview
 ## A short history 
-Base on the original [ATDD.TestScriptor](https://github.com/fluxxus-nl/ATDD.TestScriptor) conceived by [@lvanvugt](https://github.com/lvanvugt) and build by [@jhoek](https://github.com/orgs/fluxxus-nl/people/jhoek), [@martonsagi](https://github.com/martonsagi) did build a first UI version which is still the base to the current version. With the help of [@DavidFeldhoff](https://github.com/DavidFeldhoff) we started to, bottom up, fill in the various features that will allow you to create a new FEATURE, add SCENARIOs and detail these out with GIVEN, WHEN and THEN tags, and simulataneously generate the .al counterpart.
+Based on the original [ATDD.TestScriptor](https://github.com/fluxxus-nl/ATDD.TestScriptor) conceived by [@lvanvugt](https://github.com/lvanvugt) and build by [@jhoek](https://github.com/orgs/fluxxus-nl/people/jhoek), [@martonsagi](https://github.com/martonsagi) did build a first UI version which is still the base to the current version. With the help of [@DavidFeldhoff](https://github.com/DavidFeldhoff) we started to, bottom up, fill in the various features that will allow you to create a new FEATURE, add SCENARIOs and detail these out with GIVEN, WHEN and THEN tags, and simulataneously generate the .al counterpart.
 As [@martonsagi](https://github.com/martonsagi) could already extract from an .al test codeunit the various tags we followed the bottom up order and started with first enabling to add a new GIVEN to an existing test function, i.e. SCENARIO.
-This is the path we have followed so far:
+
+## Scope
+This is the path we have followed so far and defines the scope of the _beta_ release:
+
 1. Use Case: **Adding Given-When-Then** [#27](https://github.com/fluxxus-nl/ATDD.TestScriptor.VSCodeExtension/issues/27)
 1. Use Case: **Removing Given-When-Then** [#28](https://github.com/fluxxus-nl/ATDD.TestScriptor.VSCodeExtension/issues/28)
 1. Use Case: **Update Given-When-Then** [#30](https://github.com/fluxxus-nl/ATDD.TestScriptor.VSCodeExtension/issues/30)
@@ -44,11 +49,54 @@ This is the path we have followed so far:
 
 ## Out of scope
 These are the current **out of scope** use cases:
+
 1. Use Case: **Moving Given-When-Then** [#29](https://github.com/fluxxus-nl/ATDD.TestScriptor.VSCodeExtension/issues/29)
 1. Use Case: **Moving Scenario** [#59](https://github.com/fluxxus-nl/ATDD.TestScriptor.VSCodeExtension/issues/59)
 1. Use Case: **Updating Feature** [#64](https://github.com/fluxxus-nl/ATDD.TestScriptor.VSCodeExtension/issues/64)
 1. Use Case: **Copying Scenario** [#65](https://github.com/fluxxus-nl/ATDD.TestScriptor.VSCodeExtension/issues/65)
 
-Next to that exporting to and importing from Excel of ATDD features/sceanrios is not yet handled.
+Next to that exporting to and importing from Excel of ATDD features/scenarios is not yet handled.
 
-**Enjoy!**
+# Opening ATDD.TestScriptor
+To open the TestScriptor page type `ATDD.TestScriptor` in the command pallette and press enter. When the page opens the extension determines whether...
+
+- your VSCode project contains AL test codeunits, i.e. codeunit objects with `Subtype = Test`
+- each test codeunit contains a **FEATURE** and **SCENARIO**s
+
+As a result the TestScriptor page displays each FEATURE/SCENARIO combination as a line enabling you with a hyperlinked scenario name to jump to the related AL test function.
+
+# Basic Rules
+## Abstracting ATDD information
+To be able to abstract ATDD information from a test codeunit the following rules apply.
+
+- Each ATDD tag is provided as a comment line with a square bracketed tag with a description
+- The **FEATURE** tag resides in the OnRun trigger of the test codeunit or/and as a comment line under a test function
+- A **SCENARIO** tag is resides either as a comment line under the test function or in the test function; if a SCENARIO tag is missing the test function name will be used a SCENARIO description
+- A **SCENARIO** tag can be accompanied by a number in one of the formats `#x1`, `x1` or `1`, with x a number of leading zeros and 1 any number
+- Each **SCENARIO** only contains one **WHEN**
+
+## Converting ATDD information
+When entering ATDD information in the TestScriptor page the following rules apply.
+
+- A new **FEATURE** tag results in a new test codeunit with the same name; the new test codeunit will be placed in the folder defined in the ``atddTestScriptor`` setting ``testDirectory``
+- A new **SCENARIO** tag results in a new test function with the same name where
+  - spaces are removed
+  - each single word is capatalized
+  - all non-alphabetic and non-numeral characters are removed
+  - a call to the ``Intialize`` helper function is added to
+- A new **GIVEN**, **WHEN** or **THEN** tag results in a call to a helper function with the same name where
+  - the same name creation rules apply as for SCENARIO
+  - the name is preceded with the prefix as defined in the ``atddTestScriptor`` settings
+    - ``prefixGiven`` (default: ``Create``)
+    - ``prefixWhen`` (default: none)
+    - ``prefixThen`` (default: ``Make``)
+  - it will by default contain a _Not yet implemented_ error statement including the name of the helper function; you can change this by changing the ``atddTestScriptor`` setting ``addException`` to ``false``
+- The maximum length of the name of the functions created for the **SCENARIO**, **GIVEN**, **WHEN** and **THEN** tags is controled by the ``atddTestScriptor`` setting ``maxLengthOfDescription``. Its default value is ``120``
+
+## Removing  ATDD information
+When removing ATDD information ATDD.TestScriptor will ask you in various cases to confirm your changes. You can change this behaviour by means of the ``atddTestScriptor`` setting ``removalMode``.
+- _Ask for confirmation_ (default)
+- _No confirmation, but removal_
+- _No confirmation & no removal_
+
+**Have fun!**
