@@ -2,25 +2,32 @@
 # ATDD.TestScriptor Build pipeline - Windows x64
 ######
 
+name: 'ATDD.TestScriptor Beta $(RunVersion)'
+
 trigger:
-- master
+  branches:
+    include:
+    - master
+  tags:
+    include:
+    - refs/tags/beta*
 
 pool:
   vmImage: 'windows-latest'
 
 variables:
-  RunVersion: "0.1.$(Build.BuildId)"
+  RunVersion: "0.9.$(Build.BuildId)"
 
 steps:
 - checkout: self
 
 # Aurelia App
 
-- script: yarn global add aurelia-cli
+- script: npm install -g aurelia-cli
   displayName: 'Aurelia-CLI install'
   workingDirectory: 'web-ui'
 
-- script: yarn install
+- script: npm install
   displayName: 'Aurelia App restore'
   workingDirectory: 'web-ui'
 
@@ -30,11 +37,11 @@ steps:
 
 # VSCode extension
 
-- script: yarn global add vsce
+- script: npm install -g vsce
   displayName: 'VSCE install'
   workingDirectory: 'vscode-extension'
 
-- script: yarn install
+- script: npm install
   displayName: 'VS Ext. restore'
   workingDirectory: 'vscode-extension'
   
@@ -56,14 +63,19 @@ steps:
 # Finalize
 
 - task: CopyFiles@2
-  displayName: 'VS Ext. publish'
+  displayName: 'VS Ext. copy'
   inputs:
     SourceFolder: 'vscode-extension'
     Contents: '*.vsix'
     TargetFolder: '$(Build.ArtifactStagingDirectory)'
 
 - task: PublishBuildArtifacts@1
-  displayName: 'Final publish'
+  displayName: 'Publish Artifact'
   inputs:
     pathtoPublish: '$(Build.ArtifactStagingDirectory)' 
-    artifactName: 'ATDD.TestScriptor'
+    artifactName: 'ATDD.TestScriptor-$(RunVersion)'
+
+- script: yarn vsce publish --yarn --pat $(VSCE_PAT)
+  displayName: 'Publish to Marketplace'
+  workingDirectory: 'vscode-extension'
+  condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
