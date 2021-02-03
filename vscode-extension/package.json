@@ -131,7 +131,6 @@
         "@types/glob": "^7.1.1",
         "@types/mocha": "^5.2.7",
         "@types/node": "^13.9.3",
-        "@types/request": "^2.48.4",
         "@types/vscode": "^1.42.0",
         "fs-plus": "^3.1.1",
         "glob": "^7.1.4",
@@ -145,13 +144,11 @@
         "webpack-cli": "^3.3.11"
     },
     "dependencies": {
-        "@microsoft/signalr": "^3.1.0",
         "aurelia-dependency-injection": "^1.5.2",
         "aurelia-loader-nodejs": "^1.1.0",
         "clipboardy": "^2.2.0",
         "exceljs": "3.8.1",
         "fs-extra": "^8.1.0",
-        "portfinder": "^1.0.25",
         "reflect-metadata": "^0.1.13"
     },
     "extensionDependencies": [

@@ -1,8 +1,6 @@
 import { Container } from 'aurelia-dependency-injection';
 import { WebPanel } from './WebPanel';
 import { LogService } from './Services/LogService';
-import { MiddlewareService } from './Services/MiddlewareService';
-import { BackendService } from './Services/BackendService';
 import { localObjectWatcher, VSCommandType, VSCommandService, ATDDFileChangeType } from './Services/VSCommandService';
 import { UIService } from './Services/UIService';
 import { commands, ExtensionContext, workspace, WorkspaceFolder, extensions } from 'vscode';
@@ -19,8 +17,6 @@ export class Application {
     private _logService: LogService;
     private _uiService: UIService;
     private _vsCommandService!: VSCommandService;
-    private _backendService!: BackendService;
-    private _middlewareService!: MiddlewareService;
     private static _instance: Application;
 
     private constructor() {
@@ -30,8 +26,6 @@ export class Application {
         this._container = (new Container()).makeGlobal();
         this._logService = this._container.get(LogService);
         this._uiService = this._container.get(UIService);
-        this._backendService = this._container.get(BackendService);
-        this._middlewareService = this._container.get(MiddlewareService);
     }
 
     public static get container() {
@@ -111,13 +105,7 @@ export class Application {
         this._context.subscriptions.push(watcher.onDidDelete((e) => localObjectWatcher(e, ATDDFileChangeType.Unlink)));
     }
 
-    async registerBackend() {
-        await this._backendService.start(this._context.extensionPath);
-        await this._middlewareService.init(`http://localhost:${this._backendService.port}`);
-    }
-    
     private async _activate() {
-        // await this.registerBackend();
         this._vsCommandService = this._container.get(VSCommandService);
         this.registerCommand(VSCommandType.Open, this._vsCommandService.open);
         this.registerCommand(VSCommandType.Discover, this._vsCommandService.discover);
@@ -134,8 +122,6 @@ export class Application {
     private async _deactivate() {
         WebPanel.instance.dispose();
         this._logService.debug('ATDD Panel disposed.');
-        await this._middlewareService.dispose();
-        // await this._backendService.stop();
 
         this._logService.debug(`Extension "${Application.extensionName}" has been deactivated.`);
     }
