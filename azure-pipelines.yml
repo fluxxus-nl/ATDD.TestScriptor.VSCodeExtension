@@ -2,7 +2,7 @@
 # ATDD.TestScriptor Build pipeline - Windows x64
 ######
 
-name: 'ATDD.TestScriptor Beta $(RunVersion)'
+name: 'ATDD.TestScriptor Beta 0.9.$(Build.BuildId)'
 
 trigger:
   branches:
