@@ -22,7 +22,8 @@
     "lodash": "^4.17.15",
     "popper.js": "^1.16.0",
     "requirejs": "^2.3.6",
-    "split.js": "^1.5.11"
+    "split.js": "^1.5.11",
+    "jsonc-parser": "^3.0.0"
   },
   "devDependencies": {
     "@fortawesome/fontawesome-free": "^5.11.2",

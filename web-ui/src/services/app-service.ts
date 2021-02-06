@@ -3,7 +3,8 @@ import { singleton, computedFrom } from 'aurelia-framework';
 import { AppEventPublisher, AppEditMode, MessageState, TypeChanged, MessageUpdate, Message } from 'types';
 import Enumerable from 'linq';
 import { GridApi } from 'ag-grid-community';
-const vsSettings = JSON.parse((window as any).vsSettings);
+import { parse } from 'jsonc-parser';
+const vsSettings = parse((window as any).vsSettings);
 
 @singleton()
 export class AppService {
