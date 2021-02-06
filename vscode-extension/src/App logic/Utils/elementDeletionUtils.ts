@@ -29,10 +29,10 @@ export class ElementDeletionUtils {
             return successful;
         }
     }
-    static async deleteFeature(featureToDelete: string): Promise<void> {
+    static async deleteFeature(featureToDelete: string): Promise<boolean> {
         let features: Map<string, Uri[]> = await ElementUtils.getFeaturesOfDirectories(Application.getWorkspacePaths())
         if (!features.has(featureToDelete))
-            return
+            return false
         let uris: Uri[] = features.get(featureToDelete)!
         for (const uri of uris) {
             let messages: Message[] = await MessageParser.getMessageObjectFromTestUri(uri)
@@ -44,6 +44,7 @@ export class ElementDeletionUtils {
                 await ElementDeletionUtils.deleteScenariosWithFeature(uri, featureToDelete);
             }
         }
+        return true
     }
     private static async deleteScenariosWithFeature(uri: Uri, featureToDelete: string) {
         let messages: Message[] = await MessageParser.getMessageObjectFromTestUri(uri);
