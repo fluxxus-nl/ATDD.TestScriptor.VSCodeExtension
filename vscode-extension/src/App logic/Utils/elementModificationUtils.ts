@@ -109,7 +109,7 @@ export class ElementModificationUtils {
     private static async getMethodTreeNode(msg: MessageUpdate, document: TextDocument): Promise<ALFullSyntaxTreeNode | undefined> {
         let methodTreeNode: ALFullSyntaxTreeNode | undefined
         let scenarioName: string = msg.Type == TypeChanged.ScenarioName ? msg.OldValue : msg.Scenario;
-        let scenarioRange: Range | undefined = ElementUtils.getRangeOfScenario(document, scenarioName);
+        let scenarioRange: Range | undefined = ElementUtils.getRangeOfScenario(document, scenarioName, msg.Id);
         if (scenarioRange) {
             let syntaxTree: SyntaxTree = await SyntaxTree.getInstance(document);
             methodTreeNode = SyntaxTreeExt.getMethodOrTriggerTreeNodeOfCurrentPosition(syntaxTree, scenarioRange.start);

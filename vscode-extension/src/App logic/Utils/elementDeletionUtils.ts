@@ -1,20 +1,21 @@
 import { unlinkSync } from "fs-extra";
-import { Range, WorkspaceEdit, TextDocument, workspace } from "vscode";
-import { MessageUpdate, TypeChanged } from "../../typings/types";
+import { Range, TextDocument, Uri, workspace, WorkspaceEdit } from "vscode";
+import { Application } from "../../Application";
+import { Message, MessageUpdate, TypeChanged } from "../../typings/types";
 import { ALFullSyntaxTreeNodeExt } from "../AL Code Outline Ext/alFullSyntaxTreeNodeExt";
 import { FullSyntaxTreeNodeKind } from "../AL Code Outline Ext/fullSyntaxTreeNodeKind";
 import { TextRangeExt } from "../AL Code Outline Ext/textRangeExt";
 import { ALFullSyntaxTreeNode } from "../AL Code Outline/alFullSyntaxTreeNode";
 import { SyntaxTree } from "../AL Code Outline/syntaxTree";
 import { ElementUtils } from "./elementUtils";
+import { MessageParser } from "./messageParser";
 import { RangeUtils } from "./rangeUtils";
 import { TestMethodUtils } from "./testMethodUtils";
 
 export class ElementDeletionUtils {
     public static async deleteSomethingFromCode(msg: MessageUpdate): Promise<boolean> {
         if (msg.Type == TypeChanged.Feature) {
-            unlinkSync(msg.FsPath);
-            return true;
+            return await ElementDeletionUtils.deleteFeature(msg.OldValue)
         } else {
             let edit: WorkspaceEdit = new WorkspaceEdit();
             let document: TextDocument = await workspace.openTextDocument(msg.FsPath);
@@ -28,10 +29,43 @@ export class ElementDeletionUtils {
             return successful;
         }
     }
+    static async deleteFeature(featureToDelete: string): Promise<void> {
+        let features: Map<string, Uri[]> = await ElementUtils.getFeaturesOfDirectories(Application.getWorkspacePaths())
+        if (!features.has(featureToDelete))
+            return
+        let uris: Uri[] = features.get(featureToDelete)!
+        for (const uri of uris) {
+            let messages: Message[] = await MessageParser.getMessageObjectFromTestUri(uri)
+            let messagesOfFeature: Message[] = messages.filter(message => message.Feature == featureToDelete)
+
+            if (messagesOfFeature.length == messages.length)
+                unlinkSync(uri.fsPath);
+            else {
+                await ElementDeletionUtils.deleteScenariosWithFeature(uri, featureToDelete);
+            }
+        }
+    }
+    private static async deleteScenariosWithFeature(uri: Uri, featureToDelete: string) {
+        let messages: Message[] = await MessageParser.getMessageObjectFromTestUri(uri);
+        let featureMessages: Message[] = messages.filter(message => message.Feature == featureToDelete);
+        let document: TextDocument = await workspace.openTextDocument(uri);
+        let edit: WorkspaceEdit = new WorkspaceEdit();
+        for (const featureMessage of featureMessages) {
+            let range: Range | undefined = ElementUtils.getRangeOfScenario(document, featureMessage.Scenario, featureMessage.Id);
+            if (range) {
+                let syntaxTree: SyntaxTree = await SyntaxTree.getInstance(document);
+                let methodTreeNode: ALFullSyntaxTreeNode = syntaxTree.findTreeNode(range.start, [FullSyntaxTreeNodeKind.getMethodDeclaration()])!;
+                edit.delete(uri, TextRangeExt.createVSCodeRange(methodTreeNode.fullSpan));
+            }
+        }
+        if (edit.entries().length > 0)
+            await workspace.applyEdit(edit);
+    }
+
     public static async deleteElementWithProcedureCall(edit: WorkspaceEdit, msg: MessageUpdate, document: TextDocument) {
         if (!msg.ArrayIndex && msg.ArrayIndex != 0)
             throw new Error('ArrayIndex not passed')
-        let rangeOfElement: Range | undefined = await ElementUtils.getRangeOfElement(document, msg.Scenario, msg.Type, msg.ArrayIndex);
+        let rangeOfElement: Range | undefined = await ElementUtils.getRangeOfElement(document, msg.Scenario, msg.Id, msg.Type, msg.ArrayIndex);
         if (!rangeOfElement)
             throw new Error('Element ' + msg.OldValue + ' not found in scenario \'' + msg.Scenario + '\'.');
 

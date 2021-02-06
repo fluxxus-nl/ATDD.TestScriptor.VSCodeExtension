@@ -36,10 +36,10 @@ export class ObjectService {
 
     public async getObjects(paths: string[]): Promise<Message[]> {
         let messages: Message[] = [];
-        let testUris: Uri[] = await TestCodeunitUtils.getTestUrisOfWorkspaces(paths);
+        let testUris: Uri[] = await TestCodeunitUtils.getTestUrisOfDirectories(paths);
         let newMessagePromises: Promise<Message[]>[] = []
-        for (let i = 0; i < testUris.length; i++) {
-            newMessagePromises.push(MessageParser.extractMessageObjectFromTestUris(testUris, i))
+        for (const testUri of testUris) {
+            newMessagePromises.push(MessageParser.getMessageObjectFromTestUri(testUri))
         }
         let newMessagesPerFile: Message[][] = await Promise.all(newMessagePromises);
         for (const newMessages of newMessagesPerFile)
@@ -63,7 +63,7 @@ export class ObjectService {
             (msg.State == MessageState.Deleted || (msg.State == MessageState.Modified && await this.checkIfOldAndNewProcedureExists(msg)))) {
             if (!msg.ArrayIndex && msg.ArrayIndex != 0)
                 throw new Error('ArrayIndex not passed')
-            let procedureToDelete: { procedureName: string, parameterTypes: string[] } | undefined = await this.getProcedureWhichCouldBeDeletedAfterwardsOfElement(document, msg.Scenario, msg.OldValue, msg.ArrayIndex, msg.Type);
+            let procedureToDelete: { procedureName: string, parameterTypes: string[] } | undefined = await this.getProcedureWhichCouldBeDeletedAfterwardsOfElement(document, msg.Scenario, msg.Id, msg.OldValue, msg.ArrayIndex, msg.Type);
             if (procedureToDelete)
                 return [procedureToDelete];
         } else if (TypeChanged.ScenarioName == msg.Type && MessageState.Deleted == msg.State) {
@@ -78,7 +78,7 @@ export class ObjectService {
         if (!msg.ArrayIndex && msg.ArrayIndex != 0)
             throw new Error('ArrayIndex not passed')
 
-        let elementRange: Range | undefined = await ElementUtils.getRangeOfElement(document, msg.Scenario, msg.Type, msg.ArrayIndex) as Range;
+        let elementRange: Range | undefined = await ElementUtils.getRangeOfElement(document, msg.Scenario, msg.Id, msg.Type, msg.ArrayIndex) as Range;
         let identifierTreeNodeOfOldInvocation: ALFullSyntaxTreeNode | undefined = await ElementUtils.getAppropriateProcedureCallToElementValue(document, elementRange.start, msg.Type, msg.OldValue);
         if (!identifierTreeNodeOfOldInvocation)
             return false;
@@ -120,21 +120,21 @@ export class ObjectService {
 
                 let message: Message = await ObjectToMessageUtils.testMethodToMessage(document, scenarioMethodTreeNode);
                 for (let i = 0; i < message.Details.given.length; i++) {
-                    let procedureToDelete: { procedureName: string; parameterTypes: string[]; } | undefined = await this.getProcedureWhichCouldBeDeletedAfterwardsOfElement(document, msg.Scenario, message.Details.given[i], i, TypeChanged.Given, scenarioMethodRange);
+                    let procedureToDelete: { procedureName: string; parameterTypes: string[]; } | undefined = await this.getProcedureWhichCouldBeDeletedAfterwardsOfElement(document, msg.Scenario, msg.Id, message.Details.given[i], i, TypeChanged.Given, scenarioMethodRange);
                     if (procedureToDelete)
                         if (!TestMethodUtils.procedureAlreadyExistsInProcedureList(procedureToDelete, proceduresWhichCouldBeDeleted))
                             proceduresWhichCouldBeDeleted.push(procedureToDelete);
                 }
                 for (let i = 0; i < message.Details.when.length; i++) {
                     if (message.Details.when[i] != '') {
-                        let procedureToDelete: { procedureName: string; parameterTypes: string[]; } | undefined = await this.getProcedureWhichCouldBeDeletedAfterwardsOfElement(document, msg.Scenario, message.Details.when[i], i, TypeChanged.When, scenarioMethodRange);
+                        let procedureToDelete: { procedureName: string; parameterTypes: string[]; } | undefined = await this.getProcedureWhichCouldBeDeletedAfterwardsOfElement(document, msg.Scenario, msg.Id, message.Details.when[i], i, TypeChanged.When, scenarioMethodRange);
                         if (procedureToDelete)
                             if (!TestMethodUtils.procedureAlreadyExistsInProcedureList(procedureToDelete, proceduresWhichCouldBeDeleted))
                                 proceduresWhichCouldBeDeleted.push(procedureToDelete);
                     }
                 }
                 for (let i = 0; i < message.Details.then.length; i++) {
-                    let procedureToDelete: { procedureName: string; parameterTypes: string[]; } | undefined = await this.getProcedureWhichCouldBeDeletedAfterwardsOfElement(document, msg.Scenario, message.Details.then[i], i, TypeChanged.Then, scenarioMethodRange);
+                    let procedureToDelete: { procedureName: string; parameterTypes: string[]; } | undefined = await this.getProcedureWhichCouldBeDeletedAfterwardsOfElement(document, msg.Scenario, msg.Id, message.Details.then[i], i, TypeChanged.Then, scenarioMethodRange);
                     if (procedureToDelete)
                         if (!TestMethodUtils.procedureAlreadyExistsInProcedureList(procedureToDelete, proceduresWhichCouldBeDeleted))
                             proceduresWhichCouldBeDeleted.push(procedureToDelete);
@@ -155,8 +155,8 @@ export class ObjectService {
         return proceduresWhichCouldBeDeleted;
     }
 
-    private async getProcedureWhichCouldBeDeletedAfterwardsOfElement(document: TextDocument, scenario: string, elementValue: string, elementId: number, elementType: TypeChanged, rangeToDeleteInTotal?: Range): Promise<{ procedureName: string, parameterTypes: string[] } | undefined> {
-        let elementRange: Range | undefined = await ElementUtils.getRangeOfElement(document, scenario, elementType, elementId) as Range;
+    private async getProcedureWhichCouldBeDeletedAfterwardsOfElement(document: TextDocument, scenario: string, scenarioId: number | undefined, elementValue: string, elementId: number, elementType: TypeChanged, rangeToDeleteInTotal?: Range): Promise<{ procedureName: string, parameterTypes: string[] } | undefined> {
+        let elementRange: Range | undefined = await ElementUtils.getRangeOfElement(document, scenario, scenarioId, elementType, elementId) as Range;
 
         let identifierTreeNodeOfInvocation: ALFullSyntaxTreeNode | undefined = await ElementUtils.getAppropriateProcedureCallToElementValue(document, elementRange.start, elementType, elementValue);
         if (identifierTreeNodeOfInvocation) {
@@ -212,7 +212,7 @@ export class ObjectService {
                 throw new Error('ArrayIndex not passed')
             let fsPath: string = await ElementUtils.getFSPathOfFeature(msg.Project, msg.Feature);
             let document: TextDocument = await workspace.openTextDocument(fsPath);
-            if (!await ElementUtils.getRangeOfElement(document, msg.Scenario, msg.Type, msg.ArrayIndex)) {
+            if (!await ElementUtils.getRangeOfElement(document, msg.Scenario, msg.Id, msg.Type, msg.ArrayIndex)) {
                 return {
                     valid: false,
                     reason: TypeChanged[TypeChanged.Given] + ' \'' + msg.OldValue + '\' not found.'
