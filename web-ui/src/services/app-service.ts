@@ -14,9 +14,19 @@ export class AppService {
     private _entries: Array<Message> = [];
     public selectedEntry: Message;
     public gridApi: GridApi;
+    private _loading: boolean = false;
 
     public constructor(private eventAggregator: EventAggregator) {
         this._editMode = AppEditMode.Scenario;
+    }
+
+    @computedFrom('_loading')
+    public get loading() {
+        return this._loading;
+    }
+
+    public set loading(newVal: boolean) {
+        this._loading = newVal;
     }
 
     @computedFrom('_editMode')
@@ -71,10 +81,22 @@ export class AppService {
             });
         }
 
+        if (!this._projects || this._projects.length == 0) {
+            this._sidebarLinks.push({
+                name: 'New Project',
+                active: false,
+                children: [
+                    ''
+                ],
+                hasChildren: true
+            });
+        }
+
         this.eventAggregator.publish(AppEventPublisher.sidebarLinksUpdated);
     }
 
     public sendChangeNotification(type: TypeChanged, state: MessageState, newValue: any, oldValue: any, item?: Message) {
+        this.loading = true;
         if (state === MessageState.Unchanged)
             return;
 
@@ -91,7 +113,7 @@ export class AppService {
             message.FsPath = item.FsPath;
         }
         //message.DeleteProcedure = [TypeChanged.Given, TypeChanged.When, TypeChanged.Then].indexOf(type) !== -1 && state == MessageState.Deleted;
-        message.ArrayIndex = item.ArrayIndex;        
+        message.ArrayIndex = item.ArrayIndex;
 
         this.eventAggregator.publish(AppEventPublisher.saveChanges, message);
     }
