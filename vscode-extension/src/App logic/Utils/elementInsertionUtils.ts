@@ -1,5 +1,7 @@
 import * as CRSApi from 'crs-al-language-extension-api';
+import { mkdirSync } from 'fs';
 import { readFileSync, renameSync, writeFileSync } from "fs-extra";
+import { parse } from 'path';
 import { Extension, extensions, Position, Range, TextDocument, Uri, workspace, WorkspaceEdit } from "vscode";
 import { MessageUpdate, TypeChanged } from "../../typings/types";
 import { ALFullSyntaxTreeNodeExt } from "../AL Code Outline Ext/alFullSyntaxTreeNodeExt";
@@ -29,10 +31,11 @@ export class ElementInsertionUtils {
 
     private static async addNewFeatureToCode(msg: MessageUpdate): Promise<boolean> {
         let srcFolder: string = Config.getTestSrcFolder()!;
-        
+
         let objectName: string = new StringUtils(msg.NewValue).titleCase().removeSpecialChars().value();
         let fileName: string = objectName + '.al';
         msg.FsPath = WorkspaceUtils.getFullFsPathOfRelativePath(srcFolder, fileName);
+        mkdirSync(parse(msg.FsPath).dir, { recursive: true })
         writeFileSync(msg.FsPath, (await TestCodeunitUtils.getDefaultTestCodeunit(msg.NewValue, Uri.file(msg.FsPath))).join('\r\n'), { encoding: 'utf8' });
         let id: string | undefined = await TestCodeunitUtils.getNextCodeunitId(msg.FsPath);
         if (id) {
