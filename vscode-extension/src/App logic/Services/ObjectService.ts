@@ -210,6 +210,11 @@ export class ObjectService {
         return { valid: true, reason: '' };
     }
     async isChangeValid_Feature(msg: MessageUpdate): Promise<{ valid: boolean, reason: string }> {
+        if (msg.State == MessageState.Modified)
+            return {
+                valid: false,
+                reason: 'Not supported yet to rename a feature.'
+            }
         let srcFolder: string | undefined = Config.getTestSrcFolder();
         if (!srcFolder)
             return {
