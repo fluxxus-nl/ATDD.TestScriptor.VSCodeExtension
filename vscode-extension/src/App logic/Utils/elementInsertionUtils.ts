@@ -1,8 +1,6 @@
 import * as CRSApi from 'crs-al-language-extension-api';
 import { readFileSync, renameSync, writeFileSync } from "fs-extra";
 import { Extension, extensions, Position, Range, TextDocument, Uri, workspace, WorkspaceEdit } from "vscode";
-import { Application } from '../../Application';
-import { UIService } from '../../Services/UIService';
 import { MessageUpdate, TypeChanged } from "../../typings/types";
 import { ALFullSyntaxTreeNodeExt } from "../AL Code Outline Ext/alFullSyntaxTreeNodeExt";
 import { FullSyntaxTreeNodeKind } from "../AL Code Outline Ext/fullSyntaxTreeNodeKind";
@@ -30,14 +28,8 @@ export class ElementInsertionUtils {
     }
 
     private static async addNewFeatureToCode(msg: MessageUpdate): Promise<boolean> {
-        let srcFolder: string | undefined = Config.getTestSrcFolder();
-        if (!srcFolder)
-            throw new Error('Please specify the source folder for your tests in the settings.');
-        let existingFeatures: Map<string, Uri[]> = await ElementUtils.getFeaturesOfDirectories(Application.getWorkspacePaths())
-        if (existingFeatures.has(msg.NewValue)) {
-            new UIService().error('A feature with the same name exists already');
-            return false;
-        }
+        let srcFolder: string = Config.getTestSrcFolder()!;
+        
         let objectName: string = new StringUtils(msg.NewValue).titleCase().removeSpecialChars().value();
         let fileName: string = objectName + '.al';
         msg.FsPath = WorkspaceUtils.getFullFsPathOfRelativePath(srcFolder, fileName);
