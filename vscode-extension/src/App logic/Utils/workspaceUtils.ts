@@ -7,11 +7,14 @@ export class WorkspaceUtils {
         let fullFsPath: string;
         if (!workspace.workspaceFolders)
             throw new Error('No workspacefolder opened.');
-        if (workspace.workspaceFile) {
-            fullFsPath = join(dirname(workspace.workspaceFile.fsPath), relativeFsPath);
+        if (workspace.workspaceFile && workspace.workspaceFile.scheme != 'untitled') {
+            let workspaceFilePath: string = dirname(workspace.workspaceFile.fsPath)
+            fullFsPath = join(workspaceFilePath, relativeFsPath);
         } else if (workspace.workspaceFolders.length == 1) {
             let workspaceFolder: WorkspaceFolder = workspace.workspaceFolders[0];
             fullFsPath = join(workspaceFolder.uri.fsPath, relativeFsPath);
+        } else if (workspace.workspaceFile && workspace.workspaceFile.scheme == 'untitled') {
+            throw new Error('Please save the workspace before creating features.')
         } else {
             throw new Error('Expected to find the workspacefolder.')
         }
