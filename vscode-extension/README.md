@@ -31,7 +31,7 @@ And of course, be more than welcome to report any issue you come accross on our 
 A big thanx to [@martonsagi](https://github.com/martonsagi) and [@DavidFeldhoff](https://github.com/DavidFeldhoff) for their development power.
 
 # Requirements overview
-## A short history 
+## A brief history 
 Based on the original [ATDD.TestScriptor](https://github.com/fluxxus-nl/ATDD.TestScriptor) conceived by [@lvanvugt](https://github.com/lvanvugt) and build by [@jhoek](https://github.com/orgs/fluxxus-nl/people/jhoek), [@martonsagi](https://github.com/martonsagi) did build a first UI version which is still the base to the current version. With the help of [@DavidFeldhoff](https://github.com/DavidFeldhoff) we started to, bottom up, fill in the various features that will allow you to create a new FEATURE, add SCENARIOs and detail these out with GIVEN, WHEN and THEN tags, and simulataneously generate the .al counterpart.
 As [@martonsagi](https://github.com/martonsagi) could already extract from an .al test codeunit the various tags we followed the bottom up order and started with first enabling to add a new GIVEN to an existing test function, i.e. SCENARIO.
 
@@ -67,13 +67,16 @@ As a result the TestScriptor page displays each FEATURE/SCENARIO combination as 
 
 ![Opening ATDD.TestScriptor](media/Opening%20ATDD.TestScriptor.gif)
 
+In case a test codeunit does not contain a **FEATURE** tag the FEATURE column in the TestScriptor page remains empty. If no  **SCENARIO** tag has been provided for a test function the test function name will be used.
+### Tip
+To get the FEATURE column in the TestScriptor page populated add a **FEATURE** tag the test codeunit. See also **Abstracting ATDD information**.
 # Basic Rules
 ## Abstracting ATDD information
 To be able to abstract ATDD information from a test codeunit the following rules apply.
 
 - Each ATDD tag is provided as a comment line with a square bracketed tag with a description
-- The **FEATURE** tag resides in the OnRun trigger of the test codeunit or/and as a comment line under a test function
-- A **SCENARIO** tag is resides either as a comment line under the test function or in the test function; if a SCENARIO tag is missing the test function name will be used a SCENARIO description
+- The **FEATURE** tag resides in the OnRun trigger or somewhere in the top of the test codeunit, before the OnRun trigger or any function. And/or as a comment line right under the test function name
+- A **SCENARIO** tag resides either as a comment line in the test function or right under the test function name; as already mentioned, if a SCENARIO tag is missing the test function name will be used a SCENARIO description
 - A **SCENARIO** tag can be accompanied by a number in one of the formats `#x1`, `x1` or `1`, with x a number of leading zeros and 1 any number
 - Each **SCENARIO** only contains one **WHEN**
 
