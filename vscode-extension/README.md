@@ -23,10 +23,13 @@ At this point in time *ATDD.TestScriptor for AL* allows you to:
 
 ## Issues
 ### Known Issues
-As this is a _beta_ version no listing is made for known issues. Have a look at the beta related [issues](https://github.com/fluxxus-nl/ATDD.TestScriptor.VSCodeExtension/issues?q=is%3Aopen+is%3Aissue+milestone%3A%22beta+release%22) on the GitHub repository.
+As this is a _beta_ version no specific listing is made for known issues. Have a look at the beta related [issues](https://github.com/fluxxus-nl/ATDD.TestScriptor.VSCodeExtension/issues?q=is%3Aopen+is%3Aissue+milestone%3A%22beta+release%22) on the GitHub repository.
+
+#### Note
+One known issue, however, makes sense to be noted: multi-project workspaces are not yet fully supported, meaning that some things work well, while others might not.
 
 ### Issue reporting
-And of course, be more than welcome to report any issue you come accross on our [GitHub repository](https://github.com/fluxxus-nl/ATDD.TestScriptor.VSCodeExtension/issues).
+Be more than welcome to report any issue you come accross on our [GitHub repository](https://github.com/fluxxus-nl/ATDD.TestScriptor.VSCodeExtension/issues).
 ## Contributors
 A big thanx to [@martonsagi](https://github.com/martonsagi) and [@DavidFeldhoff](https://github.com/DavidFeldhoff) for their development power.
 
