@@ -230,7 +230,9 @@ export class ObjectService {
         return { valid: true, reason: '' }
     }
     async isChangeValid_Scenario(msg: MessageUpdate): Promise<{ valid: boolean, reason: string }> {
-        let fsPath: string = await ElementUtils.getFSPathOfFeature(msg.Project, msg.Feature);
+        let fsPath: string = msg.FsPath;
+        if (fsPath == '')
+            fsPath = await ElementUtils.getFSPathOfFeature(msg.Project, msg.Feature);
         let document: TextDocument = await workspace.openTextDocument(fsPath);
         let scenarioProcedureName = TestMethodUtils.getProcedureName(TypeChanged.ScenarioName, msg.NewValue);
         if (await TestCodeunitUtils.isProcedureAlreadyDeclared(document, scenarioProcedureName, [])) {
@@ -244,7 +246,9 @@ export class ObjectService {
     async isChangeValid_Element(msg: MessageUpdate): Promise<{ valid: boolean, reason: string }> {
         if (!msg.ArrayIndex && msg.ArrayIndex != 0)
             throw new Error('ArrayIndex not passed')
-        let fsPath: string = await ElementUtils.getFSPathOfFeature(msg.Project, msg.Feature);
+        let fsPath: string = msg.FsPath
+        if (fsPath == '')
+            fsPath = await ElementUtils.getFSPathOfFeature(msg.Project, msg.Feature);
         let document: TextDocument = await workspace.openTextDocument(fsPath);
         if (!await ElementUtils.getRangeOfElement(document, msg.Scenario, msg.Id, msg.Type, msg.ArrayIndex)) {
             return {

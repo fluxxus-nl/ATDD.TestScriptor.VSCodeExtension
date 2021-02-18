@@ -81,7 +81,9 @@ export class ElementInsertionUtils {
     }
 
     private static async addNewScenarioToCode(msg: MessageUpdate): Promise<boolean> {
-        let fsPath: string = await ElementUtils.getFSPathOfFeature(msg.Project, msg.Feature);
+        let fsPath: string = msg.FsPath
+        if (fsPath == '')
+            fsPath = await ElementUtils.getFSPathOfFeature(msg.Project, msg.Feature);
         let document: TextDocument = await workspace.openTextDocument(fsPath);
 
         let positionToInsert: Position = await ElementInsertionUtils.getPositionToInsertForScenario(document);
