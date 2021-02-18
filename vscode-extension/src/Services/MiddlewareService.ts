@@ -1,6 +1,7 @@
 import { singleton } from 'aurelia-dependency-injection';
 import { Message, MessageUpdate } from '../typings/types';
 import { ObjectService } from "../App logic/Services/ObjectService";
+import { PreChecks } from '../App logic/Utils/preChecks';
 
 @singleton(true)
 export class MiddlewareService {
@@ -17,7 +18,7 @@ export class MiddlewareService {
         // return this.send(MiddlewareRequestMethod.QueryObjects, MiddlewareResponseMethod.GetObjects, false, paths) as Promise<Array<Message>>;
     }
     async isChangeValid(msg: MessageUpdate): Promise<{ valid: boolean, reason: string }> {
-        return new ObjectService().isChangeValid(msg);
+        return PreChecks.isChangeValid(msg);
     }
     async getProceduresWhichCouldBeDeletedAfterwards(msg: MessageUpdate): Promise<Array<{ procedureName: string, parameterTypes: string[] }>> {
         return new ObjectService().getProceduresWhichCouldBeDeletedAfterwards(msg);
