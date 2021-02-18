@@ -1,22 +1,16 @@
-codeunit 50100 TestObjectFLX
+codeunit 50200 "FirstTestObjectFLX"
 {
     Subtype = Test;
 
     trigger OnRun()
     begin
-        // [FEATURE] First test object
     end;
 
     [Test]
-    procedure FirstTestFunctionWithValidGivenWhenThenStructure()
-    // [FEATURE] First test object
+    procedure FirstTestFunction()
     begin
-        // [SCENARIO 0001] First test function with valid Given-When-Then structure
-        // [GIVEN] Valid Given
         CreateValidGiven();
-        // [WHEN] Valid When
         ValidWhen();
-        // [THEN] Valid Then
         VerifyValidThen();
     end;
 

@@ -1,0 +1,33 @@
+{
+  "id": "40b76ed1-4750-403b-8dcd-587c05d41983",
+  "name": "Test Project - No Tags",
+  "publisher": "fluxxus.nl",
+  "version": "1.0.0.0",
+  "brief": "ATDD.TestScriptor.VSCodeExtension test project that has no ATDD tags",
+  "description": "VSCode project to test ATDD.TestScriptor.VSCodeExtension",
+  "privacyStatement": "",
+  "EULA": "",
+  "help": "https://github.com/fluxxus-nl/ATDD.TestScriptor.VSCodeExtension",
+  "url": "http://www.fluxxus.nl",
+  "logo": "images/logo.png",
+  "screenshots": [],
+  "platform": "16.0.0.0",
+  "application": "16.0.0.0",
+  "dependencies": [
+    {
+      "id":  "5d86850b-0d76-4eca-bd7b-951ad998e997",
+      "name":  "Tests-TestLibraries",
+      "publisher":  "Microsoft",
+      "version":  "16.0.0.0"
+    }
+  ],
+  "idRanges": [
+    {
+      "from": 50200,
+      "to": 50249
+    }
+  ],
+  "contextSensitiveHelpUrl": "https://TestProject.com/help/",
+  "showMyCode": true,
+  "runtime": "5.0"
+}
