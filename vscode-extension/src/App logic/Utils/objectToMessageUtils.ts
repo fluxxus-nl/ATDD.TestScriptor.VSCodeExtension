@@ -10,6 +10,7 @@ import { RangeUtils } from './rangeUtils';
 import { TestCodeunitUtils } from './testCodeunitUtils';
 
 export class ObjectToMessageUtils {
+    static regexFeature: RegExp = /\[Feature\]\s*(?<content>.+)\s*/i;
     public static async testMethodToMessage(document: TextDocument, testMethod: ALFullSyntaxTreeNode, featureCodeunitLevel?: string | undefined): Promise<Message> {
         let message: MessageImpl = new MessageImpl();
         message.Codeunit = await TestCodeunitUtils.getObjectName(document, TextRangeExt.createVSCodeRange(testMethod.fullSpan).start);
@@ -34,10 +35,9 @@ export class ObjectToMessageUtils {
         let firstMethodRange: Range = TextRangeExt.createVSCodeRange(firstMethodTreeNode.fullSpan)
         let rangeUntilFirstMethodNode: Range = new Range(objectRange.start, firstMethodRange.start)
         let textUntilFirstMethodNode: string = document.getText(rangeUntilFirstMethodNode)
-        let regexFeature: RegExp = /\[Feature\]\s*(?<content>.+)\s*/;
-        let matchArr: RegExpMatchArray | null = textUntilFirstMethodNode.match(new RegExp(regexFeature, 'ig'));
+        let matchArr: RegExpMatchArray | null = textUntilFirstMethodNode.match(new RegExp(ObjectToMessageUtils.regexFeature, 'ig'));
         if (matchArr && matchArr.length == 1) {
-            let matchArr: RegExpMatchArray | null = textUntilFirstMethodNode.match(new RegExp(regexFeature, 'i'));
+            let matchArr: RegExpMatchArray | null = textUntilFirstMethodNode.match(new RegExp(ObjectToMessageUtils.regexFeature, 'i'));
             if (matchArr && matchArr.groups) {
                 return matchArr.groups['content'];
             }
@@ -47,13 +47,12 @@ export class ObjectToMessageUtils {
     public static getMessageDetails(document: TextDocument, testMethod: ALFullSyntaxTreeNode, message: MessageImpl, featureCodeunitLevel: string | undefined) {
         message.Details = new MessageDetailsImpl();
         let methodText: string = document.getText(RangeUtils.trimRange(document, TextRangeExt.createVSCodeRange(testMethod.fullSpan)));
-        let regexFeature: RegExp = /\[Feature\]\s*(?<content>.+)\s*/i;
         let regexScenario: RegExp = /\[Scenario\s*(?:#?(?<id>\d+))?\]\s*(?<content>.+)\s*/i;
         let givenPattern: RegExp = /\[Given\]\s*(?<content>.+)\s*/i;
         let regexWhen: RegExp = /\[When\]\s*(?<content>.+)\s*/i;
         let thenPattern: RegExp = /\[Then\]\s*(?<content>.+)\s*/i;
 
-        let matchArr: RegExpMatchArray | null = methodText.match(regexFeature);
+        let matchArr: RegExpMatchArray | null = methodText.match(ObjectToMessageUtils.regexFeature);
         if (matchArr && matchArr.groups)
             message.Feature = matchArr.groups['content'].trim();
         else if (featureCodeunitLevel)

@@ -44,6 +44,7 @@ export class App {
       let result = await this.backendService.send({ Command: 'SaveChanges', Data: message });
       let userCancelledSaving: boolean = result.success === false;
       console.log('saveChanges', result, userCancelledSaving);
+      this.appService.loading = false;
       if (userCancelledSaving === true) {
         this.eventAggregator.publish(AppEventPublisher.saveChangesCancelled, message);
       } else {

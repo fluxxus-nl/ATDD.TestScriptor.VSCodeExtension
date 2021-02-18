@@ -1,13 +1,16 @@
+import { readFileSync } from "fs";
 import { dirname } from "path";
-import { Position, Range, TextDocument } from "vscode";
-import { Message, TypeChanged } from "../../typings/types";
+import { Position, Range, TextDocument, Uri } from "vscode";
+import { TypeChanged } from "../../typings/types";
 import { ALFullSyntaxTreeNodeExt } from "../AL Code Outline Ext/alFullSyntaxTreeNodeExt";
 import { FullSyntaxTreeNodeKind } from "../AL Code Outline Ext/fullSyntaxTreeNodeKind";
 import { TextRangeExt } from "../AL Code Outline Ext/textRangeExt";
 import { ALFullSyntaxTreeNode } from "../AL Code Outline/alFullSyntaxTreeNode";
 import { SyntaxTree } from "../AL Code Outline/syntaxTree";
 import { ObjectService } from "../Services/ObjectService";
+import { ObjectToMessageUtils } from "./objectToMessageUtils";
 import { RangeUtils } from "./rangeUtils";
+import { TestCodeunitUtils } from "./testCodeunitUtils";
 import { TestMethodUtils } from "./testMethodUtils";
 
 export class ElementUtils {
@@ -50,8 +53,8 @@ export class ElementUtils {
         return undefined;
     }
 
-    public static async getRangeOfElement(document: TextDocument, scenarioValue: string, type: TypeChanged, elementId: number): Promise<Range | undefined> {
-        let rangeOfScenario: Range | undefined = this.getRangeOfScenario(document, scenarioValue);
+    public static async getRangeOfElement(document: TextDocument, scenarioValue: string, scenarioId: number | undefined, type: TypeChanged, elementId: number): Promise<Range | undefined> {
+        let rangeOfScenario: Range | undefined = this.getRangeOfScenario(document, scenarioValue, scenarioId);
         if (!rangeOfScenario)
             return undefined;
 
@@ -71,8 +74,8 @@ export class ElementUtils {
         return rangesOfElement[elementId];
     }
 
-    public static getRangeOfScenario(document: TextDocument, scenarioValue: string, id?: number): Range | undefined {
-        let idAsString: string = (id ? id : '') + '';
+    public static getRangeOfScenario(document: TextDocument, scenarioValue: string, scenarioId: number | undefined): Range | undefined {
+        let idAsString: string = (scenarioId ? scenarioId : '') + '';
         let scenarioValueSafe: string = scenarioValue.replace(/([^\w 0-9])/g, '\\$1');
         let regexScenario: RegExp = new RegExp('[/][/]\\s*\\[Scenario[^\\]]*' + idAsString + '\\]\\s*' + scenarioValueSafe, 'i');
         return RangeUtils.getRangeOfTextInsideRange(document, new Range(0, 0, document.lineCount - 1, 0), regexScenario);
@@ -113,12 +116,41 @@ export class ElementUtils {
         let projects: any[] = await new ObjectService().getProjects();
         let project: any = projects.find(project => project.name == projectName);
 
-        let basePath = dirname(project.FilePath)
-        let objects: Message[] = await new ObjectService().getObjects([basePath]);
-        let object: Message | undefined = objects.find(object => object.Feature == featureName);
-        if (!object) {
+        let basePath: string = dirname(project.FilePath)
+        let features: Map<string, Uri[]> = await ElementUtils.getFeaturesOfDirectories([basePath]);
+        if (features.has(featureName))
+            if (features.get(featureName)!.length == 1)
+                return features.get(featureName)![0].fsPath
+            else
+                throw new Error('Feature exists in multiple files. Currently it\'s only supported that one feature is in one file')
+        else
             throw new Error('Feature ' + featureName + 'not found.');
+    }
+    public static async getFeaturesOfDirectories(paths: string[]): Promise<Map<string, Uri[]>> {
+        let features: Map<string, Uri[]> = new Map();
+        let testUris: Uri[] = await TestCodeunitUtils.getTestUrisOfDirectories(paths);
+        for (const testUri of testUris) {
+            let featuresOfPath: string[] = this.getFeaturesOfPath(testUri.fsPath);
+            for (const featureOfPath of featuresOfPath) {
+                if (!features.has(featureOfPath))
+                    features.set(featureOfPath, [testUri]);
+                else if (!features.get(featureOfPath)!.includes(testUri))
+                    features.get(featureOfPath)!.push(testUri)
+            }
         }
-        return object.FsPath;
+        return features;
+    }
+    public static getFeaturesOfPath(fsPath: string): string[] {
+        let features: string[] = []
+        let fileContent: string = readFileSync(fsPath, { encoding: 'utf8' })
+        let matches: RegExpMatchArray | null = fileContent.match(new RegExp(ObjectToMessageUtils.regexFeature, 'ig'));
+        if (matches) {
+            for (const matchEntry of matches) {
+                let feature = matchEntry.match(ObjectToMessageUtils.regexFeature)![1]
+                if (!features.includes(feature))
+                    features.push(feature);
+            }
+        }
+        return features;
     }
 }

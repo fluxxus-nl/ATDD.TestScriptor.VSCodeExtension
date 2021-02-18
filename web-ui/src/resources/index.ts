@@ -6,6 +6,7 @@ export function configure(config: FrameworkConfiguration) {
     './elements/test-list',
     './elements/feature-list',
     './elements/entry-form',
-    './elements/entry-form-group'
+    './elements/entry-form-group',
+    './elements/loader.html'
   ]);
 }

@@ -8,11 +8,12 @@ import { TextRangeExt } from '../AL Code Outline Ext/textRangeExt';
 import { ALFullSyntaxTreeNode } from '../AL Code Outline/alFullSyntaxTreeNode';
 import { SyntaxTree } from '../AL Code Outline/syntaxTree';
 import { Config } from './config';
+import { ElementUtils } from './elementUtils';
 import { RangeUtils } from './rangeUtils';
 import { TestMethodUtils } from './testMethodUtils';
 
 export class TestCodeunitUtils {
-    public static async getTestUrisOfWorkspaces(paths: string[]): Promise<Uri[]> {
+    public static async getTestUrisOfDirectories(paths: string[]): Promise<Uri[]> {
         let uris: Uri[] = []
         for (let i = 0; i < paths.length; i++) {
             uris = uris.concat(await workspace.findFiles(new RelativePattern(paths[i], '**/*.al')))
@@ -276,7 +277,7 @@ export class TestCodeunitUtils {
         } while (!nextIDCompletionItem);
         return nextIDCompletionItem?.label;
     }
-    public static getDefaultTestMethod(feature: string, id: number | undefined, scenario: string, uri: Uri): string[] {
+    public static getDefaultTestMethod(id: number | undefined, scenario: string, uri: Uri, feature: string, featureNecessary: boolean): string[] {
         let scenarioNameTitleCase: string = TestMethodUtils.getProcedureName(TypeChanged.ScenarioName, scenario);
         let idAsString: string = '';
         if (id)
@@ -290,6 +291,10 @@ export class TestCodeunitUtils {
         ];
         if (Config.getAddInitializeFunction(uri))
             procedure.splice(4, 0, '        Initialize();');
+        if (featureNecessary) {
+            procedure.splice(2, 0, '    ' + ElementUtils.getElementComment(TypeChanged.Feature, feature));
+        }
+
         return procedure;
     }
     static getInitializeMethod(nameOfCodeunit: string): string[] {

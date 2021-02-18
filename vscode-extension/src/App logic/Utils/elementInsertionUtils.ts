@@ -1,5 +1,7 @@
 import * as CRSApi from 'crs-al-language-extension-api';
+import { mkdirSync } from 'fs';
 import { readFileSync, renameSync, writeFileSync } from "fs-extra";
+import { parse } from 'path';
 import { Extension, extensions, Position, Range, TextDocument, Uri, workspace, WorkspaceEdit } from "vscode";
 import { MessageUpdate, TypeChanged } from "../../typings/types";
 import { ALFullSyntaxTreeNodeExt } from "../AL Code Outline Ext/alFullSyntaxTreeNodeExt";
@@ -28,12 +30,12 @@ export class ElementInsertionUtils {
     }
 
     private static async addNewFeatureToCode(msg: MessageUpdate): Promise<boolean> {
-        let srcFolder: string | undefined = Config.getTestSrcFolder();
-        if (!srcFolder)
-            throw new Error('Please specify the source folder for your tests in the settings.');
+        let srcFolder: string = Config.getTestSrcFolder()!;
+
         let objectName: string = new StringUtils(msg.NewValue).titleCase().removeSpecialChars().value();
         let fileName: string = objectName + '.al';
         msg.FsPath = WorkspaceUtils.getFullFsPathOfRelativePath(srcFolder, fileName);
+        mkdirSync(parse(msg.FsPath).dir, { recursive: true })
         writeFileSync(msg.FsPath, (await TestCodeunitUtils.getDefaultTestCodeunit(msg.NewValue, Uri.file(msg.FsPath))).join('\r\n'), { encoding: 'utf8' });
         let id: string | undefined = await TestCodeunitUtils.getNextCodeunitId(msg.FsPath);
         if (id) {
@@ -58,7 +60,7 @@ export class ElementInsertionUtils {
         if (msg.FsPath == '' && msg.Feature !== '' && msg.Project !== '')
             msg.FsPath = await ElementUtils.getFSPathOfFeature(msg.Project, msg.Feature);
         let document: TextDocument = await workspace.openTextDocument(msg.FsPath);
-        let scenarioRange: Range | undefined = ElementUtils.getRangeOfScenario(document, msg.Scenario);
+        let scenarioRange: Range | undefined = ElementUtils.getRangeOfScenario(document, msg.Scenario, msg.Id);
         if (!scenarioRange)
             return false;
 
@@ -67,15 +69,10 @@ export class ElementInsertionUtils {
             return false;
 
         let edit = new WorkspaceEdit();
-        // if (result.addEmptyLine)
-        //     edit.insert(document.uri, result.endPositionOfPreviousLine, '\r\n')
 
         ElementInsertionUtils.addElement(edit, document, result.endPositionOfPreviousLine, msg.Type, msg.NewValue);
         let procedureName: string = TestMethodUtils.getProcedureName(msg.Type, msg.NewValue);
         ElementInsertionUtils.addProcedureCall(edit, document, result.endPositionOfPreviousLine, procedureName);
-        // let currentLineText: string = document.lineAt(positionToInsert.line + 1).text.trim();
-        // if (currentLineText != '' && currentLineText != 'end;')
-        //     textToAdd += '\r\n';
         await TestCodeunitUtils.addProcedure(edit, document, procedureName);
 
         let successful: boolean = await workspace.applyEdit(edit);
@@ -89,11 +86,12 @@ export class ElementInsertionUtils {
 
         let positionToInsert: Position = await ElementInsertionUtils.getPositionToInsertForScenario(document);
         let edit: WorkspaceEdit = new WorkspaceEdit();
-        
+
         if (Config.getAddInitializeFunction(document.uri)) {
             await ElementInsertionUtils.addInitializeProcedureToDocument(document, positionToInsert, edit);
         }
-        edit.insert(document.uri, positionToInsert, '\r\n\r\n' + TestCodeunitUtils.getDefaultTestMethod(msg.Feature, msg.Id, msg.NewValue, document.uri).join('\r\n'));
+        let featureDeclarationNecessary: boolean = ElementUtils.getFeaturesOfPath(fsPath).length != 1;
+        edit.insert(document.uri, positionToInsert, '\r\n\r\n' + TestCodeunitUtils.getDefaultTestMethod(msg.Id, msg.NewValue, document.uri, msg.Feature, featureDeclarationNecessary).join('\r\n'));
         msg.MethodName = TestMethodUtils.getProcedureName(TypeChanged.ScenarioName, msg.NewValue);
         msg.FsPath = fsPath;
         let success = await workspace.applyEdit(edit);

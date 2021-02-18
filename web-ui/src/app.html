@@ -4,6 +4,8 @@
   <require from="ag-grid-community/dist/styles/ag-theme-material.css"></require>
   <require from="./styles/common.css"></require>
 
+  <loader if.bind="appService.loading"></loader>
+
   <div class="fixed-top">
     <toolbar search-value.two-way="searchValue"></toolbar>
   </div>

@@ -11,9 +11,9 @@
 
 body {
     /*font-family     : "Segoe UI", "Segoe WP", Segoe, device-segoe, Tahoma, Helvetica, Arial, sans-serif !important;*/
-    padding           : 0;
-    color             : var(--vscode-editor-foreground);
-    background-color  : inherit !important;
+    padding         : 0;
+    color           : var(--vscode-editor-foreground);
+    background-color: inherit !important;
 }
 
 html,
@@ -60,7 +60,7 @@ ul#sidebar-list {
 
         div {
             padding: 7px;
-            cursor: pointer;
+            cursor : pointer;
 
             &:not(.active) {
                 background-color: transparent;
@@ -233,6 +233,63 @@ body.vscode-light {
             background: @bc-green-light  !important;
         }
     }
+}
+
+/**
+
+Loader animation
+https://loading.io/css/
+
+**/
+
+.lds-dual-ring {
+    display: inline-block;
+    width  : 80px;
+    height : 80px;
+}
+
+.lds-dual-ring:after {
+    content      : " ";
+    display      : block;
+    width        : 64px;
+    height       : 64px;
+    margin       : 8px;
+    border-radius: 50%;
+    border       : 6px solid @bc-green;
+    border-color : @bc-green transparent @bc-green transparent;
+    animation    : lds-dual-ring 1.2s linear infinite;
+}
+
+@keyframes lds-dual-ring {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Loader END */
+
+.overlay {
+    height          : 100%;
+    width           : 100%;
+    position        : fixed;
+    z-index         : 1099;
+    top             : 0;
+    left            : 0;
+    opacity         : 0.85;
+    background-color: @bc-black;
+    overflow-x      : hidden;
+    transition      : 0.5s;
+}
+
+.overlay-content {
+    position  : relative;
+    top       : 45%;
+    width     : 100%;
+    text-align: center;
 }
 
 body.vscode-high-contrast,

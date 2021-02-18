@@ -5,9 +5,9 @@ import { ObjectToMessageUtils } from "./objectToMessageUtils";
 import { TestCodeunitUtils } from "./testCodeunitUtils";
 
 export class MessageParser{
-    public static async extractMessageObjectFromTestUris(testUris: Uri[], i: number): Promise<Message[]> {
+    public static async getMessageObjectFromTestUri(testUri: Uri): Promise<Message[]> {
         let newMesssages: Message[] = [];
-        let document: TextDocument = await workspace.openTextDocument(testUris[i].fsPath);
+        let document: TextDocument = await workspace.openTextDocument(testUri.fsPath);
         let testMethods: ALFullSyntaxTreeNode[] = await TestCodeunitUtils.getTestMethodsOfDocument(document);
         let featureCodeunitLevel: string | undefined;
         if (testMethods.length > 0) {
