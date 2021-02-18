@@ -9,6 +9,7 @@ import { ALFullSyntaxTreeNode } from "../AL Code Outline/alFullSyntaxTreeNode";
 import { SyntaxTree } from "../AL Code Outline/syntaxTree";
 import { ElementUtils } from "./elementUtils";
 import { MessageParser } from "./messageParser";
+import { ObjectToMessageUtils } from "./objectToMessageUtils";
 import { RangeUtils } from "./rangeUtils";
 import { TestMethodUtils } from "./testMethodUtils";
 
@@ -59,8 +60,27 @@ export class ElementDeletionUtils {
                 edit.delete(uri, TextRangeExt.createVSCodeRange(methodTreeNode.fullSpan));
             }
         }
-        if (edit.entries().length > 0)
+        if (edit.entries().length > 0) {
+            let firstDeletedLine: number =
+                edit.entries().sort((a, b) => a[1].sort(
+                    (x, y) => x.range.start.compareTo(y.range.start)
+                )[0].range.start.compareTo(
+                    b[1].sort(
+                        (x, y) => x.range.start.compareTo(y.range.start)
+                    )[0].range.start
+                ))[0][1][0].range.start.line
+
+            for (let lineNo = 0; lineNo < firstDeletedLine; lineNo++) {
+                if (ObjectToMessageUtils.regexFeature.test(document.lineAt(lineNo).text)) {
+                    let featureName = document.lineAt(lineNo).text.match(ObjectToMessageUtils.regexFeature)![1]
+                    if (featureName == featureToDelete) {
+                        edit.delete(uri, new Range(lineNo, 0, lineNo + 1, 0))
+                    }
+                }
+            }
             await workspace.applyEdit(edit);
+            await document.save();
+        }
     }
 
     public static async deleteElementWithProcedureCall(edit: WorkspaceEdit, msg: MessageUpdate, document: TextDocument) {
