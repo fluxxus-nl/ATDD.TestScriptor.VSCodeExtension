@@ -77,8 +77,8 @@ export class WebPanelCommandService {
         WebPanel.postMessage({ Command: 'SaveChanges', Data: { success: somethingIsChanged, fsPath: entry.FsPath, methodName: entry.MethodName } });
     }
     async askUserForConfirmationsToProceed(entry: MessageUpdate, informationOutput: InformationOutput = new VSCodeInformationOutput()): Promise<{ wantsToContinue: boolean, wantsProceduresToBeDeleted: Array<{ procedureName: string, parameterTypes: string[] }>, updateProcedureCall: boolean }> {
-        let confirmDeletion = (thing: string) => `Do you want to delete '${thing}'?`;
-        let confirmUpdate = (thing: string) => `Do you want to update '${thing}'?`;
+        let confirmDeletion = (thing: string) => `Do you want to delete ${thing}?`;
+        let confirmUpdate = (thing: string) => `Do you want to update ${thing}?`;
         let askWhichProcedureToTake: string = 'To the new naming exists already a helper function with the same parameters. Which one to take?';
         let optionYes: string = 'Yes';
         let optionNo: string = 'No';
@@ -108,7 +108,7 @@ export class WebPanelCommandService {
                         if (helperFunctionsWhichCouldBeDeleted.length == 1) {
                             let responseHelperFunctionShouldBeDeleted: string | undefined;
                             if (removalMode == Config.removalModeConfirmation)
-                                responseHelperFunctionShouldBeDeleted = await informationOutput.ask(confirmDeletion('the procedure ' + helperFunctionsWhichCouldBeDeleted[0].procedureName), [optionYes, optionNo]);
+                                responseHelperFunctionShouldBeDeleted = await informationOutput.ask(confirmDeletion('the procedure \'' + helperFunctionsWhichCouldBeDeleted[0].procedureName) + '\'', [optionYes, optionNo]);
                             if (responseHelperFunctionShouldBeDeleted === optionYes || removalMode == Config.removalModeNoConfirmationButRemoval)
                                 proceduresToDelete = helperFunctionsWhichCouldBeDeleted;
                             else
@@ -132,7 +132,7 @@ export class WebPanelCommandService {
                     for (let i = 1; i < proceduresWhichCouldBeDeleted.length; i++) { //i = 1 because scenario-Testprocedure is also inside this this array
                         let responseHelperFunctionShouldBeDeleted: string | undefined;
                         if (removalMode == Config.removalModeConfirmation)
-                            responseHelperFunctionShouldBeDeleted = await informationOutput.ask(confirmDeletion('the procedure ' + proceduresWhichCouldBeDeleted[i].procedureName), [optionYes, optionNo]);
+                            responseHelperFunctionShouldBeDeleted = await informationOutput.ask(confirmDeletion('the procedure \'' + proceduresWhichCouldBeDeleted[i].procedureName) + '\'', [optionYes, optionNo]);
                         if (responseHelperFunctionShouldBeDeleted === optionYes || removalMode == Config.removalModeNoConfirmationButRemoval) {
                             proceduresToDelete.push(proceduresWhichCouldBeDeleted[i]);
                         }
