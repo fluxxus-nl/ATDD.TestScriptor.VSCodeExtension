@@ -27,11 +27,11 @@ codeunit 50105 TestObjectWithTwoFeaturesFLX
     begin
         // [SCENARIO 0002] Test function 2
         // [Given] Valid Given        
-        CreateValidGiven();
+        CreateValidGiven_2();
         // [When] Valid When        
-        ValidWhen();
+        ValidWhen_2();
         // [Then] Valid Then        
-        VerifyValidThen();
+        VerifyValidThen_2();
     end;
 
     [Test]
@@ -58,6 +58,21 @@ codeunit 50105 TestObjectWithTwoFeaturesFLX
     end;
 
     local procedure VerifyValidThen()
+    begin
+        Error('Procedure VerifyValidThen not yet implemented.');
+    end;
+
+    local procedure CreateValidGiven_2()
+    begin
+        Error('Procedure CreateValidGiven not yet implemented.');
+    end;
+
+    local procedure ValidWhen_2()
+    begin
+        Error('Procedure ValidWhen not yet implemented.');
+    end;
+
+    local procedure VerifyValidThen_2()
     begin
         Error('Procedure VerifyValidThen not yet implemented.');
     end;
