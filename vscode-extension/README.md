@@ -31,7 +31,7 @@ One known issue, however, makes sense to be noted: multi-project workspaces are 
 ### Issue reporting
 Be more than welcome to report any issue you come accross on our [GitHub repository](https://github.com/fluxxus-nl/ATDD.TestScriptor.VSCodeExtension/issues).
 ## Contributors
-A big thanx to [@martonsagi](https://github.com/martonsagi) and [@davidfeldhoff](https://github.com/davidfeldhoff) for their development power. And [@mtefanMaron](https://github.com/stefanmaron) for his early stage testing.
+A big thanx to [@martonsagi](https://github.com/martonsagi) and [@davidfeldhoff](https://github.com/davidfeldhoff) for their development power. And [@stefanmaron](https://github.com/stefanmaron) for his early stage testing.
 
 # Requirements overview
 ## A brief history 
