@@ -31,11 +31,11 @@ One known issue, however, makes sense to be noted: multi-project workspaces are 
 ### Issue reporting
 Be more than welcome to report any issue you come accross on our [GitHub repository](https://github.com/fluxxus-nl/ATDD.TestScriptor.VSCodeExtension/issues).
 ## Contributors
-A big thanx to [@martonsagi](https://github.com/martonsagi) and [@DavidFeldhoff](https://github.com/DavidFeldhoff) for their development power.
+A big thanx to [@martonsagi](https://github.com/martonsagi) and [@davidfeldhoff](https://github.com/davidfeldhoff) for their development power. And [@mtefanMaron](https://github.com/stefanmaron) for his early stage testing.
 
 # Requirements overview
 ## A brief history 
-Based on the original [ATDD.TestScriptor](https://github.com/fluxxus-nl/ATDD.TestScriptor) conceived by [@lvanvugt](https://github.com/lvanvugt) and build by [@jhoek](https://github.com/orgs/fluxxus-nl/people/jhoek), [@martonsagi](https://github.com/martonsagi) did build a first UI version which is still the base to the current version. With the help of [@DavidFeldhoff](https://github.com/DavidFeldhoff) we started to, bottom up, fill in the various features that will allow you to create a new FEATURE, add SCENARIOs and detail these out with GIVEN, WHEN and THEN tags, and simulataneously generate the .al counterpart.
+Based on the original [ATDD.TestScriptor](https://github.com/fluxxus-nl/ATDD.TestScriptor) conceived by [@lvanvugt](https://github.com/lvanvugt) and build by [@jhoek](https://github.com/orgs/fluxxus-nl/people/jhoek), [@martonsagi](https://github.com/martonsagi) did build a first UI version which is still the base to the current version. With the help of [@davidfeldhoff](https://github.com/davidfeldhoff) we started to, bottom up, fill in the various features that will allow you to create a new FEATURE, add SCENARIOs and detail these out with GIVEN, WHEN and THEN tags, and simulataneously generate the .al counterpart.
 As [@martonsagi](https://github.com/martonsagi) could already extract from an .al test codeunit the various tags we followed the bottom up order and started with first enabling to add a new GIVEN to an existing test function, i.e. SCENARIO.
 
 ## Scope
@@ -108,5 +108,12 @@ When removing ATDD information ATDD.TestScriptor will ask you in various cases t
 - _Ask for confirmation_ (default)
 - _No confirmation, but removal_
 - _No confirmation & no removal_
+
+# Background and Examples
+If you are looking for inspiration on ATDD based testing, you might want to consults these resource:
+- the [Acceptance test–driven development](https://en.wikipedia.org/wiki/Acceptance_test%E2%80%93driven_development) wiki topic
+- the [Automated Testing in Microsoft Dynamics 365 Business Central](https://www.packtpub.com/product/automated-testing-in-microsoft-dynamics-365-business-central/9781789804935) book
+- the [Test Automation Examples](https://github.com/fluxxus-nl/Test-Automation-Examples) GitHub repo
+- the zillion tests that Microsoft delivers with Dynamics 365 Business Central
 
 **Have fun!**
