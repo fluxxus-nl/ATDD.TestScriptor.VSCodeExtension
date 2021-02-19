@@ -5,6 +5,7 @@ import { Range, Uri, workspace, WorkspaceEdit } from "vscode";
 import { SyntaxTree } from "../App logic/AL Code Outline/syntaxTree";
 import { ObjectService } from "../App logic/Services/ObjectService";
 import { TestInformationOutput } from "../App logic/Utils/informationsOutput";
+import { PreChecks } from "../App logic/Utils/preChecks";
 import { Application } from "../Application";
 import { WebPanelCommandService } from "../Services/WebPanelCommandService";
 import { MessageUpdate } from "../typings/types";
@@ -15,7 +16,7 @@ export class TestHelper {
 
 	public static async verifyChangeIsValid(messageUpdate: MessageUpdate, isValid: boolean = true) {
 		//Then change is valid
-		let validResult: { valid: boolean; reason: string; } = await new ObjectService().isChangeValid(messageUpdate);
+		let validResult: { valid: boolean; reason: string; } = await PreChecks.isChangeValid(messageUpdate);
 		assert.strictEqual(validResult.valid, isValid, isValid ? 'Change should be valid' : 'Change should be invalid');
 	}
 	public static async verifyUserQuestions(messageUpdate: MessageUpdate, informationOutput: TestInformationOutput): Promise<boolean> {

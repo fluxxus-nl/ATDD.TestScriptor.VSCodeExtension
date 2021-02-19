@@ -14,8 +14,13 @@ export class NewScenarioCommand implements ICommand {
     async execute(payload: any): Promise<void> {
         let project = this.appService.projects[0];
         let featureName = this.appService.selectedEntry?.Feature || '';
-        if (featureName == '') {
-            featureName =  this.appService.getLastFeatureName();
+        let fsPath = this.appService.selectedEntry?.FsPath || '';
+        if (featureName == '' || fsPath == '') {
+            let lastEntry: Message | undefined = this.appService.getLastEntry();
+            if (lastEntry && featureName == '')
+                featureName = lastEntry.Feature
+            if (lastEntry && fsPath == '')
+                fsPath = lastEntry.FsPath
         }
         let newID = this.appService.getNextScenarioID(featureName);
         let newRec: Message = {
@@ -26,7 +31,7 @@ export class NewScenarioCommand implements ICommand {
             Id: newID,
             MethodName: '',
             Codeunit: '',
-            FsPath: '',
+            FsPath: fsPath,
             IsDirty: true,
             TestRunnerResult: ALTestRunnerResult.NoInfo,
             State: MessageState.New,

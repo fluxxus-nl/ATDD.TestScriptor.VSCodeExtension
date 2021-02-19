@@ -134,12 +134,10 @@ export class AppService {
         return newId;
     }
 
-    public getLastFeatureName(): string {
+    public getLastEntry(): Message | undefined {
         let lastIndex = this.gridApi.getLastDisplayedRow();
         let previousRow = this.gridApi.getDisplayedRowAtIndex(lastIndex - 1);
-        let data = previousRow.data as Message;
-
-        return data ? data.Feature : '';
+        return previousRow.data as Message;
     }
 
 
