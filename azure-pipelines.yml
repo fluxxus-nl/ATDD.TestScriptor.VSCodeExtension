@@ -37,10 +37,6 @@ steps:
 
 # VSCode extension
 
-- script: npm install -g vsce
-  displayName: 'VSCE install'
-  workingDirectory: 'vscode-extension'
-
 - script: npm install
   displayName: 'VS Ext. restore'
   workingDirectory: 'vscode-extension'
