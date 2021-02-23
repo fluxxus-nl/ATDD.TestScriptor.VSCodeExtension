@@ -79,3 +79,28 @@ steps:
   displayName: 'Publish to Marketplace'
   workingDirectory: 'vscode-extension'
   condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
+
+- task: AzureFileCopy@4  
+  displayName: 'Upload to blob by version'
+  inputs:
+    SourcePath: 'vscode-extension/ATDD.TestScriptor-$(RunVersion).vsix'
+    azureSubscription: 'TestScriptorConnection'
+    Destination: 'AzureBlob'
+    storage: 'luxadofiles'
+    ContainerName: 'atddtestscriptorinsiderbuild'    
+
+- task: PowerShell@2
+  displayName: 'Prepare latest version'
+  inputs:
+    targetType: 'inline'
+    script: 'Copy-Item "vscode-extension/ATDD.TestScriptor-$(RunVersion).vsix" -Destination "vscode-extension/latest-develop.vsix"'
+
+- task: AzureFileCopy@4  
+  displayName: 'Upload to blob as latest'
+  inputs:
+    SourcePath: 'vscode-extension/latest-develop.vsix'
+    azureSubscription: 'TestScriptorConnection'
+    Destination: 'AzureBlob'
+    storage: 'luxadofiles'
+    ContainerName: 'atddtestscriptorinsiderbuild'    
+    TargetPath: 'develop-latest.vsix'
