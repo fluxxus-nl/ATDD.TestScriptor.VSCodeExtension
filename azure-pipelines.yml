@@ -77,7 +77,7 @@ steps:
     pathtoPublish: '$(Build.ArtifactStagingDirectory)' 
     artifactName: 'ATDD.TestScriptor-$(RunVersion)'
 
-- script: npx vsce publish --pat $(VSCE_PAT)
+- script: npx vsce publish --pat $(VSCE_PAT_LOCAL)
   displayName: 'Publish to Marketplace'
   workingDirectory: 'vscode-extension'
   condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
