@@ -37,6 +37,10 @@ steps:
 
 # VSCode extension
 
+- script: yarn global add vsce
+  displayName: 'VSCE install'
+  workingDirectory: 'vscode-extension'
+
 - script: npm install
   displayName: 'VS Ext. restore'
   workingDirectory: 'vscode-extension'
@@ -71,7 +75,7 @@ steps:
     pathtoPublish: '$(Build.ArtifactStagingDirectory)' 
     artifactName: 'ATDD.TestScriptor-$(RunVersion)'
 
-- script: yarn vsce publish --yarn --pat $(VSCE_PAT)
+- script: vsce publish --yarn --pat $(VSCE_PAT)
   displayName: 'Publish to Marketplace'
   workingDirectory: 'vscode-extension'
   condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))

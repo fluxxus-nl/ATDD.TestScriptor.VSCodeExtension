@@ -74,6 +74,10 @@ export class FeatureList {
     }
 
     update(index: number, parent: any, newValue: any) {
+        if (!newValue || newValue == '') {
+            return;
+        }
+
         if (this.entries) {
             let i = this.entries.indexOf(parent);
             if (i != -1) {
