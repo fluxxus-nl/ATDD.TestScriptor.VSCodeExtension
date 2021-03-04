@@ -1,10 +1,10 @@
 {
     "name": "atdd-testscriptor",
     "displayName": "ATDD.TestScriptor",
-    "publisher": "fluxxus-nl",
+    "publisher": "fluxxusnl",
     "license": "MIT",
     "author": {
-        "name": "fluxxus-nl"
+        "name": "fluxxusnl"
     },
     "icon": "images/ATDDTestScriptorIcon.png",
     "repository": {
