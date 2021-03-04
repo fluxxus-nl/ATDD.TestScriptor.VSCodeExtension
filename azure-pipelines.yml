@@ -37,7 +37,7 @@ steps:
 
 # VSCode extension
 
-- script: yarn global add vsce
+- script: npm install -g vsce
   displayName: 'VSCE install'
   workingDirectory: 'vscode-extension'
 
@@ -56,7 +56,7 @@ steps:
   displayName: 'VS Ext. set version'
   workingDirectory: 'vscode-extension'
 
-- script: yarn package
+- script: npx vsce package
   displayName: 'VS Ext. package'
   workingDirectory: 'vscode-extension'
 
@@ -75,7 +75,7 @@ steps:
     pathtoPublish: '$(Build.ArtifactStagingDirectory)' 
     artifactName: 'ATDD.TestScriptor-$(RunVersion)'
 
-- script: vsce publish --yarn --pat $(VSCE_PAT)
+- script: npx vsce publish --pat $(VSCE_PAT)
   displayName: 'Publish to Marketplace'
   workingDirectory: 'vscode-extension'
   condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
