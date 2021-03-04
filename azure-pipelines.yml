@@ -16,7 +16,9 @@ pool:
   vmImage: 'windows-latest'
 
 variables:
-  RunVersion: "0.9.$(Build.BuildId)"
+  -group: TestScriptor
+  -name: RunVersion
+  -value: "0.9.$(Build.BuildId)"
 
 steps:
 - checkout: self
