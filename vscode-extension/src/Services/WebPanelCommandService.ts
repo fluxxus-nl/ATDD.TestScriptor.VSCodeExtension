@@ -74,7 +74,8 @@ export class WebPanelCommandService {
                 somethingIsChanged = true;
             }
         }
-        WebPanel.postMessage({ Command: 'SaveChanges', Data: { success: somethingIsChanged, fsPath: entry.FsPath, methodName: entry.MethodName } });
+        if (!entry.internalCall)
+            WebPanel.postMessage({ Command: 'SaveChanges', Data: { success: somethingIsChanged, fsPath: entry.FsPath, methodName: entry.MethodName } });
     }
     async askUserForConfirmationsToProceed(entry: MessageUpdate, informationOutput: InformationOutput = new VSCodeInformationOutput()): Promise<{ wantsToContinue: boolean, wantsProceduresToBeDeleted: Array<{ procedureName: string, parameterTypes: string[] }>, updateProcedureCall: boolean }> {
         let confirmDeletion = (thing: string) => `Do you want to delete ${thing}?`;
@@ -123,7 +124,11 @@ export class WebPanelCommandService {
             return { wantsToContinue: true, wantsProceduresToBeDeleted: [], updateProcedureCall: true };
         } else if (TypeChanged.ScenarioName == entry.Type) {
             if (entry.State == MessageState.Deleted) {
-                let responseScenarioShouldBeDeleted: string | undefined = await informationOutput.ask(confirmDeletion('this scenario'), [optionYes, optionNo]);
+                let responseScenarioShouldBeDeleted: string | undefined
+                if (!entry.internalCall)
+                    await informationOutput.ask(confirmDeletion('this scenario'), [optionYes, optionNo]);
+                else
+                    responseScenarioShouldBeDeleted = optionYes
                 if (responseScenarioShouldBeDeleted === optionYes) {
                     let proceduresWhichCouldBeDeleted: Array<{ procedureName: string, parameterTypes: string[] }> =
                         await this.middlewareService.getProceduresWhichCouldBeDeletedAfterwards(entry);

@@ -1,7 +1,11 @@
 import { unlinkSync } from "fs-extra";
 import { Range, TextDocument, Uri, workspace, WorkspaceEdit } from "vscode";
 import { Application } from "../../Application";
-import { Message, MessageUpdate, TypeChanged } from "../../typings/types";
+import { ExcelService } from "../../Services/ExcelService";
+import { MiddlewareService } from "../../Services/MiddlewareService";
+import { VSCommandService } from "../../Services/VSCommandService";
+import { WebPanelCommandService } from "../../Services/WebPanelCommandService";
+import { Message, MessageState, MessageUpdate, TypeChanged } from "../../typings/types";
 import { ALFullSyntaxTreeNodeExt } from "../AL Code Outline Ext/alFullSyntaxTreeNodeExt";
 import { FullSyntaxTreeNodeKind } from "../AL Code Outline Ext/fullSyntaxTreeNodeKind";
 import { TextRangeExt } from "../AL Code Outline Ext/textRangeExt";
@@ -16,7 +20,7 @@ import { TestMethodUtils } from "./testMethodUtils";
 export class ElementDeletionUtils {
     public static async deleteSomethingFromCode(msg: MessageUpdate): Promise<boolean> {
         if (msg.Type == TypeChanged.Feature) {
-            return await ElementDeletionUtils.deleteFeature(msg.OldValue)
+            return await ElementDeletionUtils.deleteFeature(msg)
         } else {
             let edit: WorkspaceEdit = new WorkspaceEdit();
             let document: TextDocument = await workspace.openTextDocument(msg.FsPath);
@@ -30,7 +34,8 @@ export class ElementDeletionUtils {
             return successful;
         }
     }
-    static async deleteFeature(featureToDelete: string): Promise<boolean> {
+    static async deleteFeature(msg: MessageUpdate): Promise<boolean> {
+        let featureToDelete: string = msg.OldValue
         let features: Map<string, Uri[]> = await ElementUtils.getFeaturesOfDirectories(Application.getWorkspacePaths())
         if (!features.has(featureToDelete))
             return false
@@ -42,42 +47,44 @@ export class ElementDeletionUtils {
             if (messagesOfFeature.length == messages.length)
                 unlinkSync(uri.fsPath);
             else {
-                await ElementDeletionUtils.deleteScenariosWithFeature(uri, featureToDelete);
+                await ElementDeletionUtils.deleteScenariosWithFeature(uri, featureToDelete, msg);
             }
         }
         return true
     }
-    private static async deleteScenariosWithFeature(uri: Uri, featureToDelete: string) {
+    private static async deleteScenariosWithFeature(uri: Uri, featureToDelete: string, msg: MessageUpdate) {
         let messages: Message[] = await MessageParser.getMessageObjectFromTestUri(uri);
         let featureMessages: Message[] = messages.filter(message => message.Feature == featureToDelete);
+        for (const featureMessage of featureMessages) {
+            let msg2: MessageUpdate = {
+                Project: msg.Project,
+                Feature: msg.OldValue,
+                FsPath: uri.fsPath,
+                Scenario: '',
+                OldValue: featureMessage.Scenario,
+                NewValue: '',
+                State: MessageState.Deleted,
+                Type: TypeChanged.ScenarioName,
+                Id: featureMessage.Id,
+                internalCall: true
+            }
+            await new WebPanelCommandService(new MiddlewareService(), new VSCommandService(), new ExcelService()).SaveChangesCommand({
+                Command: 'Internal',
+                Data: msg2
+            })
+        }
         let document: TextDocument = await workspace.openTextDocument(uri);
         let edit: WorkspaceEdit = new WorkspaceEdit();
-        for (const featureMessage of featureMessages) {
-            let range: Range | undefined = ElementUtils.getRangeOfScenario(document, featureMessage.Scenario, featureMessage.Id);
-            if (range) {
-                let syntaxTree: SyntaxTree = await SyntaxTree.getInstance(document);
-                let methodTreeNode: ALFullSyntaxTreeNode = syntaxTree.findTreeNode(range.start, [FullSyntaxTreeNodeKind.getMethodDeclaration()])!;
-                edit.delete(uri, TextRangeExt.createVSCodeRange(methodTreeNode.fullSpan));
+
+        for (let lineNo = 0; lineNo < document.lineCount; lineNo++) {
+            if (ObjectToMessageUtils.regexFeature.test(document.lineAt(lineNo).text)) {
+                let featureName = document.lineAt(lineNo).text.match(ObjectToMessageUtils.regexFeature)![1]
+                if (featureName.toLowerCase() == featureToDelete.toLowerCase()) {
+                    edit.delete(uri, new Range(lineNo, 0, lineNo + 1, 0))
+                }
             }
         }
         if (edit.entries().length > 0) {
-            let firstDeletedLine: number =
-                edit.entries().sort((a, b) => a[1].sort(
-                    (x, y) => x.range.start.compareTo(y.range.start)
-                )[0].range.start.compareTo(
-                    b[1].sort(
-                        (x, y) => x.range.start.compareTo(y.range.start)
-                    )[0].range.start
-                ))[0][1][0].range.start.line
-
-            for (let lineNo = 0; lineNo < firstDeletedLine; lineNo++) {
-                if (ObjectToMessageUtils.regexFeature.test(document.lineAt(lineNo).text)) {
-                    let featureName = document.lineAt(lineNo).text.match(ObjectToMessageUtils.regexFeature)![1]
-                    if (featureName == featureToDelete) {
-                        edit.delete(uri, new Range(lineNo, 0, lineNo + 1, 0))
-                    }
-                }
-            }
             await workspace.applyEdit(edit);
             await document.save();
         }
