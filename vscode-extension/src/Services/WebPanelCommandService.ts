@@ -126,7 +126,7 @@ export class WebPanelCommandService {
             if (entry.State == MessageState.Deleted) {
                 let responseScenarioShouldBeDeleted: string | undefined
                 if (!entry.internalCall)
-                    await informationOutput.ask(confirmDeletion('this scenario'), [optionYes, optionNo]);
+                    responseScenarioShouldBeDeleted = await informationOutput.ask(confirmDeletion('this scenario'), [optionYes, optionNo]);
                 else
                     responseScenarioShouldBeDeleted = optionYes
                 if (responseScenarioShouldBeDeleted === optionYes) {
