@@ -14,23 +14,34 @@ import { TestMethodUtils } from './testMethodUtils';
 
 export class TestCodeunitUtils {
     public static async getTestUrisOfDirectories(paths: string[]): Promise<Uri[]> {
-        let uris: Uri[] = []
-        for (let i = 0; i < paths.length; i++) {
-            uris = uris.concat(await workspace.findFiles(new RelativePattern(paths[i], '**/*.al')))
-        }
-        let allTestUris: Uri[] = [];
+        let alUris: Uri[] = await TestCodeunitUtils.getUniqueALFileUris(paths);
+        let testUris: Uri[] = [];
         let checkUriPromiseArr: Promise<{ uri: Uri, isTestCodeunit: boolean }>[] = [];
-        for (let i = 0; i < uris.length; i++) {
-            checkUriPromiseArr.push(this.checkIfUriIsTestCodeunit(uris[i]));
+        for (let i = 0; i < alUris.length; i++) {
+            checkUriPromiseArr.push(this.checkIfUriIsTestCodeunit(alUris[i]));
             if (checkUriPromiseArr.length > 100) {
-                allTestUris = allTestUris.concat(await this.resolvePromiseSAndReturnTestUris(checkUriPromiseArr))
+                testUris = testUris.concat(await this.resolvePromiseSAndReturnTestUris(checkUriPromiseArr))
                 checkUriPromiseArr = []
             }
         }
-        allTestUris = allTestUris.concat(await this.resolvePromiseSAndReturnTestUris(checkUriPromiseArr))
+        testUris = testUris.concat(await this.resolvePromiseSAndReturnTestUris(checkUriPromiseArr))
         checkUriPromiseArr = []
-        return allTestUris;
+        return testUris;
     }
+    private static async getUniqueALFileUris(paths: string[]): Promise<Uri[]> {
+        let alUris: Uri[] = [];
+        let alFilePaths: string[] = [];
+        for (let i = 0; i < paths.length; i++) {
+            let alFileUrisOfWorkspaceFolder: Uri[] = await workspace.findFiles(new RelativePattern(paths[i], '**/*.al'));
+            for (const alFileUri of alFileUrisOfWorkspaceFolder)
+                if (!alFilePaths.includes(alFileUri.path)) {
+                    alFilePaths.push(alFileUri.path);
+                    alUris.push(alFileUri);
+                }
+        }
+        return alUris;
+    }
+
     private static async checkIfUriIsTestCodeunit(uri: Uri): Promise<{ uri: Uri, isTestCodeunit: boolean }> {
         let regex: RegExp = /^.*codeunit \d+.*Subtype\s+=\s+Test;.*/is;
         let fileContent: string = readFileSync(uri.fsPath, { encoding: 'utf8', flag: 'r' });
