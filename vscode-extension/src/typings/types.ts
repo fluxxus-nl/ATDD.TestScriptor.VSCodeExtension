@@ -52,6 +52,7 @@ export interface MessageUpdate {
     UpdateProcedureCall?: boolean;
     ArrayIndex?: number;
     MethodName?: string;
+    internalCall?: boolean;
 }
 
 export enum TypeChanged {

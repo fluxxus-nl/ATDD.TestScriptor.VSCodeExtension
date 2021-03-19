@@ -8,15 +8,18 @@ trigger:
   branches:
     include:
     - master
-  tags:
-    include:
-    - refs/tags/beta*
+    - refs/tags/*beta*
+  #tags:
+  #  include:
+  #  - refs/tags/beta*
 
 pool:
   vmImage: 'windows-latest'
 
 variables:
-  RunVersion: "0.9.$(Build.BuildId)"
+- group: TestScriptor
+- name: RunVersion
+  value: "0.9.$(Build.BuildId)"
 
 steps:
 - checkout: self
@@ -37,6 +40,10 @@ steps:
 
 # VSCode extension
 
+- script: npm install -g vsce
+  displayName: 'VSCE install'
+  workingDirectory: 'vscode-extension'
+
 - script: npm install
   displayName: 'VS Ext. restore'
   workingDirectory: 'vscode-extension'
@@ -52,7 +59,7 @@ steps:
   displayName: 'VS Ext. set version'
   workingDirectory: 'vscode-extension'
 
-- script: yarn package
+- script: npx vsce package
   displayName: 'VS Ext. package'
   workingDirectory: 'vscode-extension'
 
@@ -71,7 +78,7 @@ steps:
     pathtoPublish: '$(Build.ArtifactStagingDirectory)' 
     artifactName: 'ATDD.TestScriptor-$(RunVersion)'
 
-- script: yarn vsce publish --yarn --pat $(VSCE_PAT)
+- script: npx vsce publish --pat $(VSCE_PAT_LOCAL)
   displayName: 'Publish to Marketplace'
   workingDirectory: 'vscode-extension'
   condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))

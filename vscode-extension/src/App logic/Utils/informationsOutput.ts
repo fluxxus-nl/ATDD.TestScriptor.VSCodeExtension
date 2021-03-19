@@ -1,11 +1,14 @@
 import * as vscode from 'vscode';
-// import { window } from 'vscode';
+import { Config } from './config';
 
 export interface InformationOutput {
-    ask(question: string, options: string[]): Promise<string | undefined>;
+    ask(question: string, options: string[], defaultOption: string): Promise<string | undefined>;
 }
 export class VSCodeInformationOutput implements InformationOutput {
-    async ask(question: string, options: string[]): Promise<string | undefined> {
+    async ask(question: string, options: string[], defaultOption: string): Promise<string | undefined> {
+        if (options.length > 0 && !Config.getShowConfirmations(vscode.window.activeTextEditor?.document.uri))
+            return defaultOption
+            
         switch (options.length) {
             case 0:
                 vscode.window.showInformationMessage(question);
@@ -28,7 +31,7 @@ export class TestInformationOutput implements InformationOutput {
     configure(question: string, response: string) {
         this.resultMap.set(question, response);
     }
-    async ask(question: string, options: string[]): Promise<string | undefined> {
+    async ask(question: string, options: string[], defaultOption: string): Promise<string | undefined> {
         this.askedQuestions.push({ question, options })
         if (this.resultMap.has(question))
             return this.resultMap.get(question);
