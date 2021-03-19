@@ -17,7 +17,7 @@ export class UIService {
 
     public async progress(message: string, task: (progress: Progress<{ message?: string; increment?: number }>, token: CancellationToken) => Promise<boolean>): Promise<boolean> {
         return await window.withProgress({
-            location: ProgressLocation.Notification,
+            location: ProgressLocation.Window,
             title: message,
             cancellable: true
         }, task);
