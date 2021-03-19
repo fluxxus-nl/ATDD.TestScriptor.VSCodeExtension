@@ -22,7 +22,7 @@ codeunit 50107 TestObject1WithSameFeatureFLX
 
     [Test]
     procedure TestFunction12()
-    // [FEATURE] SameFeature
+    // [FEATURE] Same Feature
     begin
         // [SCENARIO 0012] Test function 12
         // [Given] Valid Given        
