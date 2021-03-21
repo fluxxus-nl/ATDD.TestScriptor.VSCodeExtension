@@ -83,6 +83,10 @@ export class FeatureList {
             if (i != -1) {
                 let oldValue = parent.children[index];
 
+                if (oldValue == newValue) {
+                    return;
+                }
+
                 parent.children.splice(index, 1, newValue);
                 //this.entries.splice(i, 1, parent);
 
