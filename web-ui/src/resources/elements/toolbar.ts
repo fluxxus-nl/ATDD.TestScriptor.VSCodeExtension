@@ -1,5 +1,6 @@
 import { BackendService } from 'services/backend-service';
 import { autoinject, bindable } from "aurelia-framework";
+import { CommandHandlerService } from 'backend/CommandHandlerService';
 
 @autoinject()
 export class Toolbar {
@@ -12,12 +13,12 @@ export class Toolbar {
 
     loaded: boolean = false;
 
-    constructor(private backendService: BackendService) {
+    constructor(private backendService: BackendService, private commandHandlerService: CommandHandlerService) {
     }
 
     async attached() {
         try {
-            let currentSetting = await this.sendCommand('GetConfiguration');
+            let currentSetting = await this.sendBackendCommand('GetConfiguration');
             this.noConfirmations = currentSetting;
         } catch {
             console.log('GetConfiguration call is not yet implemented');
@@ -27,6 +28,10 @@ export class Toolbar {
     }
 
     async sendCommand(command: string, data?: any) {
+        await this.commandHandlerService.dispatch(command, data);
+    }
+
+    async sendBackendCommand(command: string, data?: any) {
         return await this.backendService.send({ Command: command, Data: data });
     }
 
@@ -35,6 +40,6 @@ export class Toolbar {
             return;
         }
 
-        this.sendCommand('SetConfiguration', newValue);
+        this.sendBackendCommand('SetConfiguration', newValue);
     }
 }
