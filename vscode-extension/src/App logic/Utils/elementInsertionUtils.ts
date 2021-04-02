@@ -1,7 +1,7 @@
 import * as CRSApi from 'crs-al-language-extension-api';
 import { mkdirSync } from 'fs';
 import { readFileSync, renameSync, writeFileSync } from "fs-extra";
-import { parse } from 'path';
+import { join, parse } from 'path';
 import { Extension, extensions, Position, Range, TextDocument, Uri, workspace, WorkspaceEdit } from "vscode";
 import { MessageUpdate, TypeChanged } from "../../typings/types";
 import { ALFullSyntaxTreeNodeExt } from "../AL Code Outline Ext/alFullSyntaxTreeNodeExt";
@@ -9,13 +9,13 @@ import { FullSyntaxTreeNodeKind } from "../AL Code Outline Ext/fullSyntaxTreeNod
 import { TextRangeExt } from "../AL Code Outline Ext/textRangeExt";
 import { ALFullSyntaxTreeNode } from "../AL Code Outline/alFullSyntaxTreeNode";
 import { SyntaxTree } from "../AL Code Outline/syntaxTree";
+import { ObjectService } from '../Services/ObjectService';
 import { Config } from "./config";
 import { ElementUtils } from "./elementUtils";
 import { RangeUtils } from "./rangeUtils";
 import { StringUtils } from "./stringUtils";
 import { TestCodeunitUtils } from "./testCodeunitUtils";
 import { TestMethodUtils } from "./testMethodUtils";
-import { WorkspaceUtils } from "./workspaceUtils";
 
 export class ElementInsertionUtils {
     public static async addSomethingNewToCode(msg: MessageUpdate): Promise<boolean> {
@@ -30,11 +30,14 @@ export class ElementInsertionUtils {
     }
 
     private static async addNewFeatureToCode(msg: MessageUpdate): Promise<boolean> {
-        let srcFolder: string = Config.getTestSrcFolder()!;
-
         let objectName: string = new StringUtils(msg.NewValue).titleCase().removeSpecialChars().value();
         let fileName: string = objectName + '.al';
-        msg.FsPath = WorkspaceUtils.getFullFsPathOfRelativePath(srcFolder, fileName);
+        
+        let projects: any[] = await new ObjectService().getProjects();
+        let project: any = projects.find(project => project.name == msg.Project);
+        let srcFolder: string = Config.getTestSrcFolder()!;
+        msg.FsPath = join(project.FilePath, srcFolder, fileName)
+
         mkdirSync(parse(msg.FsPath).dir, { recursive: true })
         writeFileSync(msg.FsPath, (await TestCodeunitUtils.getDefaultTestCodeunit(msg.NewValue, Uri.file(msg.FsPath))).join('\r\n'), { encoding: 'utf8' });
         let id: string | undefined = await TestCodeunitUtils.getNextCodeunitId(msg.FsPath);
@@ -48,7 +51,7 @@ export class ElementInsertionUtils {
         if (waldosExtension && waldosExtension.isActive) {
             let waldosApi: CRSApi.ICRSExtensionPublicApi = waldosExtension.exports;
             let newFilename: string = waldosApi.ObjectNamesApi.GetObjectFileName('codeunit', id ? id : '', objectName)
-            let newFileFullname: string = WorkspaceUtils.getFullFsPathOfRelativePath(srcFolder, newFilename);
+            let newFileFullname: string = join(project.FilePath, srcFolder, newFilename);
             renameSync(msg.FsPath, newFileFullname)
             msg.FsPath = newFileFullname
         }

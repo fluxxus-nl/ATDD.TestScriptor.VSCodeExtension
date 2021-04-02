@@ -92,6 +92,7 @@ export class FeatureList {
 
                 let message: Message = new Message();
                 message.ArrayIndex = index;
+                message.Project = parent.name;
 
                 let newState = !oldValue || oldValue.length == 0 ? MessageState.New : MessageState.Modified;
                 this.appService.sendChangeNotification(TypeChanged.Feature, newState, newValue, oldValue, message);
