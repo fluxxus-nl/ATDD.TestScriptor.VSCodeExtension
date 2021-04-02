@@ -1,5 +1,5 @@
 import { ObjectService } from '../App logic/Services/ObjectService';
-import { UserInteractionMock } from '../App logic/Utils/userInteraction';
+import { UserInteraction, UserInteractionMock } from '../App logic/Utils/userInteraction';
 import { MessageState, MessageUpdate, TypeChanged } from '../typings/types';
 import { TestHelper } from './testHelper';
 
@@ -32,10 +32,8 @@ suite('Remove', function () {
 		}
 		//Then
 		let userInteractionMock = new UserInteractionMock();
-		let confirmDeletionOfElementQuestion: string = 'Do you want to delete this element?';
-		let confirmDeletionOfProcedureVariableQuestion = (procName: string) => `Do you want to delete the procedure '${procName}'?`;
-		userInteractionMock.configure(confirmDeletionOfElementQuestion, 'Yes')
-		userInteractionMock.configure(confirmDeletionOfProcedureVariableQuestion('CreateValidGiven'), 'Yes')
+		userInteractionMock.configure(UserInteraction.questionDeleteElement(), 'Yes')
+		userInteractionMock.configure(UserInteraction.questionDeleteProcedure('CreateValidGiven'), 'Yes')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
 		if (await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock))
 			await TestHelper.verifyResult(messageUpdate, 'scenario030.al')
@@ -59,8 +57,7 @@ suite('Remove', function () {
 		}
 		//Then
 		let userInteractionMock = new UserInteractionMock();
-		let confirmDeletionOfElementQuestion: string = 'Do you want to delete this element?';
-		userInteractionMock.configure(confirmDeletionOfElementQuestion, 'No')
+		userInteractionMock.configure(UserInteraction.questionDeleteElement(), 'No')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
 		await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock);
 	})
@@ -83,10 +80,8 @@ suite('Remove', function () {
 		}
 		//Then
 		let userInteractionMock = new UserInteractionMock();
-		let confirmDeletionOfElementQuestion: string = 'Do you want to delete this element?';
-		userInteractionMock.configure(confirmDeletionOfElementQuestion, 'Yes')
-		let confirmDeletionOfProcedureVariableQuestion = (procName: string) => `Do you want to delete the procedure '${procName}'?`;
-		userInteractionMock.configure(confirmDeletionOfProcedureVariableQuestion('CreateValidGiven'), 'No')
+		userInteractionMock.configure(UserInteraction.questionDeleteElement(), 'Yes')
+		userInteractionMock.configure(UserInteraction.questionDeleteProcedure('CreateValidGiven'), 'No')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
 		if (await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock))
 			await TestHelper.verifyResult(messageUpdate, 'scenario032.al')
@@ -123,8 +118,7 @@ suite('Remove', function () {
 		}
 		//Then
 		let userInteractionMock = new UserInteractionMock();
-		let confirmDeletionOfElementQuestion: string = 'Do you want to delete this element?';
-		userInteractionMock.configure(confirmDeletionOfElementQuestion, 'Yes')
+		userInteractionMock.configure(UserInteraction.questionDeleteElement(), 'Yes')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
 		if (await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock))
 			await TestHelper.verifyResult(messageUpdate, 'scenario038.al')
@@ -161,10 +155,8 @@ suite('Remove', function () {
 		}
 		//Then
 		let userInteractionMock = new UserInteractionMock();
-		let confirmDeletionOfElementQuestion: string = 'Do you want to delete this element?';
-		userInteractionMock.configure(confirmDeletionOfElementQuestion, 'Yes')
-		let confirmDeletionOfProcedureVariableQuestion = (procName: string) => `Do you want to delete the procedure '${procName}'?`;
-		userInteractionMock.configure(confirmDeletionOfProcedureVariableQuestion('CreateNewGiven'), 'Yes')
+		userInteractionMock.configure(UserInteraction.questionDeleteElement(), 'Yes')
+		userInteractionMock.configure(UserInteraction.questionDeleteProcedure('CreateNewGiven'), 'Yes')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
 		if (await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock))
 			await TestHelper.verifyResult(messageUpdate, 'scenario040.al')
@@ -201,8 +193,7 @@ suite('Remove', function () {
 		}
 		//Then
 		let userInteractionMock = new UserInteractionMock();
-		let confirmDeletionOfElementQuestion: string = 'Do you want to delete this element?';
-		userInteractionMock.configure(confirmDeletionOfElementQuestion, 'No')
+		userInteractionMock.configure(UserInteraction.questionDeleteElement(), 'No')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
 		if (await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock))
 			await TestHelper.verifyResult(messageUpdate, 'scenario041.al')
@@ -228,10 +219,8 @@ suite('Remove', function () {
 		}
 		//Then
 		let userInteractionMock = new UserInteractionMock();
-		let confirmDeletionOfElementQuestion: string = 'Do you want to delete this element?';
-		userInteractionMock.configure(confirmDeletionOfElementQuestion, 'Yes')
-		let confirmDeletionOfProcedureVariableQuestion = (procName: string) => `Do you want to delete the procedure '${procName}'?`;
-		userInteractionMock.configure(confirmDeletionOfProcedureVariableQuestion('VerifyValidThen'), 'Yes')
+		userInteractionMock.configure(UserInteraction.questionDeleteElement(), 'Yes')
+		userInteractionMock.configure(UserInteraction.questionDeleteProcedure('VerifyValidThen'), 'Yes')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
 		if (await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock))
 			await TestHelper.verifyResult(messageUpdate, 'scenario035.al')
@@ -255,8 +244,7 @@ suite('Remove', function () {
 		}
 		//Then
 		let userInteractionMock = new UserInteractionMock();
-		let confirmDeletionOfElementQuestion: string = 'Do you want to delete this element?';
-		userInteractionMock.configure(confirmDeletionOfElementQuestion, 'No')
+		userInteractionMock.configure(UserInteraction.questionDeleteElement(), 'No')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
 		await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock)
 	})
@@ -279,10 +267,8 @@ suite('Remove', function () {
 		}
 		//Then
 		let userInteractionMock = new UserInteractionMock();
-		let confirmDeletionOfElementQuestion: string = 'Do you want to delete this element?';
-		userInteractionMock.configure(confirmDeletionOfElementQuestion, 'Yes')
-		let confirmDeletionOfProcedureVariableQuestion = (procName: string) => `Do you want to delete the procedure '${procName}'?`;
-		userInteractionMock.configure(confirmDeletionOfProcedureVariableQuestion('VerifyValidThen'), 'No')
+		userInteractionMock.configure(UserInteraction.questionDeleteElement(), 'Yes')
+		userInteractionMock.configure(UserInteraction.questionDeleteProcedure('VerifyValidThen'), 'No')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
 		if (await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock))
 			await TestHelper.verifyResult(messageUpdate, 'scenario037.al')
@@ -319,8 +305,7 @@ suite('Remove', function () {
 		}
 		//Then
 		let userInteractionMock = new UserInteractionMock();
-		let confirmDeletionOfElementQuestion: string = 'Do you want to delete this element?';
-		userInteractionMock.configure(confirmDeletionOfElementQuestion, 'Yes')
+		userInteractionMock.configure(UserInteraction.questionDeleteElement(), 'Yes')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
 		if (await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock))
 			await TestHelper.verifyResult(messageUpdate, 'scenario039.al')
@@ -357,10 +342,8 @@ suite('Remove', function () {
 		}
 		//Then
 		let userInteractionMock = new UserInteractionMock();
-		let confirmDeletionOfElementQuestion: string = 'Do you want to delete this element?';
-		userInteractionMock.configure(confirmDeletionOfElementQuestion, 'Yes')
-		let confirmDeletionOfProcedureVariableQuestion = (procName: string) => `Do you want to delete the procedure '${procName}'?`;
-		userInteractionMock.configure(confirmDeletionOfProcedureVariableQuestion('VerifyNewThen'), 'Yes')
+		userInteractionMock.configure(UserInteraction.questionDeleteElement(), 'Yes')
+		userInteractionMock.configure(UserInteraction.questionDeleteProcedure('VerifyNewThen'), 'Yes')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
 		if (await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock))
 			await TestHelper.verifyResult(messageUpdate, 'scenario042.al')
@@ -397,8 +380,7 @@ suite('Remove', function () {
 		}
 		//Then
 		let userInteractionMock = new UserInteractionMock();
-		let confirmDeletionOfElementQuestion: string = 'Do you want to delete this element?';
-		userInteractionMock.configure(confirmDeletionOfElementQuestion, 'No')
+		userInteractionMock.configure(UserInteraction.questionDeleteElement(), 'No')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
 		await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock)
 	})

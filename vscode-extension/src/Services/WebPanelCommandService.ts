@@ -78,26 +78,21 @@ export class WebPanelCommandService {
             WebPanel.postMessage({ Command: 'SaveChanges', Data: { success: somethingIsChanged, fsPath: entry.FsPath, methodName: entry.MethodName } });
     }
     async askUserForConfirmationsToProceed(entry: MessageUpdate, userInteraction: UserInteraction = new VSCodeInformationOutput()): Promise<{ wantsToContinue: boolean, wantsProceduresToBeDeleted: Array<{ procedureName: string, parameterTypes: string[] }>, updateProcedureCall: boolean }> {
-        let confirmDeletion = (thing: string) => `Do you want to delete ${thing}?`;
-        let confirmUpdate = (thing: string) => `Do you want to update ${thing}?`;
-        let askWhichProcedureToTake: string = 'To the new naming exists already a helper function with the same parameters. Which one to take?';
-        let optionYes: string = 'Yes';
-        let optionNo: string = 'No';
         let removalMode: string = Config.getRemovalMode(entry.FsPath ? Uri.file(entry.FsPath) : undefined);
         if ([TypeChanged.Given, TypeChanged.When, TypeChanged.Then].includes(entry.Type)) {
             if ([MessageState.Deleted, MessageState.Modified].includes(entry.State)) {
                 let response: string | undefined;
                 if (entry.State == MessageState.Deleted)
-                    response = await userInteraction.ask(confirmDeletion('this element'), [optionYes, optionNo], optionYes)
+                    response = await userInteraction.ask(UserInteraction.questionDeleteElement(), [UserInteraction.responseYes, UserInteraction.responseNo], UserInteraction.responseYes)
                 else
-                    response = await userInteraction.ask(confirmUpdate('this element'), [optionYes, optionNo], optionYes)
-                if (response === optionYes) {
+                    response = await userInteraction.ask(UserInteraction.questionUpdateElement(), [UserInteraction.responseYes, UserInteraction.responseNo], UserInteraction.responseYes)
+                if (response === UserInteraction.responseYes) {
                     let useNewProcedure: boolean = true;
                     if (entry.State == MessageState.Modified) {
                         if (await this.middlewareService.checkIfOldAndNewProcedureExists(entry)) {
                             let optionKeepOld: string = 'Keep old';
                             let optionSwitchToNew: string = 'Switch to new one';
-                            response = await userInteraction.ask(askWhichProcedureToTake, [optionKeepOld, optionSwitchToNew], optionSwitchToNew)
+                            response = await userInteraction.ask(UserInteraction.questionWhichProcedureToTake, [optionKeepOld, optionSwitchToNew], optionSwitchToNew)
                             if (response === optionKeepOld)
                                 useNewProcedure = false;
                         }
@@ -109,8 +104,8 @@ export class WebPanelCommandService {
                         if (helperFunctionsWhichCouldBeDeleted.length == 1) {
                             let responseHelperFunctionShouldBeDeleted: string | undefined;
                             if (removalMode == Config.removalModeConfirmation)
-                                responseHelperFunctionShouldBeDeleted = await userInteraction.ask(confirmDeletion('the procedure \'' + helperFunctionsWhichCouldBeDeleted[0].procedureName + '\''), [optionYes, optionNo], optionYes);
-                            if (responseHelperFunctionShouldBeDeleted === optionYes || removalMode == Config.removalModeNoConfirmationButRemoval)
+                                responseHelperFunctionShouldBeDeleted = await userInteraction.ask(UserInteraction.questionDeleteProcedure(helperFunctionsWhichCouldBeDeleted[0].procedureName), [UserInteraction.responseYes, UserInteraction.responseNo], UserInteraction.responseYes);
+                            if (responseHelperFunctionShouldBeDeleted === UserInteraction.responseYes || removalMode == Config.removalModeNoConfirmationButRemoval)
                                 proceduresToDelete = helperFunctionsWhichCouldBeDeleted;
                             else
                                 proceduresToDelete = [];
@@ -126,10 +121,10 @@ export class WebPanelCommandService {
             if (entry.State == MessageState.Deleted) {
                 let responseScenarioShouldBeDeleted: string | undefined
                 if (!entry.internalCall)
-                    responseScenarioShouldBeDeleted = await userInteraction.ask(confirmDeletion('this scenario'), [optionYes, optionNo], optionYes);
+                    responseScenarioShouldBeDeleted = await userInteraction.ask(UserInteraction.questionDeleteScenario(), [UserInteraction.responseYes, UserInteraction.responseNo], UserInteraction.responseYes);
                 else
-                    responseScenarioShouldBeDeleted = optionYes
-                if (responseScenarioShouldBeDeleted === optionYes) {
+                    responseScenarioShouldBeDeleted = UserInteraction.responseYes
+                if (responseScenarioShouldBeDeleted === UserInteraction.responseYes) {
                     let proceduresWhichCouldBeDeleted: Array<{ procedureName: string, parameterTypes: string[] }> =
                         await this.middlewareService.getProceduresWhichCouldBeDeletedAfterwards(entry);
                     let proceduresToDelete: Array<{ procedureName: string, parameterTypes: string[] }> = [];
@@ -137,8 +132,8 @@ export class WebPanelCommandService {
                     for (let i = 1; i < proceduresWhichCouldBeDeleted.length; i++) { //i = 1 because scenario-Testprocedure is also inside this this array
                         let responseHelperFunctionShouldBeDeleted: string | undefined;
                         if (removalMode == Config.removalModeConfirmation)
-                            responseHelperFunctionShouldBeDeleted = await userInteraction.ask(confirmDeletion('the procedure \'' + proceduresWhichCouldBeDeleted[i].procedureName + '\''), [optionYes, optionNo], optionYes);
-                        if (responseHelperFunctionShouldBeDeleted === optionYes || removalMode == Config.removalModeNoConfirmationButRemoval) {
+                            responseHelperFunctionShouldBeDeleted = await userInteraction.ask(UserInteraction.questionDeleteProcedure(proceduresWhichCouldBeDeleted[i].procedureName), [UserInteraction.responseYes, UserInteraction.responseNo], UserInteraction.responseYes);
+                        if (responseHelperFunctionShouldBeDeleted === UserInteraction.responseYes || removalMode == Config.removalModeNoConfirmationButRemoval) {
                             proceduresToDelete.push(proceduresWhichCouldBeDeleted[i]);
                         }
                     }
@@ -147,16 +142,16 @@ export class WebPanelCommandService {
                     return { wantsToContinue: false, wantsProceduresToBeDeleted: [], updateProcedureCall: false };
                 }
             } else if (entry.State == MessageState.Modified) {
-                let responseScenarioShouldBeModified: string | undefined = await userInteraction.ask(confirmUpdate('this scenario'), [optionYes, optionNo], optionYes);
-                if (responseScenarioShouldBeModified === optionNo) {
+                let responseScenarioShouldBeModified: string | undefined = await userInteraction.ask(UserInteraction.questionUpdateScenario(), [UserInteraction.responseYes, UserInteraction.responseNo], UserInteraction.responseYes);
+                if (responseScenarioShouldBeModified === UserInteraction.responseNo) {
                     return { wantsToContinue: false, wantsProceduresToBeDeleted: [], updateProcedureCall: false };
                 }
             }
             return { wantsToContinue: true, wantsProceduresToBeDeleted: [], updateProcedureCall: true };
         } else if (TypeChanged.Feature == entry.Type) {
             if (entry.State == MessageState.Deleted) {
-                let responseScenarioShouldBeDeleted: string | undefined = await userInteraction.ask(confirmDeletion('this feature'), [optionYes, optionNo], optionYes);
-                if (responseScenarioShouldBeDeleted == optionNo)
+                let responseScenarioShouldBeDeleted: string | undefined = await userInteraction.ask(UserInteraction.questionDeleteFeature(), [UserInteraction.responseYes, UserInteraction.responseNo], UserInteraction.responseYes);
+                if (responseScenarioShouldBeDeleted == UserInteraction.responseNo)
                     return { wantsToContinue: false, wantsProceduresToBeDeleted: [], updateProcedureCall: false };
             }
             return { wantsToContinue: true, wantsProceduresToBeDeleted: [], updateProcedureCall: true };

@@ -1,5 +1,5 @@
 import { Uri, workspace } from 'vscode';
-import { UserInteractionMock } from '../App logic/Utils/userInteraction';
+import { UserInteraction, UserInteractionMock } from '../App logic/Utils/userInteraction';
 import { MessageState, MessageUpdate, TypeChanged } from '../typings/types';
 import { TestHelper } from './testHelper';
 
@@ -28,12 +28,10 @@ suite('Remove Scenario', function () {
 		}
 		//Then
 		let userInteractionMock = new UserInteractionMock();
-		let confirmDeletionOfScenarioQuestion: string = 'Do you want to delete this scenario?';
-		userInteractionMock.configure(confirmDeletionOfScenarioQuestion, 'Yes')
-		let confirmDeletionOfProcedureVariableQuestion = (procName: string) => `Do you want to delete the procedure '${procName}'?`;
-		userInteractionMock.configure(confirmDeletionOfProcedureVariableQuestion('CreateValidGiven'), 'Yes')
-		userInteractionMock.configure(confirmDeletionOfProcedureVariableQuestion('ValidWhen'), 'Yes')
-		userInteractionMock.configure(confirmDeletionOfProcedureVariableQuestion('VerifyValidThen'), 'Yes')
+		userInteractionMock.configure(UserInteraction.questionDeleteScenario(), 'Yes')
+		userInteractionMock.configure(UserInteraction.questionDeleteProcedure('CreateValidGiven'), 'Yes')
+		userInteractionMock.configure(UserInteraction.questionDeleteProcedure('ValidWhen'), 'Yes')
+		userInteractionMock.configure(UserInteraction.questionDeleteProcedure('VerifyValidThen'), 'Yes')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
 		if (await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock))
 			await TestHelper.verifyResult(messageUpdate, 'scenario058.al');
@@ -77,12 +75,10 @@ suite('Remove Scenario', function () {
 		}
 		//Then
 		let userInteractionMock = new UserInteractionMock();
-		let confirmDeletionOfScenarioQuestion: string = 'Do you want to delete this scenario?';
-		userInteractionMock.configure(confirmDeletionOfScenarioQuestion, 'Yes')
-		let confirmDeletionOfProcedureVariableQuestion = (procName: string) => `Do you want to delete the procedure '${procName}'?`;
-		userInteractionMock.configure(confirmDeletionOfProcedureVariableQuestion('CreateValidGiven'), 'No')
-		userInteractionMock.configure(confirmDeletionOfProcedureVariableQuestion('ValidWhen'), 'No')
-		userInteractionMock.configure(confirmDeletionOfProcedureVariableQuestion('VerifyValidThen'), 'No')
+		userInteractionMock.configure(UserInteraction.questionDeleteScenario(), 'Yes')
+		userInteractionMock.configure(UserInteraction.questionDeleteProcedure('ValidWhen'), 'No')
+		userInteractionMock.configure(UserInteraction.questionDeleteProcedure('CreateValidGiven'), 'No')
+		userInteractionMock.configure(UserInteraction.questionDeleteProcedure('VerifyValidThen'), 'No')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
 		if (await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock))
 			await TestHelper.verifyResult(messageUpdate, 'scenario060.al');
@@ -105,12 +101,10 @@ suite('Remove Scenario', function () {
 		}
 		//Then
 		let userInteractionMock = new UserInteractionMock();
-		let confirmDeletionOfScenarioQuestion: string = 'Do you want to delete this scenario?';
-		userInteractionMock.configure(confirmDeletionOfScenarioQuestion, 'Yes')
-		let confirmDeletionOfProcedureVariableQuestion = (procName: string) => `Do you want to delete the procedure '${procName}'?`;
-		userInteractionMock.configure(confirmDeletionOfProcedureVariableQuestion('CreateValidGiven'), 'Yes')
-		userInteractionMock.configure(confirmDeletionOfProcedureVariableQuestion('ValidWhen'), 'Yes')
-		userInteractionMock.configure(confirmDeletionOfProcedureVariableQuestion('VerifyValidThen'), 'Yes')
+		userInteractionMock.configure(UserInteraction.questionDeleteScenario(), 'Yes')
+		userInteractionMock.configure(UserInteraction.questionDeleteProcedure('CreateValidGiven'), 'Yes')
+		userInteractionMock.configure(UserInteraction.questionDeleteProcedure('ValidWhen'), 'Yes')
+		userInteractionMock.configure(UserInteraction.questionDeleteProcedure('VerifyValidThen'), 'Yes')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
 		if (await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock))
 			await TestHelper.verifyResult(messageUpdate, 'scenario068.al');
@@ -133,13 +127,11 @@ suite('Remove Scenario', function () {
 		}
 		//Then
 		let userInteractionMock = new UserInteractionMock();
-		let confirmDeletionOfScenarioQuestion: string = 'Do you want to delete this scenario?';
-		userInteractionMock.configure(confirmDeletionOfScenarioQuestion, 'Yes')
-		let confirmDeletionOfProcedureVariableQuestion = (procName: string) => `Do you want to delete the procedure '${procName}'?`;
-		userInteractionMock.configure(confirmDeletionOfProcedureVariableQuestion('CreateValidGiven'), 'Yes')
-		userInteractionMock.configure(confirmDeletionOfProcedureVariableQuestion('ValidWhen'), 'Yes')
-		userInteractionMock.configure(confirmDeletionOfProcedureVariableQuestion('VerifyValidThen'), 'Yes')
-		userInteractionMock.configure(confirmDeletionOfProcedureVariableQuestion('AMessageHandler'), 'Yes')
+		userInteractionMock.configure(UserInteraction.questionDeleteScenario(), 'Yes')
+		userInteractionMock.configure(UserInteraction.questionDeleteProcedure('CreateValidGiven'), 'Yes')
+		userInteractionMock.configure(UserInteraction.questionDeleteProcedure('ValidWhen'), 'Yes')
+		userInteractionMock.configure(UserInteraction.questionDeleteProcedure('VerifyValidThen'), 'Yes')
+		userInteractionMock.configure(UserInteraction.questionDeleteProcedure('AMessageHandler'), 'Yes')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
 		if (await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock))
 			await TestHelper.verifyResult(messageUpdate, 'scenario069.al');
@@ -162,13 +154,11 @@ suite('Remove Scenario', function () {
 		}
 		//Then
 		let userInteractionMock = new UserInteractionMock();
-		let confirmDeletionOfScenarioQuestion: string = 'Do you want to delete this scenario?';
-		userInteractionMock.configure(confirmDeletionOfScenarioQuestion, 'Yes')
-		let confirmDeletionOfProcedureVariableQuestion = (procName: string) => `Do you want to delete the procedure '${procName}'?`;
-		userInteractionMock.configure(confirmDeletionOfProcedureVariableQuestion('CreateValidGiven'), 'Yes')
-		userInteractionMock.configure(confirmDeletionOfProcedureVariableQuestion('ValidWhen'), 'Yes')
-		userInteractionMock.configure(confirmDeletionOfProcedureVariableQuestion('VerifyValidThen'), 'Yes')
-		userInteractionMock.configure(confirmDeletionOfProcedureVariableQuestion('AMessageHandler'), 'No')
+		userInteractionMock.configure(UserInteraction.questionDeleteScenario(), 'Yes')
+		userInteractionMock.configure(UserInteraction.questionDeleteProcedure('CreateValidGiven'), 'Yes')
+		userInteractionMock.configure(UserInteraction.questionDeleteProcedure('ValidWhen'), 'Yes')
+		userInteractionMock.configure(UserInteraction.questionDeleteProcedure('VerifyValidThen'), 'Yes')
+		userInteractionMock.configure(UserInteraction.questionDeleteProcedure('AMessageHandler'), 'No')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
 		if (await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock))
 			await TestHelper.verifyResult(messageUpdate, 'scenario070.al');
