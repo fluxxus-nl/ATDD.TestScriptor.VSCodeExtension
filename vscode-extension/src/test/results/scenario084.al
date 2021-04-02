@@ -25,7 +25,6 @@ codeunit 50100 TestObjectFLX
 
     [Test]
     procedure SecondTestFunctionWithValidGivenWhenThenStructure()
-    // [Feature] First test object
     begin
         // [Scenario #0002] Second test function with valid Given-When-Then structure
         Initialize();
@@ -33,7 +32,6 @@ codeunit 50100 TestObjectFLX
 
     [Test]
     procedure AnotherTestFunctionWithValidGivenWhenThenStructure()
-    // [Feature] First test object
     begin
         // [Scenario #0003] Another test function with valid Given-When-Then structure
         Initialize();
@@ -59,11 +57,15 @@ codeunit 50100 TestObjectFLX
         LibraryTestInitialize: Codeunit "Library - Test Initialize";
     begin
         LibraryTestInitialize.OnTestInitialize(Codeunit::TestObjectFLX);
+
         if IsInitialized then
             exit;
+
         LibraryTestInitialize.OnBeforeTestSuiteInitialize(Codeunit::TestObjectFLX);
+
         IsInitialized := true;
         Commit();
+
         LibraryTestInitialize.OnAfterTestSuiteInitialize(Codeunit::TestObjectFLX);
     end;
 }

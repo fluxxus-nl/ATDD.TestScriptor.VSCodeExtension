@@ -1,10 +1,10 @@
 import { Uri, workspace } from 'vscode';
-import { TestInformationOutput } from '../App logic/Utils/informationsOutput';
+import { UserInteraction, UserInteractionMock } from '../App logic/Utils/userInteraction';
 import { MessageState, MessageUpdate, TypeChanged } from '../typings/types';
 import { TestHelper } from './testHelper';
 
 
-suite('Extension Test Suite', async function () {
+suite('Remove Scenario', function () {
 	this.beforeAll(async function () {
 		await TestHelper.resetFiles();
 	})
@@ -27,15 +27,13 @@ suite('Extension Test Suite', async function () {
 			Project: 'Test Project' //name of project in app.json
 		}
 		//Then
-		let informationOutput = new TestInformationOutput();
-		let confirmDeletionOfScenarioQuestion: string = 'Do you want to delete this scenario?';
-		informationOutput.configure(confirmDeletionOfScenarioQuestion, 'Yes')
-		let confirmDeletionOfProcedureVariableQuestion = (procName: string) => `Do you want to delete the procedure '${procName}' ?`;
-		informationOutput.configure(confirmDeletionOfProcedureVariableQuestion('CreateValidGiven'), 'Yes')
-		informationOutput.configure(confirmDeletionOfProcedureVariableQuestion('ValidWhen'), 'Yes')
-		informationOutput.configure(confirmDeletionOfProcedureVariableQuestion('VerifyValidThen'), 'Yes')
+		let userInteractionMock = new UserInteractionMock();
+		userInteractionMock.configure(UserInteraction.questionDeleteScenario(), 'Yes')
+		userInteractionMock.configure(UserInteraction.questionDeleteProcedure('CreateValidGiven'), 'Yes')
+		userInteractionMock.configure(UserInteraction.questionDeleteProcedure('ValidWhen'), 'Yes')
+		userInteractionMock.configure(UserInteraction.questionDeleteProcedure('VerifyValidThen'), 'Yes')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
-		if (await TestHelper.verifyUserQuestions(messageUpdate, informationOutput))
+		if (await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock))
 			await TestHelper.verifyResult(messageUpdate, 'scenario058.al');
 	})
 	test('Scenario059', async () => {
@@ -54,11 +52,11 @@ suite('Extension Test Suite', async function () {
 			Project: 'Test Project' //name of project in app.json
 		}
 		//Then
-		let informationOutput = new TestInformationOutput();
+		let userInteractionMock = new UserInteractionMock();
 		let confirmDeletionOfScenarioQuestion: string = 'Do you want to delete this scenario?';
-		informationOutput.configure(confirmDeletionOfScenarioQuestion, 'No')
+		userInteractionMock.configure(confirmDeletionOfScenarioQuestion, 'No')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
-		await TestHelper.verifyUserQuestions(messageUpdate, informationOutput)
+		await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock)
 	})
 	test('Scenario060', async () => {
 		//Given Test function with valid Given-When-Then structure
@@ -76,15 +74,13 @@ suite('Extension Test Suite', async function () {
 			Project: 'Test Project' //name of project in app.json
 		}
 		//Then
-		let informationOutput = new TestInformationOutput();
-		let confirmDeletionOfScenarioQuestion: string = 'Do you want to delete this scenario?';
-		informationOutput.configure(confirmDeletionOfScenarioQuestion, 'Yes')
-		let confirmDeletionOfProcedureVariableQuestion = (procName: string) => `Do you want to delete the procedure '${procName}' ?`;
-		informationOutput.configure(confirmDeletionOfProcedureVariableQuestion('CreateValidGiven'), 'No')
-		informationOutput.configure(confirmDeletionOfProcedureVariableQuestion('ValidWhen'), 'No')
-		informationOutput.configure(confirmDeletionOfProcedureVariableQuestion('VerifyValidThen'), 'No')
+		let userInteractionMock = new UserInteractionMock();
+		userInteractionMock.configure(UserInteraction.questionDeleteScenario(), 'Yes')
+		userInteractionMock.configure(UserInteraction.questionDeleteProcedure('ValidWhen'), 'No')
+		userInteractionMock.configure(UserInteraction.questionDeleteProcedure('CreateValidGiven'), 'No')
+		userInteractionMock.configure(UserInteraction.questionDeleteProcedure('VerifyValidThen'), 'No')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
-		if (await TestHelper.verifyUserQuestions(messageUpdate, informationOutput))
+		if (await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock))
 			await TestHelper.verifyResult(messageUpdate, 'scenario060.al');
 	})
 	test('Scenario068', async () => {
@@ -104,15 +100,13 @@ suite('Extension Test Suite', async function () {
 			Project: 'Test Project' //name of project in app.json
 		}
 		//Then
-		let informationOutput = new TestInformationOutput();
-		let confirmDeletionOfScenarioQuestion: string = 'Do you want to delete this scenario?';
-		informationOutput.configure(confirmDeletionOfScenarioQuestion, 'Yes')
-		let confirmDeletionOfProcedureVariableQuestion = (procName: string) => `Do you want to delete the procedure '${procName}' ?`;
-		informationOutput.configure(confirmDeletionOfProcedureVariableQuestion('CreateValidGiven'), 'Yes')
-		informationOutput.configure(confirmDeletionOfProcedureVariableQuestion('ValidWhen'), 'Yes')
-		informationOutput.configure(confirmDeletionOfProcedureVariableQuestion('VerifyValidThen'), 'Yes')
+		let userInteractionMock = new UserInteractionMock();
+		userInteractionMock.configure(UserInteraction.questionDeleteScenario(), 'Yes')
+		userInteractionMock.configure(UserInteraction.questionDeleteProcedure('CreateValidGiven'), 'Yes')
+		userInteractionMock.configure(UserInteraction.questionDeleteProcedure('ValidWhen'), 'Yes')
+		userInteractionMock.configure(UserInteraction.questionDeleteProcedure('VerifyValidThen'), 'Yes')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
-		if (await TestHelper.verifyUserQuestions(messageUpdate, informationOutput))
+		if (await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock))
 			await TestHelper.verifyResult(messageUpdate, 'scenario068.al');
 	})
 	test('Scenario069', async () => {
@@ -132,16 +126,14 @@ suite('Extension Test Suite', async function () {
 			Project: 'Test Project' //name of project in app.json
 		}
 		//Then
-		let informationOutput = new TestInformationOutput();
-		let confirmDeletionOfScenarioQuestion: string = 'Do you want to delete this scenario?';
-		informationOutput.configure(confirmDeletionOfScenarioQuestion, 'Yes')
-		let confirmDeletionOfProcedureVariableQuestion = (procName: string) => `Do you want to delete the procedure '${procName}' ?`;
-		informationOutput.configure(confirmDeletionOfProcedureVariableQuestion('CreateValidGiven'), 'Yes')
-		informationOutput.configure(confirmDeletionOfProcedureVariableQuestion('ValidWhen'), 'Yes')
-		informationOutput.configure(confirmDeletionOfProcedureVariableQuestion('VerifyValidThen'), 'Yes')
-		informationOutput.configure(confirmDeletionOfProcedureVariableQuestion('AMessageHandler'), 'Yes')
+		let userInteractionMock = new UserInteractionMock();
+		userInteractionMock.configure(UserInteraction.questionDeleteScenario(), 'Yes')
+		userInteractionMock.configure(UserInteraction.questionDeleteProcedure('CreateValidGiven'), 'Yes')
+		userInteractionMock.configure(UserInteraction.questionDeleteProcedure('ValidWhen'), 'Yes')
+		userInteractionMock.configure(UserInteraction.questionDeleteProcedure('VerifyValidThen'), 'Yes')
+		userInteractionMock.configure(UserInteraction.questionDeleteProcedure('AMessageHandler'), 'Yes')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
-		if (await TestHelper.verifyUserQuestions(messageUpdate, informationOutput))
+		if (await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock))
 			await TestHelper.verifyResult(messageUpdate, 'scenario069.al');
 	})
 	test('Scenario070', async () => {
@@ -161,16 +153,14 @@ suite('Extension Test Suite', async function () {
 			Project: 'Test Project' //name of project in app.json
 		}
 		//Then
-		let informationOutput = new TestInformationOutput();
-		let confirmDeletionOfScenarioQuestion: string = 'Do you want to delete this scenario?';
-		informationOutput.configure(confirmDeletionOfScenarioQuestion, 'Yes')
-		let confirmDeletionOfProcedureVariableQuestion = (procName: string) => `Do you want to delete the procedure '${procName}' ?`;
-		informationOutput.configure(confirmDeletionOfProcedureVariableQuestion('CreateValidGiven'), 'Yes')
-		informationOutput.configure(confirmDeletionOfProcedureVariableQuestion('ValidWhen'), 'Yes')
-		informationOutput.configure(confirmDeletionOfProcedureVariableQuestion('VerifyValidThen'), 'Yes')
-		informationOutput.configure(confirmDeletionOfProcedureVariableQuestion('AMessageHandler'), 'No')
+		let userInteractionMock = new UserInteractionMock();
+		userInteractionMock.configure(UserInteraction.questionDeleteScenario(), 'Yes')
+		userInteractionMock.configure(UserInteraction.questionDeleteProcedure('CreateValidGiven'), 'Yes')
+		userInteractionMock.configure(UserInteraction.questionDeleteProcedure('ValidWhen'), 'Yes')
+		userInteractionMock.configure(UserInteraction.questionDeleteProcedure('VerifyValidThen'), 'Yes')
+		userInteractionMock.configure(UserInteraction.questionDeleteProcedure('AMessageHandler'), 'No')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
-		if (await TestHelper.verifyUserQuestions(messageUpdate, informationOutput))
+		if (await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock))
 			await TestHelper.verifyResult(messageUpdate, 'scenario070.al');
 	})
 	test('Scenario071', async () => {
@@ -193,11 +183,11 @@ suite('Extension Test Suite', async function () {
 			Project: 'Test Project' //name of project in app.json
 		}
 		//Then
-		let informationOutput = new TestInformationOutput();
+		let userInteractionMock = new UserInteractionMock();
 		let confirmDeletionOfScenarioQuestion: string = 'Do you want to delete this scenario?';
-		informationOutput.configure(confirmDeletionOfScenarioQuestion, 'Yes')
+		userInteractionMock.configure(confirmDeletionOfScenarioQuestion, 'Yes')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
-		if (await TestHelper.verifyUserQuestions(messageUpdate, informationOutput))
+		if (await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock))
 			await TestHelper.verifyResult(messageUpdate, 'scenario071.al');
 	})
 	test('Scenario072', async () => {
@@ -220,11 +210,11 @@ suite('Extension Test Suite', async function () {
 			Project: 'Test Project' //name of project in app.json
 		}
 		//Then
-		let informationOutput = new TestInformationOutput();
+		let userInteractionMock = new UserInteractionMock();
 		let confirmDeletionOfScenarioQuestion: string = 'Do you want to delete this scenario?';
-		informationOutput.configure(confirmDeletionOfScenarioQuestion, 'Yes')
+		userInteractionMock.configure(confirmDeletionOfScenarioQuestion, 'Yes')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
-		if (await TestHelper.verifyUserQuestions(messageUpdate, informationOutput))
+		if (await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock))
 			await TestHelper.verifyResult(messageUpdate, 'scenario072.al');
 	})
 });
