@@ -91,6 +91,9 @@ export class ObjectService {
 
         let parameterTypes: string[] = TestMethodUtils.getParameterTypesOfMethod(oldMethodTreeNode, document);
         let newProcedureName: string = TestMethodUtils.getProcedureName(msg.Type, msg.NewValue);
+        if (newProcedureName.toLowerCase() == document.getText(rangeOfOldIdentifier).toLowerCase())
+            return false;
+            
         if (await TestCodeunitUtils.isProcedureAlreadyDeclared(document, newProcedureName, parameterTypes))
             return true;
         let newHistoricalProcedureNames: string[] = TestMethodUtils.getProcedureNameHistory(msg.Type, msg.NewValue)
