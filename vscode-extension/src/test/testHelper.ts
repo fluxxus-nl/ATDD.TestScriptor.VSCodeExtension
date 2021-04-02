@@ -53,6 +53,7 @@ export class TestHelper {
 		await config.update('addException', true)
 		await config.update('addInitializeFunction', true)
 		await config.update('removalMode', 'Ask for confirmation')
+		await config.update('showConfirmations', true)
 		await config.update('testDirectory', 'src')
 	}
 	public static getFsPathOfTestProject(filename: string): string {

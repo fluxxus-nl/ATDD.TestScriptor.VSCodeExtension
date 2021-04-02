@@ -33,7 +33,7 @@ suite('Remove', function () {
 		//Then
 		let informationOutput = new TestInformationOutput();
 		let confirmDeletionOfElementQuestion: string = 'Do you want to delete this element?';
-		let confirmDeletionOfProcedureVariableQuestion = (procName: string) => `Do you want to delete the procedure '${procName}' ?`;
+		let confirmDeletionOfProcedureVariableQuestion = (procName: string) => `Do you want to delete the procedure '${procName}'?`;
 		informationOutput.configure(confirmDeletionOfElementQuestion, 'Yes')
 		informationOutput.configure(confirmDeletionOfProcedureVariableQuestion('CreateValidGiven'), 'Yes')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
@@ -85,7 +85,7 @@ suite('Remove', function () {
 		let informationOutput = new TestInformationOutput();
 		let confirmDeletionOfElementQuestion: string = 'Do you want to delete this element?';
 		informationOutput.configure(confirmDeletionOfElementQuestion, 'Yes')
-		let confirmDeletionOfProcedureVariableQuestion = (procName: string) => `Do you want to delete the procedure '${procName}' ?`;
+		let confirmDeletionOfProcedureVariableQuestion = (procName: string) => `Do you want to delete the procedure '${procName}'?`;
 		informationOutput.configure(confirmDeletionOfProcedureVariableQuestion('CreateValidGiven'), 'No')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
 		if (await TestHelper.verifyUserQuestions(messageUpdate, informationOutput))
@@ -163,7 +163,7 @@ suite('Remove', function () {
 		let informationOutput = new TestInformationOutput();
 		let confirmDeletionOfElementQuestion: string = 'Do you want to delete this element?';
 		informationOutput.configure(confirmDeletionOfElementQuestion, 'Yes')
-		let confirmDeletionOfProcedureVariableQuestion = (procName: string) => `Do you want to delete the procedure '${procName}' ?`;
+		let confirmDeletionOfProcedureVariableQuestion = (procName: string) => `Do you want to delete the procedure '${procName}'?`;
 		informationOutput.configure(confirmDeletionOfProcedureVariableQuestion('CreateNewGiven'), 'Yes')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
 		if (await TestHelper.verifyUserQuestions(messageUpdate, informationOutput))
@@ -230,7 +230,7 @@ suite('Remove', function () {
 		let informationOutput = new TestInformationOutput();
 		let confirmDeletionOfElementQuestion: string = 'Do you want to delete this element?';
 		informationOutput.configure(confirmDeletionOfElementQuestion, 'Yes')
-		let confirmDeletionOfProcedureVariableQuestion = (procName: string) => `Do you want to delete the procedure '${procName}' ?`;
+		let confirmDeletionOfProcedureVariableQuestion = (procName: string) => `Do you want to delete the procedure '${procName}'?`;
 		informationOutput.configure(confirmDeletionOfProcedureVariableQuestion('VerifyValidThen'), 'Yes')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
 		if (await TestHelper.verifyUserQuestions(messageUpdate, informationOutput))
@@ -281,7 +281,7 @@ suite('Remove', function () {
 		let informationOutput = new TestInformationOutput();
 		let confirmDeletionOfElementQuestion: string = 'Do you want to delete this element?';
 		informationOutput.configure(confirmDeletionOfElementQuestion, 'Yes')
-		let confirmDeletionOfProcedureVariableQuestion = (procName: string) => `Do you want to delete the procedure '${procName}' ?`;
+		let confirmDeletionOfProcedureVariableQuestion = (procName: string) => `Do you want to delete the procedure '${procName}'?`;
 		informationOutput.configure(confirmDeletionOfProcedureVariableQuestion('VerifyValidThen'), 'No')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
 		if (await TestHelper.verifyUserQuestions(messageUpdate, informationOutput))
@@ -359,7 +359,7 @@ suite('Remove', function () {
 		let informationOutput = new TestInformationOutput();
 		let confirmDeletionOfElementQuestion: string = 'Do you want to delete this element?';
 		informationOutput.configure(confirmDeletionOfElementQuestion, 'Yes')
-		let confirmDeletionOfProcedureVariableQuestion = (procName: string) => `Do you want to delete the procedure '${procName}' ?`;
+		let confirmDeletionOfProcedureVariableQuestion = (procName: string) => `Do you want to delete the procedure '${procName}'?`;
 		informationOutput.configure(confirmDeletionOfProcedureVariableQuestion('VerifyNewThen'), 'Yes')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
 		if (await TestHelper.verifyUserQuestions(messageUpdate, informationOutput))

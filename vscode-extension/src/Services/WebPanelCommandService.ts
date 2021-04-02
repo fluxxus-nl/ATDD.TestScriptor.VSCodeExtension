@@ -109,7 +109,7 @@ export class WebPanelCommandService {
                         if (helperFunctionsWhichCouldBeDeleted.length == 1) {
                             let responseHelperFunctionShouldBeDeleted: string | undefined;
                             if (removalMode == Config.removalModeConfirmation)
-                                responseHelperFunctionShouldBeDeleted = await informationOutput.ask(confirmDeletion('the procedure \'' + helperFunctionsWhichCouldBeDeleted[0].procedureName) + '\'', [optionYes, optionNo], optionYes);
+                                responseHelperFunctionShouldBeDeleted = await informationOutput.ask(confirmDeletion('the procedure \'' + helperFunctionsWhichCouldBeDeleted[0].procedureName + '\''), [optionYes, optionNo], optionYes);
                             if (responseHelperFunctionShouldBeDeleted === optionYes || removalMode == Config.removalModeNoConfirmationButRemoval)
                                 proceduresToDelete = helperFunctionsWhichCouldBeDeleted;
                             else
@@ -137,7 +137,7 @@ export class WebPanelCommandService {
                     for (let i = 1; i < proceduresWhichCouldBeDeleted.length; i++) { //i = 1 because scenario-Testprocedure is also inside this this array
                         let responseHelperFunctionShouldBeDeleted: string | undefined;
                         if (removalMode == Config.removalModeConfirmation)
-                            responseHelperFunctionShouldBeDeleted = await informationOutput.ask(confirmDeletion('the procedure \'' + proceduresWhichCouldBeDeleted[i].procedureName) + '\'', [optionYes, optionNo], optionYes);
+                            responseHelperFunctionShouldBeDeleted = await informationOutput.ask(confirmDeletion('the procedure \'' + proceduresWhichCouldBeDeleted[i].procedureName + '\''), [optionYes, optionNo], optionYes);
                         if (responseHelperFunctionShouldBeDeleted === optionYes || removalMode == Config.removalModeNoConfirmationButRemoval) {
                             proceduresToDelete.push(proceduresWhichCouldBeDeleted[i]);
                         }

@@ -30,7 +30,7 @@ suite('Remove Scenario', function () {
 		let informationOutput = new TestInformationOutput();
 		let confirmDeletionOfScenarioQuestion: string = 'Do you want to delete this scenario?';
 		informationOutput.configure(confirmDeletionOfScenarioQuestion, 'Yes')
-		let confirmDeletionOfProcedureVariableQuestion = (procName: string) => `Do you want to delete the procedure '${procName}' ?`;
+		let confirmDeletionOfProcedureVariableQuestion = (procName: string) => `Do you want to delete the procedure '${procName}'?`;
 		informationOutput.configure(confirmDeletionOfProcedureVariableQuestion('CreateValidGiven'), 'Yes')
 		informationOutput.configure(confirmDeletionOfProcedureVariableQuestion('ValidWhen'), 'Yes')
 		informationOutput.configure(confirmDeletionOfProcedureVariableQuestion('VerifyValidThen'), 'Yes')
@@ -79,7 +79,7 @@ suite('Remove Scenario', function () {
 		let informationOutput = new TestInformationOutput();
 		let confirmDeletionOfScenarioQuestion: string = 'Do you want to delete this scenario?';
 		informationOutput.configure(confirmDeletionOfScenarioQuestion, 'Yes')
-		let confirmDeletionOfProcedureVariableQuestion = (procName: string) => `Do you want to delete the procedure '${procName}' ?`;
+		let confirmDeletionOfProcedureVariableQuestion = (procName: string) => `Do you want to delete the procedure '${procName}'?`;
 		informationOutput.configure(confirmDeletionOfProcedureVariableQuestion('CreateValidGiven'), 'No')
 		informationOutput.configure(confirmDeletionOfProcedureVariableQuestion('ValidWhen'), 'No')
 		informationOutput.configure(confirmDeletionOfProcedureVariableQuestion('VerifyValidThen'), 'No')
@@ -107,7 +107,7 @@ suite('Remove Scenario', function () {
 		let informationOutput = new TestInformationOutput();
 		let confirmDeletionOfScenarioQuestion: string = 'Do you want to delete this scenario?';
 		informationOutput.configure(confirmDeletionOfScenarioQuestion, 'Yes')
-		let confirmDeletionOfProcedureVariableQuestion = (procName: string) => `Do you want to delete the procedure '${procName}' ?`;
+		let confirmDeletionOfProcedureVariableQuestion = (procName: string) => `Do you want to delete the procedure '${procName}'?`;
 		informationOutput.configure(confirmDeletionOfProcedureVariableQuestion('CreateValidGiven'), 'Yes')
 		informationOutput.configure(confirmDeletionOfProcedureVariableQuestion('ValidWhen'), 'Yes')
 		informationOutput.configure(confirmDeletionOfProcedureVariableQuestion('VerifyValidThen'), 'Yes')
@@ -135,7 +135,7 @@ suite('Remove Scenario', function () {
 		let informationOutput = new TestInformationOutput();
 		let confirmDeletionOfScenarioQuestion: string = 'Do you want to delete this scenario?';
 		informationOutput.configure(confirmDeletionOfScenarioQuestion, 'Yes')
-		let confirmDeletionOfProcedureVariableQuestion = (procName: string) => `Do you want to delete the procedure '${procName}' ?`;
+		let confirmDeletionOfProcedureVariableQuestion = (procName: string) => `Do you want to delete the procedure '${procName}'?`;
 		informationOutput.configure(confirmDeletionOfProcedureVariableQuestion('CreateValidGiven'), 'Yes')
 		informationOutput.configure(confirmDeletionOfProcedureVariableQuestion('ValidWhen'), 'Yes')
 		informationOutput.configure(confirmDeletionOfProcedureVariableQuestion('VerifyValidThen'), 'Yes')
@@ -164,7 +164,7 @@ suite('Remove Scenario', function () {
 		let informationOutput = new TestInformationOutput();
 		let confirmDeletionOfScenarioQuestion: string = 'Do you want to delete this scenario?';
 		informationOutput.configure(confirmDeletionOfScenarioQuestion, 'Yes')
-		let confirmDeletionOfProcedureVariableQuestion = (procName: string) => `Do you want to delete the procedure '${procName}' ?`;
+		let confirmDeletionOfProcedureVariableQuestion = (procName: string) => `Do you want to delete the procedure '${procName}'?`;
 		informationOutput.configure(confirmDeletionOfProcedureVariableQuestion('CreateValidGiven'), 'Yes')
 		informationOutput.configure(confirmDeletionOfProcedureVariableQuestion('ValidWhen'), 'Yes')
 		informationOutput.configure(confirmDeletionOfProcedureVariableQuestion('VerifyValidThen'), 'Yes')

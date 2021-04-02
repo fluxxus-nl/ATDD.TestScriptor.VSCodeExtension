@@ -25,7 +25,6 @@ codeunit 50100 TestObjectFLX
 
     [Test]
     procedure NewScenario2()
-    // [Feature] First test object
     begin
         // [Scenario #0002] New Scenario (2)
         Initialize();
@@ -51,11 +50,15 @@ codeunit 50100 TestObjectFLX
         LibraryTestInitialize: Codeunit "Library - Test Initialize";
     begin
         LibraryTestInitialize.OnTestInitialize(Codeunit::TestObjectFLX);
+
         if IsInitialized then
             exit;
+
         LibraryTestInitialize.OnBeforeTestSuiteInitialize(Codeunit::TestObjectFLX);
+
         IsInitialized := true;
         Commit();
+
         LibraryTestInitialize.OnAfterTestSuiteInitialize(Codeunit::TestObjectFLX);
     end;
 }
