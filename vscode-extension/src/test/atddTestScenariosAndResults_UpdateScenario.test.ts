@@ -1,5 +1,5 @@
 import { ObjectService } from '../App logic/Services/ObjectService';
-import { TestInformationOutput } from '../App logic/Utils/informationsOutput';
+import { UserInteractionMock } from '../App logic/Utils/userInteraction';
 import { MessageState, MessageUpdate, TypeChanged } from '../typings/types';
 import { TestHelper } from './testHelper';
 
@@ -28,11 +28,11 @@ suite('UpdateScenario', function () {
 		}
 		//Then
 
-		let informationOutput = new TestInformationOutput();
+		let userInteractionMock = new UserInteractionMock();
 		let confirmUpdateOfScenarioQuestion: string = 'Do you want to update this scenario?';
-		informationOutput.configure(confirmUpdateOfScenarioQuestion, 'Yes')
+		userInteractionMock.configure(confirmUpdateOfScenarioQuestion, 'Yes')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
-		if (await TestHelper.verifyUserQuestions(messageUpdate, informationOutput))
+		if (await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock))
 			await TestHelper.verifyResult(messageUpdate, 'scenario081.al');
 	})
 	test('Scenario082', async () => {
@@ -51,11 +51,11 @@ suite('UpdateScenario', function () {
 			Project: 'Test Project' //name of project in app.json
 		}
 		//Then
-		let informationOutput = new TestInformationOutput();
+		let userInteractionMock = new UserInteractionMock();
 		let confirmUpdateOfScenarioQuestion: string = 'Do you want to update this scenario?';
-		informationOutput.configure(confirmUpdateOfScenarioQuestion, 'No')
+		userInteractionMock.configure(confirmUpdateOfScenarioQuestion, 'No')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
-		await TestHelper.verifyUserQuestions(messageUpdate, informationOutput)
+		await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock)
 	})
 	test('Scenario083', async () => {
 		//Given Test function with valid Given-When-Then structure
@@ -104,11 +104,11 @@ suite('UpdateScenario', function () {
 		}
 
 		//Then
-		let informationOutput = new TestInformationOutput();
+		let userInteractionMock = new UserInteractionMock();
 		let confirmUpdateOfScenarioQuestion: string = 'Do you want to update this scenario?';
-		informationOutput.configure(confirmUpdateOfScenarioQuestion, 'Yes')
+		userInteractionMock.configure(confirmUpdateOfScenarioQuestion, 'Yes')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
-		if (await TestHelper.verifyUserQuestions(messageUpdate, informationOutput))
+		if (await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock))
 			await TestHelper.verifyResult(messageUpdate, 'scenario084.al')
 	})
 

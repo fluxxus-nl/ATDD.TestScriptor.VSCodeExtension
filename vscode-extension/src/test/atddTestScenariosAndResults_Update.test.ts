@@ -1,6 +1,6 @@
 import { Uri, workspace } from 'vscode';
 import { ObjectService } from '../App logic/Services/ObjectService';
-import { TestInformationOutput } from '../App logic/Utils/informationsOutput';
+import { UserInteractionMock } from '../App logic/Utils/userInteraction';
 import { MessageState, MessageUpdate, TypeChanged } from '../typings/types';
 import { TestHelper } from './testHelper';
 
@@ -32,11 +32,11 @@ suite('Update', function () {
 			Project: 'Test Project' //name of project in app.json
 		}
 		//Then
-		let informationOutput = new TestInformationOutput();
+		let userInteractionMock = new UserInteractionMock();
 		let confirmUpdateOfElementQuestion: string = 'Do you want to update this element?';
-		informationOutput.configure(confirmUpdateOfElementQuestion, 'No')
+		userInteractionMock.configure(confirmUpdateOfElementQuestion, 'No')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
-		await TestHelper.verifyUserQuestions(messageUpdate, informationOutput)
+		await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock)
 	})
 	test('Scenario017', async () => {
 		//Given Result from scenario 16
@@ -55,11 +55,11 @@ suite('Update', function () {
 			Project: 'Test Project' //name of project in app.json
 		}
 		//Then
-		let informationOutput = new TestInformationOutput();
+		let userInteractionMock = new UserInteractionMock();
 		let confirmUpdateOfElementQuestion: string = 'Do you want to update this element?';
-		informationOutput.configure(confirmUpdateOfElementQuestion, 'Yes')
+		userInteractionMock.configure(confirmUpdateOfElementQuestion, 'Yes')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
-		if (await TestHelper.verifyUserQuestions(messageUpdate, informationOutput))
+		if (await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock))
 			await TestHelper.verifyResult(messageUpdate, 'scenario017.al')
 	})
 	test('Scenario019', async () => {
@@ -79,11 +79,11 @@ suite('Update', function () {
 			Project: 'Test Project' //name of project in app.json
 		}
 		//Then
-		let informationOutput = new TestInformationOutput();
+		let userInteractionMock = new UserInteractionMock();
 		let confirmUpdateOfElementQuestion: string = 'Do you want to update this element?';
-		informationOutput.configure(confirmUpdateOfElementQuestion, 'Yes')
+		userInteractionMock.configure(confirmUpdateOfElementQuestion, 'Yes')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
-		if (await TestHelper.verifyUserQuestions(messageUpdate, informationOutput))
+		if (await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock))
 			await TestHelper.verifyResult(messageUpdate, 'scenario019.al')
 	})
 	test('Scenario044', async () => {
@@ -108,11 +108,11 @@ suite('Update', function () {
 			Project: 'Test Project' //name of project in app.json
 		}
 		//Then
-		let informationOutput = new TestInformationOutput();
+		let userInteractionMock = new UserInteractionMock();
 		let confirmUpdateOfElementQuestion: string = 'Do you want to update this element?';
-		informationOutput.configure(confirmUpdateOfElementQuestion, 'Yes')
+		userInteractionMock.configure(confirmUpdateOfElementQuestion, 'Yes')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
-		if (await TestHelper.verifyUserQuestions(messageUpdate, informationOutput))
+		if (await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock))
 			await TestHelper.verifyResult(messageUpdate, 'scenario044.al')
 	})
 	test('Scenario087', async () => {
@@ -137,11 +137,11 @@ suite('Update', function () {
 			Project: 'Test Project' //name of project in app.json
 		}
 		//Then
-		let informationOutput = new TestInformationOutput();
+		let userInteractionMock = new UserInteractionMock();
 		let confirmUpdateOfElementQuestion: string = 'Do you want to update this element?';
-		informationOutput.configure(confirmUpdateOfElementQuestion, 'Yes')
+		userInteractionMock.configure(confirmUpdateOfElementQuestion, 'Yes')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
-		if (await TestHelper.verifyUserQuestions(messageUpdate, informationOutput))
+		if (await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock))
 			await TestHelper.verifyResult(messageUpdate, 'scenario087.al')
 	})
 	test('Scenario051', async () => {
@@ -175,11 +175,11 @@ suite('Update', function () {
 			Project: 'Test Project' //name of project in app.json
 		}
 		//Then
-		let informationOutput = new TestInformationOutput();
+		let userInteractionMock = new UserInteractionMock();
 		let confirmUpdateOfElementQuestion: string = 'Do you want to update this element?';
-		informationOutput.configure(confirmUpdateOfElementQuestion, 'Yes')
+		userInteractionMock.configure(confirmUpdateOfElementQuestion, 'Yes')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
-		if (await TestHelper.verifyUserQuestions(messageUpdate, informationOutput))
+		if (await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock))
 			await TestHelper.verifyResult(messageUpdate, 'scenario051.al')
 	})
 	test('Scenario021', async () => {
@@ -200,11 +200,11 @@ suite('Update', function () {
 			Project: 'Test Project' //name of project in app.json
 		}
 		//Then
-		let informationOutput = new TestInformationOutput();
+		let userInteractionMock = new UserInteractionMock();
 		let confirmUpdateOfElementQuestion: string = 'Do you want to update this element?';
-		informationOutput.configure(confirmUpdateOfElementQuestion, 'Yes')
+		userInteractionMock.configure(confirmUpdateOfElementQuestion, 'Yes')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
-		if (await TestHelper.verifyUserQuestions(messageUpdate, informationOutput))
+		if (await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock))
 			await TestHelper.verifyResult(messageUpdate, 'scenario021.al')
 	})
 	test('Scenario023', async () => {
@@ -224,11 +224,11 @@ suite('Update', function () {
 			Project: 'Test Project' //name of project in app.json
 		}
 		//Then
-		let informationOutput = new TestInformationOutput();
+		let userInteractionMock = new UserInteractionMock();
 		let confirmUpdateOfElementQuestion: string = 'Do you want to update this element?';
-		informationOutput.configure(confirmUpdateOfElementQuestion, 'Yes')
+		userInteractionMock.configure(confirmUpdateOfElementQuestion, 'Yes')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
-		if (await TestHelper.verifyUserQuestions(messageUpdate, informationOutput))
+		if (await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock))
 			await TestHelper.verifyResult(messageUpdate, 'scenario023.al')
 	})
 	test('Scenario047', async () => {
@@ -249,11 +249,11 @@ suite('Update', function () {
 			Project: 'Test Project' //name of project in app.json
 		}
 		//Then
-		let informationOutput = new TestInformationOutput();
+		let userInteractionMock = new UserInteractionMock();
 		let confirmUpdateOfElementQuestion: string = 'Do you want to update this element?';
-		informationOutput.configure(confirmUpdateOfElementQuestion, 'No')
+		userInteractionMock.configure(confirmUpdateOfElementQuestion, 'No')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
-		await TestHelper.verifyUserQuestions(messageUpdate, informationOutput)
+		await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock)
 	})
 
 	test('Scenario025', async () => {
@@ -274,11 +274,11 @@ suite('Update', function () {
 			Project: 'Test Project' //name of project in app.json
 		}
 		//Then
-		let informationOutput = new TestInformationOutput();
+		let userInteractionMock = new UserInteractionMock();
 		let confirmUpdateOfElementQuestion: string = 'Do you want to update this element?';
-		informationOutput.configure(confirmUpdateOfElementQuestion, 'Yes')
+		userInteractionMock.configure(confirmUpdateOfElementQuestion, 'Yes')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
-		if (await TestHelper.verifyUserQuestions(messageUpdate, informationOutput))
+		if (await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock))
 			await TestHelper.verifyResult(messageUpdate, 'scenario025.al')
 	})
 	test('Scenario027', async () => {
@@ -298,11 +298,11 @@ suite('Update', function () {
 			Project: 'Test Project' //name of project in app.json
 		}
 		//Then
-		let informationOutput = new TestInformationOutput();
+		let userInteractionMock = new UserInteractionMock();
 		let confirmUpdateOfElementQuestion: string = 'Do you want to update this element?';
-		informationOutput.configure(confirmUpdateOfElementQuestion, 'Yes')
+		userInteractionMock.configure(confirmUpdateOfElementQuestion, 'Yes')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
-		if (await TestHelper.verifyUserQuestions(messageUpdate, informationOutput))
+		if (await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock))
 			await TestHelper.verifyResult(messageUpdate, 'scenario027.al')
 	})
 	test('Scenario048', async () => {
@@ -323,11 +323,11 @@ suite('Update', function () {
 			Project: 'Test Project' //name of project in app.json
 		}
 		//Then
-		let informationOutput = new TestInformationOutput();
+		let userInteractionMock = new UserInteractionMock();
 		let confirmUpdateOfElementQuestion: string = 'Do you want to update this element?';
-		informationOutput.configure(confirmUpdateOfElementQuestion, 'No')
+		userInteractionMock.configure(confirmUpdateOfElementQuestion, 'No')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
-		await TestHelper.verifyUserQuestions(messageUpdate, informationOutput)
+		await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock)
 	})
 	test('Scenario049', async () => {
 		//Given Test function with Valid Given-When-Then structure
@@ -351,11 +351,11 @@ suite('Update', function () {
 			Project: 'Test Project' //name of project in app.json
 		}
 		//Then
-		let informationOutput = new TestInformationOutput();
+		let userInteractionMock = new UserInteractionMock();
 		let confirmUpdateOfElementQuestion: string = 'Do you want to update this element?';
-		informationOutput.configure(confirmUpdateOfElementQuestion, 'Yes')
+		userInteractionMock.configure(confirmUpdateOfElementQuestion, 'Yes')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
-		if (await TestHelper.verifyUserQuestions(messageUpdate, informationOutput))
+		if (await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock))
 			await TestHelper.verifyResult(messageUpdate, 'scenario049.al')
 	})
 	test('Scenario088', async () => {
@@ -380,11 +380,11 @@ suite('Update', function () {
 			Project: 'Test Project' //name of project in app.json
 		}
 		//Then
-		let informationOutput = new TestInformationOutput();
+		let userInteractionMock = new UserInteractionMock();
 		let confirmUpdateOfElementQuestion: string = 'Do you want to update this element?';
-		informationOutput.configure(confirmUpdateOfElementQuestion, 'Yes')
+		userInteractionMock.configure(confirmUpdateOfElementQuestion, 'Yes')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
-		if (await TestHelper.verifyUserQuestions(messageUpdate, informationOutput))
+		if (await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock))
 			await TestHelper.verifyResult(messageUpdate, 'scenario088.al')
 	})
 	test('Scenario053', async () => {
@@ -418,11 +418,11 @@ suite('Update', function () {
 			Project: 'Test Project' //name of project in app.json
 		}
 		//Then
-		let informationOutput = new TestInformationOutput();
+		let userInteractionMock = new UserInteractionMock();
 		let confirmUpdateOfElementQuestion: string = 'Do you want to update this element?';
-		informationOutput.configure(confirmUpdateOfElementQuestion, 'Yes')
+		userInteractionMock.configure(confirmUpdateOfElementQuestion, 'Yes')
 		await TestHelper.verifyChangeIsValid(messageUpdate);
-		if (await TestHelper.verifyUserQuestions(messageUpdate, informationOutput))
+		if (await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock))
 			await TestHelper.verifyResult(messageUpdate, 'scenario053.al')
 	})
 });

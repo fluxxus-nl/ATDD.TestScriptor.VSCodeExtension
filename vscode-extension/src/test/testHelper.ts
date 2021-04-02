@@ -4,7 +4,7 @@ import { join } from "path";
 import { Range, Uri, workspace, WorkspaceEdit } from "vscode";
 import { SyntaxTree } from "../App logic/AL Code Outline/syntaxTree";
 import { ObjectService } from "../App logic/Services/ObjectService";
-import { TestInformationOutput } from "../App logic/Utils/informationsOutput";
+import { UserInteractionMock } from "../App logic/Utils/userInteraction";
 import { PreChecks } from "../App logic/Utils/preChecks";
 import { Application } from "../Application";
 import { WebPanelCommandService } from "../Services/WebPanelCommandService";
@@ -19,16 +19,16 @@ export class TestHelper {
 		let validResult: { valid: boolean; reason: string; } = await PreChecks.isChangeValid(messageUpdate);
 		assert.strictEqual(validResult.valid, isValid, isValid ? 'Change should be valid' : 'Change should be invalid');
 	}
-	public static async verifyUserQuestions(messageUpdate: MessageUpdate, informationOutput: TestInformationOutput): Promise<boolean> {
+	public static async verifyUserQuestions(messageUpdate: MessageUpdate, userInteractionMock: UserInteractionMock): Promise<boolean> {
 		Application.instance;
 		let result: { wantsToContinue: boolean, wantsProceduresToBeDeleted: Array<{ procedureName: string, parameterTypes: string[] }>, updateProcedureCall: boolean } =
-			await Application.container.get(WebPanelCommandService).askUserForConfirmationsToProceed(messageUpdate, informationOutput);
+			await Application.container.get(WebPanelCommandService).askUserForConfirmationsToProceed(messageUpdate, userInteractionMock);
 		if (result.wantsToContinue) {
 			messageUpdate.ProceduresToDelete = result.wantsProceduresToBeDeleted
 			messageUpdate.UpdateProcedureCall = result.updateProcedureCall
 		}
 		//Then questions popped up match with configured questions
-		assert.strictEqual(informationOutput.validate(), true, 'configured questions should match with the questions which popped up')
+		assert.strictEqual(userInteractionMock.validate(), true, 'configured questions should match with the questions which popped up')
 		return result.wantsToContinue;
 	}
 	public static async verifyResult(messageUpdate: MessageUpdate, resultFsPath: string) {

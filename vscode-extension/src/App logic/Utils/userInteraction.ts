@@ -1,10 +1,10 @@
 import * as vscode from 'vscode';
 import { Config } from './config';
 
-export interface InformationOutput {
+export interface UserInteraction {
     ask(question: string, options: string[], defaultOption: string): Promise<string | undefined>;
 }
-export class VSCodeInformationOutput implements InformationOutput {
+export class VSCodeInformationOutput implements UserInteraction {
     async ask(question: string, options: string[], defaultOption: string): Promise<string | undefined> {
         if (options.length > 0 && !Config.getShowConfirmations(vscode.window.activeTextEditor?.document.uri))
             return defaultOption
@@ -24,7 +24,7 @@ export class VSCodeInformationOutput implements InformationOutput {
         }
     }
 }
-export class TestInformationOutput implements InformationOutput {
+export class UserInteractionMock implements UserInteraction {
     private resultMap: Map<string, string> = new Map();
     private askedQuestions: { question: string, options: string[] }[] = [];
     private notConfiguredQuestionExists: boolean = false;
