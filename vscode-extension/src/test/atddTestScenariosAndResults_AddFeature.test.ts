@@ -3,7 +3,7 @@ import { MessageState, MessageUpdate, TypeChanged } from '../typings/types';
 import { TestHelper } from './testHelper';
 
 
-suite('Extension Test Suite', async function () {
+suite('AddFeature', function () {
 	this.beforeAll(async function () {
 		await TestHelper.resetFiles();
 	})
