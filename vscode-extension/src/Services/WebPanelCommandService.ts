@@ -179,17 +179,17 @@ export class WebPanelCommandService {
         await this.excelService.export(entries);
         WebPanel.postMessage(null);
     }
-    
+
     async GetConfigurationCommand(message: IMessageBase) {
         // TODO
-        let setting = false;        
-        WebPanel.postMessage({ Command: 'GetConfiguration', setting});
+        let setting = false;
+        WebPanel.postMessage({ Command: 'GetConfiguration', setting });
     }
 
     async SetConfigurationCommand(message: IMessageBase) {
         // TODO
         //let setting = message.Data as boolean;
         //
-        WebPanel.postMessage({Command: 'SetConfiguration', Data: null});
+        WebPanel.postMessage({ Command: 'SetConfiguration', Data: null });
     }
 }
