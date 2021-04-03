@@ -39,8 +39,11 @@ export class Config {
     static getTestSrcFolder(): string | undefined {
         return this.getConfig().get<string>('testDirectory');
     }
-    static getShowConfirmations(uri: Uri | undefined): boolean {
-        return this.getConfig(uri).get<boolean>('showConfirmations', true);
+    static getShowConfirmations(): boolean {
+        return this.getConfig().get<boolean>('showConfirmations', true);
+    }
+    static setShowConfirmations(newValue: boolean) {
+        this.getConfig().update('showConfirmations', newValue, ConfigurationTarget.Workspace);
     }
     private static getConfig(uri?: Uri): WorkspaceConfiguration {
         return workspace.getConfiguration(this.app, uri);

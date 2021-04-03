@@ -181,15 +181,12 @@ export class WebPanelCommandService {
     }
 
     async GetConfigurationCommand(message: IMessageBase) {
-        // TODO
-        let setting = false;
+        let setting = !Config.getShowConfirmations();
         WebPanel.postMessage({ Command: 'GetConfiguration', setting });
     }
 
     async SetConfigurationCommand(message: IMessageBase) {
-        // TODO
-        //let setting = message.Data as boolean;
-        //
+        Config.setShowConfirmations(!message.Data)
         WebPanel.postMessage({ Command: 'SetConfiguration', Data: null });
     }
 }

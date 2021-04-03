@@ -4,7 +4,7 @@ import { Config } from './config';
 
 export abstract class UserInteraction {
     abstract ask(question: string, options: string[], defaultOption: string): Promise<string | undefined>;
-    
+
     static questionDeleteElement(): string { return this.confirmDeletion('this element') }
     static questionDeleteScenario(): string { return this.confirmDeletion('this scenario') }
     static questionDeleteFeature(): string { return this.confirmDeletion('this feature') }
@@ -18,13 +18,13 @@ export abstract class UserInteraction {
     static questionWhichProcedureToTake: string = 'To the new naming exists already a helper function with the same parameters. Which one to take?';
     static responseYes: string = 'Yes';
     static responseNo: string = 'No';
-    
+
     private static confirmDeletion(thing: string): string { return `Do you want to delete ${thing}?` }
     private static confirmUpdate(thing: string): string { return `Do you want to update ${thing}?` }
 }
 export class VSCodeInformationOutput extends UserInteraction {
     async ask(question: string, options: string[], defaultOption: string): Promise<string | undefined> {
-        if (options.length > 0 && !Config.getShowConfirmations(vscode.window.activeTextEditor?.document.uri))
+        if (options.length > 0 && !Config.getShowConfirmations())
             return defaultOption
 
         switch (options.length) {
