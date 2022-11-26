@@ -4,13 +4,13 @@ codeunit 50104 "TestObjectWithUIHandlerFLX"
 
     trigger OnRun()
     begin
-        // [FEATURE] Test object with UI Hanldler
+        // [FEATURE] Test object with UI Handler
     end;
 
     [Test]
     [HandlerFunctions('AMessageHandler')]
     procedure FifthTestFunctionWithValidGivenWhenThenStructureAndUIHandler()
-    // [FEATURE] Test object with UI Hanldler
+    // [FEATURE] Test object with UI Handler
     begin
         // [SCENARIO 0005] Fifth test function with valid Given-When-Then structure and UI handler
         Initialize();
