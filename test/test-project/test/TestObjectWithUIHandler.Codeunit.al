@@ -4,7 +4,7 @@ codeunit 50104 "TestObjectWithUIHandlerFLX"
 
     trigger OnRun()
     begin
-        // [FEATURE] Test object with UI Hanldler
+        // [FEATURE] Test object with UI Handler
     end;
 
     [Test]

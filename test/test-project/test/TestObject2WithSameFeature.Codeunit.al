@@ -11,7 +11,7 @@ codeunit 50108 "TestObject2WithSameFeatureFLX"
     procedure TestFunction21()
     // [FEATURE] Same Feature
     begin
-        // [SCENARIO 0011] Test function 21
+        // [SCENARIO 0021] Test function 21
         // [Given] Valid Given        
         CreateValidGiven();
         // [When] Valid When        
