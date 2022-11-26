@@ -1,17 +1,18 @@
-codeunit 50107 TestObject1WithSameFeatureFLX
+codeunit 50106 "DuplicateTestObject_2FLX"
 {
     Subtype = Test;
 
     trigger OnRun()
     begin
-        // [FEATURE] Same Feature
+        // [FEATURE] Duplicate test object
+        // [FEATURE] Some other feature
     end;
 
     [Test]
-    procedure TestFunction11()
-    // [FEATURE] Same Feature
+    procedure TwelfthTestFunctionWithValidGivenWhenThenStructure()
+    // [FEATURE] Duplicate test object
     begin
-        // [SCENARIO 0011] Test function 11
+        // [SCENARIO 0012] Twelfth test function with valid Given-When-Then structure
         // [Given] Valid Given        
         CreateValidGiven();
         // [When] Valid When        
@@ -21,16 +22,16 @@ codeunit 50107 TestObject1WithSameFeatureFLX
     end;
 
     [Test]
-    procedure TestFunction12()
-    // [FEATURE] Same Feature
+    procedure ThirdteenthTestFunctionWithValidGivenWhenThenStructure()
+    // [FEATURE] Some other feature
     begin
-        // [SCENARIO 0012] Test function 12
+        // [SCENARIO 0013] Thirdteenth test function with valid Given-When-Then structure
         // [Given] Valid Given        
-        CreateValidGiven_2();
+        CreateValidGiven();
         // [When] Valid When        
-        ValidWhen_2();
+        ValidWhen();
         // [Then] Valid Then        
-        VerifyValidThen_2();
+        VerifyValidThen();
     end;
 
     local procedure CreateValidGiven()
@@ -44,21 +45,6 @@ codeunit 50107 TestObject1WithSameFeatureFLX
     end;
 
     local procedure VerifyValidThen()
-    begin
-        Error('Procedure VerifyValidThen not yet implemented.');
-    end;
-
-    local procedure CreateValidGiven_2()
-    begin
-        Error('Procedure CreateValidGiven not yet implemented.');
-    end;
-
-    local procedure ValidWhen_2()
-    begin
-        Error('Procedure ValidWhen not yet implemented.');
-    end;
-
-    local procedure VerifyValidThen_2()
     begin
         Error('Procedure VerifyValidThen not yet implemented.');
     end;

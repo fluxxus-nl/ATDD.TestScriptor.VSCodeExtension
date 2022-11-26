@@ -1,22 +1,24 @@
-codeunit 50108 TestObject2WithSameFeatureFLX
+codeunit 50201 "SecondTestObjectFLX"
 {
     Subtype = Test;
 
     trigger OnRun()
     begin
-        // [FEATURE] Same Feature
     end;
 
     [Test]
-    procedure TestFunction21()
-    // [FEATURE] Same Feature
+    procedure SecondTestFunction()
     begin
-        // [SCENARIO 0011] Test function 21
-        // [Given] Valid Given        
         CreateValidGiven();
-        // [When] Valid When        
         ValidWhen();
-        // [Then] Valid Then        
+        VerifyValidThen();
+    end;
+
+    [Test]
+    procedure ThirdTestFunction()
+    begin
+        CreateValidGiven();
+        ValidWhen();
         VerifyValidThen();
     end;
 

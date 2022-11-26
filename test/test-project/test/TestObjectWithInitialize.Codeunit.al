@@ -1,4 +1,4 @@
-codeunit 50103 TestObjectWithInitializeFLX
+codeunit 50103 "TestObjectWithInitializeFLX"
 {
     Subtype = Test;
 

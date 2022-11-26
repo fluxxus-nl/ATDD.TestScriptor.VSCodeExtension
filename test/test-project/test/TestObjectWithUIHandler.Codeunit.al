@@ -1,4 +1,4 @@
-codeunit 50104 TestObjectWithUIHandlerFLX
+codeunit 50104 "TestObjectWithUIHandlerFLX"
 {
     Subtype = Test;
 

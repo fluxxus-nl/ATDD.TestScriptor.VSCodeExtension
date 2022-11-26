@@ -1,4 +1,4 @@
-codeunit 50105 TestObjectWithTwoFeaturesFLX
+codeunit 50105 "TestObjectWithTwoFeaturesFLX"
 {
     Subtype = Test;
 

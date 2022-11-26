@@ -1,18 +1,17 @@
-codeunit 50106 DuplicateTestObject_2FLX
+codeunit 50107 "TestObject1WithSameFeatureFLX"
 {
     Subtype = Test;
 
     trigger OnRun()
     begin
-        // [FEATURE] Duplicate test object
-        // [FEATURE] Some other feature
+        // [FEATURE] Same Feature
     end;
 
     [Test]
-    procedure TwelfthTestFunctionWithValidGivenWhenThenStructure()
-    // [FEATURE] Duplicate test object
+    procedure TestFunction11()
+    // [FEATURE] Same Feature
     begin
-        // [SCENARIO 0012] Twelfth test function with valid Given-When-Then structure
+        // [SCENARIO 0011] Test function 11
         // [Given] Valid Given        
         CreateValidGiven();
         // [When] Valid When        
@@ -22,16 +21,16 @@ codeunit 50106 DuplicateTestObject_2FLX
     end;
 
     [Test]
-    procedure ThirdteenthTestFunctionWithValidGivenWhenThenStructure()
-    // [FEATURE] Some other feature
+    procedure TestFunction12()
+    // [FEATURE] Same Feature
     begin
-        // [SCENARIO 0013] Thirdteenth test function with valid Given-When-Then structure
+        // [SCENARIO 0012] Test function 12
         // [Given] Valid Given        
-        CreateValidGiven();
+        CreateValidGiven_2();
         // [When] Valid When        
-        ValidWhen();
+        ValidWhen_2();
         // [Then] Valid Then        
-        VerifyValidThen();
+        VerifyValidThen_2();
     end;
 
     local procedure CreateValidGiven()
@@ -45,6 +44,21 @@ codeunit 50106 DuplicateTestObject_2FLX
     end;
 
     local procedure VerifyValidThen()
+    begin
+        Error('Procedure VerifyValidThen not yet implemented.');
+    end;
+
+    local procedure CreateValidGiven_2()
+    begin
+        Error('Procedure CreateValidGiven not yet implemented.');
+    end;
+
+    local procedure ValidWhen_2()
+    begin
+        Error('Procedure ValidWhen not yet implemented.');
+    end;
+
+    local procedure VerifyValidThen_2()
     begin
         Error('Procedure VerifyValidThen not yet implemented.');
     end;
