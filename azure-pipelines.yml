@@ -34,7 +34,7 @@ steps:
   displayName: 'Aurelia App restore'
   workingDirectory: 'web-ui'
 
-- script: yarn build
+- script: npm run build
   displayName: 'Aurelia App build'
   workingDirectory: 'web-ui'
 
