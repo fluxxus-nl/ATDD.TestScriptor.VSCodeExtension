@@ -119,17 +119,14 @@ export class AppService {
     }
 
     public getNextScenarioID(featureName: string) {
-        let entryCount = Enumerable
+        let firstMessage: Message = Enumerable
             .from(this.entries)
             .where(w => w.Feature == featureName)
-            .count();
+            .orderByDescending(w => w.Id)
+            .firstOrDefault();
+        const newId = firstMessage.Id ? firstMessage.Id + 1 : 1
 
-        console.log('getNextScenarioID', featureName, entryCount);
-
-        let newId: number = 1;
-        if (entryCount && !isNaN(entryCount)) {
-            newId = entryCount + 1;
-        }
+        console.log('getNextScenarioID', featureName, newId);
 
         return newId;
     }
