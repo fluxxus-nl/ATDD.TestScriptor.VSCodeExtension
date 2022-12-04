@@ -25,7 +25,7 @@
   ],
   "exclude": [
     "./test/**/*.ts",
-    "./types/**/*.d.ts"
+    "node_modules"
   ],
   "atom": {
     "rewriteTsconfig": false
