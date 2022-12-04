@@ -1,0 +1,75 @@
+name: CI
+
+on:
+  push
+
+env:
+  NODE_VERSION: 14.16.1
+  RUN_VERSION: 0.9.220
+  aurelia-working-directory: ./web-ui/
+  vsc-working-directory: ./vscode-extension/
+
+jobs:
+  build-web-ui:
+    runs-on: ubuntu-latest
+    name: Build Web UI
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Use Node.js v${{env.NODE_VERSION}}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{env.NODE_VERSION}}
+
+      - name: Use aurelia-cli
+        run: npm install -g aurelia-cli
+        working-directory: ${{env.aurelia-working-directory}}
+
+      - name: Install
+        run: npm install
+        working-directory: ${{env.aurelia-working-directory}}
+
+      - name: NPM List
+        run: npm list --depth=1
+        working-directory: ${{env.aurelia-working-directory}}
+
+      - name: Run Build
+        run: npm run build
+        working-directory: ${{env.aurelia-working-directory}}
+
+      - name: Use VSCE
+        run: npm install -g vsce
+        working-directory: ${{env.vsc-working-directory}}
+
+      - name: Install
+        run: npm install
+        working-directory: ${{env.vsc-working-directory}}
+
+      - name: NPM List
+        run: npm list --depth=1
+        working-directory: ${{env.vsc-working-directory}}
+
+      - name: Update package.json
+        shell: pwsh
+        run: '((Get-Content -path ./package.json -Raw) -replace ''"debugMode": true'',''"debugMode": false'') | Set-Content -Path ./package.json'
+        working-directory: ${{env.vsc-working-directory}}
+
+      - name: Update Version
+        run: yarn version --no-git-tag-version --new-version ${{env.RUN_VERSION}}
+        working-directory: ${{env.vsc-working-directory}}
+
+      - name: Run Build
+        run: npx vsce package
+        working-directory: ${{env.vsc-working-directory}}
+
+      - run: echo "VSIX_PATH=$(find . -maxdepth 1 -type f -iname "*.vsix" | head -1)" >> $GITHUB_ENV
+        working-directory: ${{env.vsc-working-directory}}
+
+      - run: echo "VSIX_NAME=$(basename $(find . -maxdepth 1 -type f -iname "*.vsix" | head -1))" >> $GITHUB_ENV
+        working-directory: ${{env.vsc-working-directory}}
+
+      - uses: actions/upload-artifact@v3
+        with:
+          path: ${{env.vsc-working-directory}}/${{env.VSIX_NAME}}
+          name: ${{env.VSIX_NAME}}
