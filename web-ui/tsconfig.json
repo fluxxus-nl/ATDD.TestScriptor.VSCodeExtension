@@ -21,7 +21,9 @@
     "allowJs": true
   },
   "include": [
-    "./src/**/*.ts",
+    "./src/**/*.ts"
+  ],
+  "exclude": [
     "./test/**/*.ts",
     "./types/**/*.d.ts"
   ],
