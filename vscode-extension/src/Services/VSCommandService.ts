@@ -16,9 +16,11 @@ export class VSCommandService {
     async open() {
         try {
             await WebPanel.open(Application.context.extensionPath);
-        } catch (e) {
-            Application.log.error(`${Application.displayName} could not be opened.`, e);
-            Application.ui.error(`${Application.displayName} could not be opened. Error: '${e.message}'`);
+        } catch (e: unknown) {
+            if (e instanceof Error) {
+                Application.log.error(`${Application.displayName} could not be opened.`, e);
+                Application.ui.error(`${Application.displayName} could not be opened. Error: '${e.message}'`);
+            }
         }
     }
 
