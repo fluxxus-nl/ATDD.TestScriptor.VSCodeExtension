@@ -9,7 +9,8 @@
     "icon": "images/ATDDTestScriptorIcon.png",
     "repository": {
         "type": "github",
-        "url": "https://github.com/fluxxus-nl/ATDD.TestScriptor.VSCodeExtension.git"
+        "url": "https://github.com/fluxxus-nl/ATDD.TestScriptor.VSCodeExtension.git",
+        "directory": "vscode-extension"
     },
     "description": "Acceptance Test-Driven Development with Business Central",
     "version": "0.0.5",
@@ -135,23 +136,23 @@
         "@types/glob": "^8.0.0",
         "@types/mocha": "^7.0.2",
         "@types/node": "^13.9.3",
-        "@types/vscode": "^1.42.0",
+        "@types/vscode": "~1.42.0",
         "fs-plus": "^3.1.1",
         "glob": "^8.0.3",
         "mocha": "^7.2.0",
         "source-map-support": "^0.5.21",
-        "ts-loader": "^9.4.2",
+        "ts-loader": "^6.2.1",
         "eslint": "^8.29.0",
-        "typescript": "^4.4.2",
+        "typescript": "^3.7.5",
         "@vscode/vsce": "^2.15.0",
         "@vscode/test-electron": "^1.6.1",
-        "webpack": "^5.75.0",
-        "webpack-cli": "^5.0.0"
+        "webpack": "^4.42.0",
+        "webpack-cli": "^3.3.11"
     },
     "dependencies": {
         "aurelia-dependency-injection": "^1.5.2",
         "aurelia-loader-nodejs": "^1.1.0",
-        "clipboardy": "^3.0.0",
+        "clipboardy": "^2.2.0",
         "exceljs": "^4.3.0",
         "fs-extra": "^11.1.0",
         "reflect-metadata": "^0.1.13"

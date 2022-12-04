@@ -3,8 +3,9 @@
   "description": "ATDD.TestScriptor Web UI",
   "version": "0.1.0",
   "repository": {
-    "type": "???",
-    "url": "???"
+    "type": "github",
+    "url": "https://github.com/fluxxus-nl/ATDD.TestScriptor.VSCodeExtension.git",
+    "directory": "web-ui"
   },
   "license": "MIT",
   "dependencies": {
