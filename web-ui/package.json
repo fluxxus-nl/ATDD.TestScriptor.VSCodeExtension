@@ -31,6 +31,7 @@
     "@fortawesome/fontawesome-free": "5.11.2",
     "@types/jest": "24.0.9",
     "@types/jquery": "3.3.31",
+    "@types/node": "10.11.6",
     "@babel/types": "7.6.1",
     "alameda": "latest",
     "aurelia-cli": "1.2.2",
