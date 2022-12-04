@@ -5,7 +5,9 @@
     "noImplicitAny": false,
     "declaration": false,
     "typeRoots": [
-      "./node_modules/@types"
+      "./node_modules/@types",
+      "./src/@types",
+      "./typings"
     ],
     "removeComments": true,
     "emitDecoratorMetadata": true,
