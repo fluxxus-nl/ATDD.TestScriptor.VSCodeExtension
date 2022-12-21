@@ -32,28 +32,33 @@ export class ElementInsertionUtils {
     private static async addNewFeatureToCode(msg: MessageUpdate): Promise<boolean> {
         let objectName: string = new StringUtils(msg.NewValue).titleCase().removeSpecialChars().value();
         let fileName: string = objectName + '.al';
-        
+
         let projects: any[] = await new ObjectService().getProjects();
         let project: any = projects.find(project => project.name == msg.Project);
         let srcFolder: string = Config.getTestSrcFolder()!;
         msg.FsPath = join(project.FilePath, srcFolder, fileName)
 
         mkdirSync(parse(msg.FsPath).dir, { recursive: true })
-        writeFileSync(msg.FsPath, (await TestCodeunitUtils.getDefaultTestCodeunit(msg.NewValue, Uri.file(msg.FsPath))).join('\r\n'), { encoding: 'utf8' });
+        writeFileSync(msg.FsPath, (await TestCodeunitUtils.getDefaultTestCodeunit(msg.NewValue, Uri.file(msg.FsPath))).join('\r\n'));
         let id: string | undefined = await TestCodeunitUtils.getNextCodeunitId(msg.FsPath);
         if (id) {
             //TODO: Can be removed if API of Andrzej exists
-            let fileContent = readFileSync(msg.FsPath, { encoding: 'utf8' });
-            fileContent = 'codeunit ' + id + fileContent.substr('codeunit 0'.length)
-            writeFileSync(msg.FsPath, fileContent, { encoding: 'utf8' });
+            let fileContent = readFileSync(msg.FsPath).toString();
+            fileContent = 'codeunit ' + id + fileContent.substring('codeunit 0'.length)
+            writeFileSync(msg.FsPath, fileContent);
         }
         let waldosExtension: Extension<any> | undefined = extensions.getExtension('waldo.crs-al-language-extension');
         if (waldosExtension && waldosExtension.isActive) {
             let waldosApi: CRSApi.ICRSExtensionPublicApi = waldosExtension.exports;
             let newFilename: string = waldosApi.ObjectNamesApi.GetObjectFileName('codeunit', id ? id : '', objectName)
-            let newFileFullname: string = join(project.FilePath, srcFolder, newFilename);
-            renameSync(msg.FsPath, newFileFullname)
-            msg.FsPath = newFileFullname
+            const onSaveAlFileAction = workspace.getConfiguration('CRS', Uri.file(msg.FsPath)).get<string>('OnSaveAlFileAction')
+            if (onSaveAlFileAction && (onSaveAlFileAction !== 'Rename' && onSaveAlFileAction !== 'Reorganize')) {
+                await (await workspace.openTextDocument(msg.FsPath)).save();
+            } else {
+                let newFileFullname: string = join(project.FilePath, srcFolder, newFilename);
+                renameSync(msg.FsPath, newFileFullname)
+                msg.FsPath = newFileFullname
+            }
         }
 
         return true;
