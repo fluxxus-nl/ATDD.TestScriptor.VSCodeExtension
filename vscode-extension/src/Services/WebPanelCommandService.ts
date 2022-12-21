@@ -63,7 +63,10 @@ export class WebPanelCommandService {
         let validationResult: { valid: boolean, reason: string } = await this.middlewareService.isChangeValid(entry);
         let somethingIsChanged: boolean = false;
         if (!validationResult.valid) {
-            window.showErrorMessage(validationResult.reason);
+            if (validationResult.reason)
+                window.showErrorMessage(validationResult.reason);
+            else
+                somethingIsChanged = true
         } else {
             let userResponses: { wantsToContinue: boolean, wantsProceduresToBeDeleted: Array<{ procedureName: string, parameterTypes: string[] }>, updateProcedureCall: boolean } =
                 await this.askUserForConfirmationsToProceed(entry);

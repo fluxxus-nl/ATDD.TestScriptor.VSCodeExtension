@@ -6,7 +6,7 @@ import { ElementUtils } from "./elementUtils";
 import { TestCodeunitUtils } from "./testCodeunitUtils";
 import { TestMethodUtils } from "./testMethodUtils";
 
-export class PreChecks{
+export class PreChecks {
     static async isChangeValid(msg: MessageUpdate): Promise<{ valid: boolean, reason: string }> {
         if (msg.Type == TypeChanged.Feature && [MessageState.New, MessageState.Modified].includes(msg.State)) {
             return await PreChecks.isChangeValid_Feature(msg);
@@ -56,6 +56,9 @@ export class PreChecks{
     static async isChangeValid_Element(msg: MessageUpdate): Promise<{ valid: boolean, reason: string }> {
         if (!msg.ArrayIndex && msg.ArrayIndex != 0)
             throw new Error('ArrayIndex not passed')
+        if (msg.State == MessageState.Deleted && msg.OldValue == '') {
+            return { valid: false, reason: '' }
+        }
         let fsPath: string = msg.FsPath
         if (fsPath == '')
             fsPath = await ElementUtils.getFSPathOfFeature(msg.Project, msg.Feature);
