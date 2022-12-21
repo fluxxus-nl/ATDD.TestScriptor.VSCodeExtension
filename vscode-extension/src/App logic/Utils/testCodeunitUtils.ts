@@ -175,16 +175,8 @@ export class TestCodeunitUtils {
             if (globalVarSection) {
                 let variables: ALFullSyntaxTreeNode[] = []
                 ALFullSyntaxTreeNodeExt.collectChildNodesOfKindArr(globalVarSection, [FullSyntaxTreeNodeKind.getVariableDeclaration(), FullSyntaxTreeNodeKind.getVariableListDeclaration()], false, variables)
-                let variablesOfSearchedType: ALFullSyntaxTreeNode[] = variables.filter(variable => document.getText(TextRangeExt.createVSCodeRange(variable.fullSpan)).toLowerCase().includes(': ' + type))
-                let identifiers: ALFullSyntaxTreeNode[] = []
-                for (const variableOfSearchedType of variablesOfSearchedType) {
-                    ALFullSyntaxTreeNodeExt.collectChildNodes(variableOfSearchedType, FullSyntaxTreeNodeKind.getIdentifierName(), true, identifiers)
-                }
-                let identifierOfVariableSearched: ALFullSyntaxTreeNode | undefined = identifiers.find(identifier => document.getText(RangeUtils.trimRange(document, TextRangeExt.createVSCodeRange(identifier.fullSpan))).toLowerCase() == variableName.toLowerCase())
-                if (identifierOfVariableSearched) {
-                    return syntaxTree.findTreeNode(TextRangeExt.createVSCodeRange(identifierOfVariableSearched.fullSpan).start, [FullSyntaxTreeNodeKind.getVariableListDeclaration(), FullSyntaxTreeNodeKind.getVariableListDeclaration()])
-                }
-                return identifierOfVariableSearched;
+                let variablesOfSearchedType: ALFullSyntaxTreeNode[] = variables.filter(variable => document.getText(TextRangeExt.createVSCodeRange(variable.fullSpan)).toLowerCase().includes(': ' + type.toLowerCase()))
+                return variablesOfSearchedType.find(variable => variable.name?.toLowerCase() == variableName.toLowerCase());
             }
         }
         return undefined;
@@ -309,6 +301,8 @@ export class TestCodeunitUtils {
         return procedure;
     }
     static getInitializeMethod(nameOfCodeunit: string): string[] {
+        if(/[^w]/.test(nameOfCodeunit) && !nameOfCodeunit.startsWith('"'))
+            nameOfCodeunit = `"${nameOfCodeunit}"`
         return [
             '    local procedure Initialize()',
             '    var',
