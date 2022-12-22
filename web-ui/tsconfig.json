@@ -5,7 +5,7 @@
     "noImplicitAny": false,
     "declaration": false,
     "typeRoots": [
-      "./node_modules/@types"
+      "./typings"
     ],
     "removeComments": true,
     "emitDecoratorMetadata": true,
@@ -14,16 +14,17 @@
     "esModuleInterop": true,
     "sourceMap": true,
     "target": "es5",
-    "lib": ["es2017", "dom"], 
+    "lib": ["es2017", "dom"],
     "moduleResolution": "node",
     "baseUrl": "src",
     "resolveJsonModule": true,
     "allowJs": true
   },
   "include": [
-    "./src/**/*.ts",
-    "./test/**/*.ts",
-    "./types/**/*.d.ts"
+    "./src/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
   ],
   "atom": {
     "rewriteTsconfig": false

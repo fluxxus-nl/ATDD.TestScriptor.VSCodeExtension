@@ -51,8 +51,10 @@ export class WebPanel {
                 try {
                     await handler.dispatch(message);
                 } catch (e) {
-                    window.showErrorMessage(`${e?.message ? `${e.message}` : 'ATDD Server error. Check "Help / Toggle Developer Tools" for details.'}`);
-                    Application.log.error(`Failed to execute command: ${message.Command}`, e);
+                    if (e instanceof Error) {
+                        window.showErrorMessage(`${e?.message ? `${e.message}` : 'ATDD Server error. Check "Help / Toggle Developer Tools" for details.'}`);
+                        Application.log.error(`Failed to execute command: ${message.Command}`, e);
+                    }
                 }
             }
         }).bind(this), null, this._disposables);
