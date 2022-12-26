@@ -1,0 +1,95 @@
+name: Release
+
+on:
+  push:
+    tags:
+       - 'v*.*.*'
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: 16.18.1
+  working-directory-webui: ./web-ui
+  working-directory-vsc: ./vscode-extension
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+concurrency: release
+
+jobs:
+  build:
+    name: Build
+    if: github.repository == 'fluxxus-nl/ATDD.TestScriptor.VSCodeExtension'
+    runs-on: ubuntu-latest
+    outputs:
+      vsix-name: ${{ steps.vsix-name.outputs.VSIX_NAME }}
+      version: ${{ steps.package-version.outputs.VERSION }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Use Node.js v${{env.NODE_VERSION}}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{env.NODE_VERSION}}
+
+      - name: Use aurelia-cli
+        run: npm install -g aurelia-cli
+        working-directory: ${{env.working-directory-webui}}
+
+      - name: Install
+        run: npm install
+        working-directory: ${{env.working-directory-webui}}
+
+      - name: Run Build
+        run: npm run build
+        working-directory: ${{env.working-directory-webui}}
+
+      - name: Use VSCE
+        run: npm install -g vsce
+        working-directory: ${{env.working-directory-vsc}}
+
+      - name: Install
+        run: npm install
+        working-directory: ${{env.working-directory-vsc}}
+
+      - name: Update package.json
+        shell: pwsh
+        run: '((Get-Content -path ./package.json -Raw) -replace ''"debugMode": true'',''"debugMode": false'') | Set-Content -Path ./package.json'
+        working-directory: ${{env.working-directory-vsc}}
+
+      - name: Run Build
+        run: npx vsce package
+        working-directory: ${{env.working-directory-vsc}}
+
+      - id: vsix-name
+        run: echo "VSIX_NAME=$(basename $(find . -maxdepth 1 -type f -iname "*.vsix" | head -1))" >> $GITHUB_OUTPUT
+        working-directory: ${{env.working-directory-vsc}}
+
+      - name: get-npm-version
+        id: package-version
+        uses: martinbeentjes/npm-get-version-action@main
+
+      - uses: actions/create-release@v1
+        id: create_release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: 'Release ${{ github.ref }}'
+          body: |
+            ${{ steps.changelog.outputs.changes }}
+            See [Change Log](https://github.com/christianbraeunlich/ATDD.TestScriptor.VSCodeExtension/blob/main/CHANGELOG.md) for details.
+          draft: false
+          prerelease: false
+
+      - uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ env.working-directory-vsc }}/${{ steps.vsix-name.outputs.VSIX_NAME }}
+          asset_name: ${{ steps.vsix-name.outputs.VSIX_NAME }}
+          asset_content_type: application/zip
+
+      - name: Publish to Marketplace
+        run: vsce publish -pat ${{ secrets.VSCE_PAT_LOCAL }}
+        working-directory: ${{env.working-directory-vsc}}
