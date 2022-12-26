@@ -10,16 +10,14 @@ on:
 
 env:
   NODE_VERSION: 16.18.1
-  working-directory-webui: ./web-ui/
-  working-directory-vsc: ./vscode-extension/
+  working-directory-webui: ./web-ui
+  working-directory-vsc: ./vscode-extension
 
 jobs:
   build:
     name: Build
     if: github.repository == 'fluxxus-nl/ATDD.TestScriptor.VSCodeExtension'
     runs-on: ubuntu-latest
-    outputs:
-      vsix-name: ${{ steps.vsix-name.outputs.VSIX_NAME }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3

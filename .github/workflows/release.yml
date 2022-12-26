@@ -10,18 +10,12 @@ env:
   NODE_VERSION: 16.18.1
   working-directory-webui: ./web-ui
   working-directory-vsc: ./vscode-extension
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-concurrency: release
 
 jobs:
   build-and-release:
     name: Build and Release
     if: github.repository == 'fluxxus-nl/ATDD.TestScriptor.VSCodeExtension'
     runs-on: ubuntu-latest
-    outputs:
-      vsix-name: ${{ steps.vsix-name.outputs.VSIX_NAME }}
-      version: ${{ steps.package-version.outputs.VERSION }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -60,13 +54,9 @@ jobs:
         run: npx vsce package
         working-directory: ${{env.working-directory-vsc}}
 
-      - id: vsix-name
-        run: echo "VSIX_NAME=$(basename $(find . -maxdepth 1 -type f -iname "*.vsix" | head -1))" >> $GITHUB_OUTPUT
+      - name: Save VSIX filename
+        run: echo "VSIX_NAME=$(basename $(find . -maxdepth 1 -type f -iname "*.vsix" | head -1))" >> $GITHUB_ENV
         working-directory: ${{env.working-directory-vsc}}
-
-      - name: get-npm-version
-        id: package-version
-        uses: martinbeentjes/npm-get-version-action@main
 
       - uses: actions/create-release@v1
         id: create_release
@@ -76,8 +66,7 @@ jobs:
           tag_name: ${{ github.ref }}
           release_name: 'Release ${{ github.ref }}'
           body: |
-            ${{ steps.changelog.outputs.changes }}
-            See [Change Log](https://github.com/christianbraeunlich/ATDD.TestScriptor.VSCodeExtension/blob/main/CHANGELOG.md) for details.
+            See [Change Log](https://github.com/fluxxus-nl/ATDD.TestScriptor.VSCodeExtension/blob/main/CHANGELOG.md) for details.
           draft: false
           prerelease: false
 
@@ -86,8 +75,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ${{ env.working-directory-vsc }}/${{ steps.vsix-name.outputs.VSIX_NAME }}
-          asset_name: ${{ steps.vsix-name.outputs.VSIX_NAME }}
+          asset_path: ${{ env.working-directory-vsc }}/${{ env.VSIX_NAME }}
+          asset_name: ${{ env.VSIX_NAME }}
           asset_content_type: application/zip
 
       - name: Publish to Marketplace
