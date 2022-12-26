@@ -15,8 +15,8 @@ env:
 concurrency: release
 
 jobs:
-  build:
-    name: Build
+  build-and-release:
+    name: Build and Release
     if: github.repository == 'fluxxus-nl/ATDD.TestScriptor.VSCodeExtension'
     runs-on: ubuntu-latest
     outputs:
