@@ -1,9 +1,16 @@
-name: Release
+name: CICD
 
 on:
+  pull_request:
+    branches:
+      - master
   push:
+    branches:
+      - master
     tags:
       - '*beta*'
+  schedule:
+    - cron: '0 3 * * 1'
 
 env:
   RUN_VERSION: 0.10.${{ github.run_number }}
@@ -12,7 +19,7 @@ env:
   working-directory-vsc: ./vscode-extension
 
 jobs:
-  build-and-release:
+  cicd:
     name: Build, Release and Publish
     if: github.repository == 'fluxxus-nl/ATDD.TestScriptor.VSCodeExtension'
     runs-on: ubuntu-latest
@@ -59,7 +66,8 @@ jobs:
         run: npx vsce package
         working-directory: ${{env.working-directory-vsc}}
 
-      - name: Save VSIX name
+      - id: vsix-name
+        name: Save VSIX name
         shell: pwsh
         run: |
           $name = (Split-Path (Get-Item -Path '*.vsix') -leaf)
@@ -68,6 +76,7 @@ jobs:
 
       - uses: actions/create-release@v1
         id: create_release
+        if: ${{ (startsWith(github.ref, 'refs/tags/')) && (github.event_name != 'schedule') }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -79,6 +88,7 @@ jobs:
           prerelease: false
 
       - uses: actions/upload-release-asset@v1
+        if: ${{ (startsWith(github.ref, 'refs/tags/')) && (github.event_name != 'schedule') }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -88,5 +98,6 @@ jobs:
           asset_content_type: application/zip
 
       - name: Publish to Marketplace
+        if: ${{ (startsWith(github.ref, 'refs/tags/')) && (github.event_name != 'schedule') }}
         run: vsce publish -pat ${{ secrets.VSCE_PAT_LOCAL }}
         working-directory: ${{env.working-directory-vsc}}
