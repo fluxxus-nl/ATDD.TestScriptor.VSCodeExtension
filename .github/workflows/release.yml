@@ -2,8 +2,8 @@ name: Release
 
 on:
   push:
-    branches:
-      - master
+    tags:
+      - '*beta*'
 
 env:
   RUN_VERSION: 0.10.${{ github.run_number }}
