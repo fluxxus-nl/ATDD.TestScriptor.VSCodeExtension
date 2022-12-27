@@ -1,9 +1,12 @@
 name: Release
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - master
 
 env:
+  RUN_VERSION: 0.10.${{ github.run_number }}
   NODE_VERSION: 16.18.1
   working-directory-webui: ./web-ui
   working-directory-vsc: ./vscode-extension
@@ -47,6 +50,11 @@ jobs:
         run: '((Get-Content -path ./package.json -Raw) -replace ''"debugMode": true'',''"debugMode": false'') | Set-Content -Path ./package.json'
         working-directory: ${{env.working-directory-vsc}}
 
+      - name: VS Ext. set version
+        shell: pwsh
+        run: 'yarn version --no-git-tag-version --new-version ${{ env.RUN_VERSION }}'
+        working-directory: ${{env.working-directory-vsc}}
+
       - name: Run Build
         run: npx vsce package
         working-directory: ${{env.working-directory-vsc}}
@@ -58,21 +66,13 @@ jobs:
           "VSIX_NAME=$name" >> $env:GITHUB_ENV
         working-directory: ${{env.working-directory-vsc}}
 
-      - name: Save package.json version
-        shell: pwsh
-        run: |
-          $json = (Get-Content 'package.json' | ConvertFrom-Json)
-          $version = $json.version
-          "VERSION=$version" >> $env:GITHUB_ENV
-        working-directory: ${{env.working-directory-vsc}}
-
       - uses: actions/create-release@v1
         id: create_release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: v${{ env.VERSION }}
-          release_name: 'Release v${{ env.VERSION }}'
+          tag_name: v${{ env.RUN_VERSION }}
+          release_name: 'Release v${{ env.RUN_VERSION }}'
           body: |
             See [Change Log](https://github.com/fluxxus-nl/ATDD.TestScriptor.VSCodeExtension/blob/main/CHANGELOG.md) for details.
           draft: false
