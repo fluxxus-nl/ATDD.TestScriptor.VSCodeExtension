@@ -1,9 +1,6 @@
 name: Release
 
 on:
-  push:
-    tags:
-       - 'v*.*.*'
   workflow_dispatch:
 
 env:
@@ -13,7 +10,7 @@ env:
 
 jobs:
   build-and-release:
-    name: Build and Release
+    name: Build, Release and Publish
     if: github.repository == 'fluxxus-nl/ATDD.TestScriptor.VSCodeExtension'
     runs-on: ubuntu-latest
     steps:
@@ -54,8 +51,19 @@ jobs:
         run: npx vsce package
         working-directory: ${{env.working-directory-vsc}}
 
-      - name: Save VSIX filename
-        run: echo "VSIX_NAME=$(basename $(find . -maxdepth 1 -type f -iname "*.vsix" | head -1))" >> $GITHUB_ENV
+      - name: Save VSIX name
+        shell: pwsh
+        run: |
+          $name = (Split-Path (Get-Item -Path '*.vsix') -leaf)
+          "VSIX_NAME=$name" >> $env:GITHUB_ENV
+        working-directory: ${{env.working-directory-vsc}}
+
+      - name: Save package.json version
+        shell: pwsh
+        run: |
+          $json = (Get-Content 'package.json' | ConvertFrom-Json)
+          $version = $json.version
+          "VERSION=$version" >> $env:GITHUB_ENV
         working-directory: ${{env.working-directory-vsc}}
 
       - uses: actions/create-release@v1
@@ -63,8 +71,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.ref }}
-          release_name: 'Release ${{ github.ref }}'
+          tag_name: v${{ env.VERSION }}
+          release_name: 'Release v${{ env.VERSION }}'
           body: |
             See [Change Log](https://github.com/fluxxus-nl/ATDD.TestScriptor.VSCodeExtension/blob/main/CHANGELOG.md) for details.
           draft: false
