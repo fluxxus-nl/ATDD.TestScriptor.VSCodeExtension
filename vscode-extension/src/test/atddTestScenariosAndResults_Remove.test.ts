@@ -16,7 +16,7 @@ suite('Remove', function () {
 	test('Scenario030', async () => {
 		//Given Test function with valid Given-When-Then structure
 		await TestHelper.resetFiles();
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 
 		//When Remove "Valid Given"
 		let messageUpdate: MessageUpdate = {
@@ -41,7 +41,7 @@ suite('Remove', function () {
 	test('Scenario036', async () => {
 		//Given Test function with valid Given-When-Then structure
 		await TestHelper.resetFiles();
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 
 		//When Remove "Valid Given"
 		let messageUpdate: MessageUpdate = {
@@ -64,7 +64,7 @@ suite('Remove', function () {
 	test('Scenario032', async () => {
 		//Given Test function with valid Given-When-Then structure
 		await TestHelper.resetFiles();
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 
 		//When Remove "Valid Given"
 		let messageUpdate: MessageUpdate = {
@@ -89,7 +89,7 @@ suite('Remove', function () {
 	test('Scenario038', async () => {
 		//Given Test function with valid Given-When-Then structure
 		await TestHelper.resetFiles();
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al');
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al');
 
 		//Given Duplicate "Valid Given"
 		let messageUpdate1: MessageUpdate = {
@@ -126,7 +126,7 @@ suite('Remove', function () {
 	test('Scenario040', async () => {
 		//Given Test function with valid Given-When-Then structure
 		await TestHelper.resetFiles();
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al');
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al');
 
 		//Given "New Given !@#$%^&*()"
 		let messageUpdate1: MessageUpdate = {
@@ -164,7 +164,7 @@ suite('Remove', function () {
 	test('Scenario041', async () => {
 		//Given Test function with valid Given-When-Then structure
 		await TestHelper.resetFiles();
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al');
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al');
 
 		//Given "New Given !@#$%^&*()"
 		let messageUpdate1: MessageUpdate = {
@@ -203,7 +203,7 @@ suite('Remove', function () {
 	test('Scenario035', async () => {
 		//Given Test function with valid Given-When-Then structure
 		await TestHelper.resetFiles();
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 
 		//When Remove "Valid Then"
 		let messageUpdate: MessageUpdate = {
@@ -228,7 +228,7 @@ suite('Remove', function () {
 	test('Scenario036', async () => {
 		//Given Test function with valid Given-When-Then structure
 		await TestHelper.resetFiles();
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 
 		//When Remove "Valid Then"
 		let messageUpdate: MessageUpdate = {
@@ -251,7 +251,7 @@ suite('Remove', function () {
 	test('Scenario037', async () => {
 		//Given Test function with valid Given-When-Then structure
 		await TestHelper.resetFiles();
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 
 		//When Remove "Valid Then"
 		let messageUpdate: MessageUpdate = {
@@ -276,7 +276,7 @@ suite('Remove', function () {
 	test('Scenario039', async () => {
 		//Given Test function with valid Given-When-Then structure
 		await TestHelper.resetFiles();
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al');
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al');
 
 		//Given Duplicate Given "Valid Then"
 		let messageUpdate1: MessageUpdate = {
@@ -313,7 +313,7 @@ suite('Remove', function () {
 	test('Scenario042', async () => {
 		//Given Test function with valid Given-When-Then structure
 		await TestHelper.resetFiles();
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al');
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al');
 
 		//Given "New Then !@#$%^&*()"
 		let messageUpdate1: MessageUpdate = {
@@ -351,7 +351,7 @@ suite('Remove', function () {
 	test('Scenario043', async () => {
 		//Given Test function with valid Given-When-Then structure
 		await TestHelper.resetFiles();
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al');
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al');
 
 		//Given "New Then !@#$%^&*()"
 		let messageUpdate1: MessageUpdate = {

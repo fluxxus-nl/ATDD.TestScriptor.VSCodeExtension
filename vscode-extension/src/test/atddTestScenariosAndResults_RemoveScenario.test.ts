@@ -14,7 +14,7 @@ suite('Remove Scenario', function () {
 
 	test('Scenario058', async () => {
 		//Given Test function with valid Given-When-Then structure
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 		//When Remove Scenario
 		let messageUpdate: MessageUpdate = {
 			Scenario: '',
@@ -39,7 +39,7 @@ suite('Remove Scenario', function () {
 	test('Scenario059', async () => {
 		//Given Test function with valid Given-When-Then structure
 		await TestHelper.resetFiles();
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 		//When Remove Scenario
 		let messageUpdate: MessageUpdate = {
 			Scenario: '',
@@ -61,7 +61,7 @@ suite('Remove Scenario', function () {
 	test('Scenario060', async () => {
 		//Given Test function with valid Given-When-Then structure
 		await TestHelper.resetFiles();
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 		//When Remove Scenario
 		let messageUpdate: MessageUpdate = {
 			Scenario: '',
@@ -86,7 +86,7 @@ suite('Remove Scenario', function () {
 	test('Scenario068', async () => {
 		//Given Test codeunit with one test function with valid Given-When-Then structure and call to Initialize
 		await TestHelper.resetFiles();
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectWithInitializeFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectWithInitialize.Codeunit.al')
 		//When Remove Scenario
 		let messageUpdate: MessageUpdate = {
 			Scenario: '',
@@ -112,7 +112,7 @@ suite('Remove Scenario', function () {
 	test('Scenario069', async () => {
 		//Given Test codeunit with one test function with valid Given-When-Then structure and UI Handler
 		await TestHelper.resetFiles();
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectWithUIHandlerFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectWithUIHandler.Codeunit.al')
 		//When Remove Scenario
 		let messageUpdate: MessageUpdate = {
 			Scenario: '',
@@ -139,7 +139,7 @@ suite('Remove Scenario', function () {
 	test('Scenario070', async () => {
 		//Given Test codeunit with one test function with valid Given-When-Then structure and UI Handler
 		await TestHelper.resetFiles();
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectWithUIHandlerFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectWithUIHandler.Codeunit.al')
 		//When Remove Scenario
 		let messageUpdate: MessageUpdate = {
 			Scenario: '',
@@ -166,7 +166,7 @@ suite('Remove Scenario', function () {
 	test('Scenario071', async () => {
 		//Given Test codeunit with one test function with valid Given-When-Then structure and call to Initialize
 		await TestHelper.resetFiles();
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectWithInitializeFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectWithInitialize.Codeunit.al')
 		//Given Setting atddTestScriptor.removalMode equals "No confirmation, but removal"
 		await workspace.getConfiguration('atddTestScriptor', Uri.file(TestHelper.pathOfTestProject)).update('removalMode', 'No confirmation, but removal');
 
@@ -193,7 +193,7 @@ suite('Remove Scenario', function () {
 	test('Scenario072', async () => {
 		//Given Test codeunit with one test function with valid Given-When-Then structure and call to Initialize
 		await TestHelper.resetFiles();
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectWithInitializeFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectWithInitialize.Codeunit.al')
 		//Given Setting atddTestScriptor.removalMode equals "No confirmation, but removal"
 		await workspace.getConfiguration('atddTestScriptor', Uri.file(TestHelper.pathOfTestProject)).update('removalMode', 'No confirmation & no removal');
 

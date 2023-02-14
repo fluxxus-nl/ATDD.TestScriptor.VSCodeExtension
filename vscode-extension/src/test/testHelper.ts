@@ -57,7 +57,7 @@ export class TestHelper {
 		await config.update('testDirectory', 'src')
 	}
 	public static getFsPathOfTestProject(filename: string): string {
-		return join(TestHelper.pathOfTestProject, 'src', 'codeunit', filename);
+		return join(TestHelper.pathOfTestProject, 'test', filename);
 	}
 	public static getFsPathOfResults(filename: string): string {
 		return join(TestHelper.pathOfTestResults, filename)
@@ -66,7 +66,7 @@ export class TestHelper {
 
 	public static async resetFiles(): Promise<void> {
 		let orgsFolder: string = join(__dirname, '..', '..', 'src', 'test', 'orgs')
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 		let pathParts: string[] = fsPath.split(/[/\\]/)
 		pathParts.pop();
 		let actualFolder: string = pathParts.join('\\')

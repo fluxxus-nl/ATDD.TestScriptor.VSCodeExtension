@@ -13,7 +13,7 @@ suite('Add', function () {
 	
 	test('Scenario001', async () => {
 		//Given Test function with valid Given-When-Then structure
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 		//When Add Given "New Given"
 		let messageUpdate: MessageUpdate = {
 			Scenario: 'First test function with valid Given-When-Then structure',
@@ -30,7 +30,7 @@ suite('Add', function () {
 	})
 	test('Scenario002', async () => {
 		//Given Result from scenario 1
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 		//When Add Given "New Given 2"
 		let messageUpdate: MessageUpdate = {
 			Scenario: 'First test function with valid Given-When-Then structure',
@@ -48,7 +48,7 @@ suite('Add', function () {
 	test('Scenario003', async () => {
 		//Given Test function with valid Given-When-Then structure
 		await TestHelper.resetFiles();
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 		//When Add Given "Valid Given"
 		let messageUpdate: MessageUpdate = {
 			Scenario: 'First test function with valid Given-When-Then structure',
@@ -67,7 +67,7 @@ suite('Add', function () {
 		//Given Test function with valid Given-When-Then structure
 		await TestHelper.resetFiles()
 
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 		//When Add Given "New Given !@#$%^&*()"
 		let messageUpdate: MessageUpdate = {
 			Scenario: 'First test function with valid Given-When-Then structure',
@@ -86,7 +86,7 @@ suite('Add', function () {
 		//Given Test function with valid Given-When-Then structure
 		await TestHelper.resetFiles()
 
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 		//When Add Given "new given all lowercase"
 		let messageUpdate: MessageUpdate = {
 			Scenario: 'First test function with valid Given-When-Then structure',
@@ -105,7 +105,7 @@ suite('Add', function () {
 		//Given Test function with valid Given-When-Then structure
 		await TestHelper.resetFiles()
 
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 		//Given Setting atddTestScriptor.prefixGiven equals Make
 		await workspace.getConfiguration('atddTestScriptor', Uri.file(TestHelper.pathOfTestProject)).update('prefixGiven', 'Make');
 
@@ -127,7 +127,7 @@ suite('Add', function () {
 		//Given Test function with valid Given-When-Then structure
 		await TestHelper.resetFiles()
 
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 		//Given Setting atddTestScriptor.addException equals false
 		await workspace.getConfiguration('atddTestScriptor', Uri.file(TestHelper.pathOfTestProject)).update('addException', false);
 
@@ -149,7 +149,7 @@ suite('Add', function () {
 		//Given Test function with valid Given-When-Then structure
 		await TestHelper.resetFiles()
 
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 
 		//When Add Then "New Then"
 		let messageUpdate: MessageUpdate = {
@@ -167,7 +167,7 @@ suite('Add', function () {
 	})
 	test('Scenario005', async () => {
 		//Given Result from scenario 4
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 
 		//When Add Then "New Then 2"
 		let messageUpdate: MessageUpdate = {
@@ -186,7 +186,7 @@ suite('Add', function () {
 	test('Scenario011', async () => {
 		//Given Test function with valid Given-When-Then structure
 		await TestHelper.resetFiles();
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 
 		//When Add Then "New Then !@#$%^&*()"
 		let messageUpdate: MessageUpdate = {
@@ -205,7 +205,7 @@ suite('Add', function () {
 	test('Scenario013', async () => {
 		//Given Test function with valid Given-When-Then structure
 		await TestHelper.resetFiles();
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 
 		//When Add Then "new then all lowercase"
 		let messageUpdate: MessageUpdate = {
@@ -224,7 +224,7 @@ suite('Add', function () {
 	test('Scenario015', async () => {
 		//Given Test function with valid Given-When-Then structure
 		await TestHelper.resetFiles();
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 		//Given Setting atddTestScriptor.prefixThen equals Check
 		await workspace.getConfiguration('atddTestScriptor', Uri.file(TestHelper.pathOfTestProject)).update('prefixThen', 'Check')
 
@@ -245,7 +245,7 @@ suite('Add', function () {
 	test('Scenario062', async () => {
 		//Given Test function with valid Given-When-Then structure
 		await TestHelper.resetFiles();
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 		//Given Setting atddTestScriptor.addException equals false
 		await workspace.getConfiguration('atddTestScriptor', Uri.file(TestHelper.pathOfTestProject)).update('addException', false)
 

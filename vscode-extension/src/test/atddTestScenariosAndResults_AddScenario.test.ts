@@ -13,7 +13,7 @@ suite('AddScenario', function () {
 
 	test('Scenario055', async () => {
 		//Given Test function with valid Given-When-Then structure
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 		//When User selects "Add Scenario" action
 		let messageUpdate: MessageUpdate = {
 			Scenario: '',
@@ -32,7 +32,7 @@ suite('AddScenario', function () {
 	})
 	test('Scenario073', async () => {
 		//Given Result from scenario 55
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 		//When User selects "Add Scenario" action
 		let messageUpdate: MessageUpdate = {
 			Scenario: '',
@@ -52,7 +52,7 @@ suite('AddScenario', function () {
 	test('Scenario078', async () => {
 		//Given Test function with valid Given-When-Then structure
 		await TestHelper.resetFiles();
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 		//Given Added scenario
 		let messageUpdate: MessageUpdate = {
 			Scenario: '',
@@ -89,7 +89,7 @@ suite('AddScenario', function () {
 	})
 	test('Scenario079', async () => {
 		//Given Test function with valid Given-When-Then structure
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 		//Given Added scenario
 		let messageUpdate: MessageUpdate = {
 			Scenario: '',

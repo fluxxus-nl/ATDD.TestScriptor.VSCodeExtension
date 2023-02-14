@@ -14,7 +14,7 @@ suite('UpdateScenario', function () {
 
 	test('Scenario081', async () => {
 		//Given Test function with valid Given-When-Then structure
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 		//When Rename "First test function with valid Given-When-Then structure" to "Valid Given-When-Then structure"
 		let messageUpdate: MessageUpdate = {
 			Scenario: '',
@@ -38,7 +38,7 @@ suite('UpdateScenario', function () {
 	test('Scenario082', async () => {
 		//Given Test function with valid Given-When-Then structure
 		await TestHelper.resetFiles();
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 		//When Rename "First test function with valid Given-When-Then structure" to "Valid Given-When-Then structure"
 		let messageUpdate: MessageUpdate = {
 			Scenario: '',
@@ -60,7 +60,7 @@ suite('UpdateScenario', function () {
 	test('Scenario083', async () => {
 		//Given Test function with valid Given-When-Then structure
 		await TestHelper.resetFiles();
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 		//Given Test function SecondTestFunctionWithValidGivenWhenThenStructurewith valid Given-When-Then structure
 		let messageUpdate: MessageUpdate = {
 			Scenario: '',
@@ -88,7 +88,7 @@ suite('UpdateScenario', function () {
 	})
 	test('Scenario084', async () => {
 		//Given Result from scenario 83
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 
 		//When Change "Third test function with valid Given-When-Then structure" to "Another test function with valid Given-When-Then structure" to and confirm
 		let messageUpdate: MessageUpdate = {

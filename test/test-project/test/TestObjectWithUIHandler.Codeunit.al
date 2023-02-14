@@ -26,17 +26,17 @@ codeunit 50104 "TestObjectWithUIHandlerFLX"
     var
         LibraryTestInitialize: Codeunit "Library - Test Initialize";
     begin
-        LibraryTestInitialize.OnTestInitialize(Codeunit::TestObjectWithInitializeFLX);
+        LibraryTestInitialize.OnTestInitialize(Codeunit::"TestObjectWithInitializeFLX");
 
         if IsInitialized then
             exit;
 
-        LibraryTestInitialize.OnBeforeTestSuiteInitialize(Codeunit::TestObjectWithInitializeFLX);
+        LibraryTestInitialize.OnBeforeTestSuiteInitialize(Codeunit::"TestObjectWithInitializeFLX");
 
         IsInitialized := true;
         Commit();
 
-        LibraryTestInitialize.OnAfterTestSuiteInitialize(Codeunit::TestObjectWithInitializeFLX);
+        LibraryTestInitialize.OnAfterTestSuiteInitialize(Codeunit::"TestObjectWithInitializeFLX");
     end;
 
     local procedure CreateValidGiven()

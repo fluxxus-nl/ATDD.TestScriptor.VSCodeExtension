@@ -17,7 +17,7 @@ suite('Update', function () {
 	test('Scenario016', async () => {
 		//Given Test function with valid Given-When-Then structure
 		await TestHelper.resetFiles();
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 
 		//When Rename "Valid Given" to "Renamed Valid Given"
 		let messageUpdate: MessageUpdate = {
@@ -40,7 +40,7 @@ suite('Update', function () {
 	})
 	test('Scenario017', async () => {
 		//Given Result from scenario 16
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 
 		//When User confirms update
 		let messageUpdate: MessageUpdate = {
@@ -64,7 +64,7 @@ suite('Update', function () {
 	})
 	test('Scenario019', async () => {
 		//Given Result from scenario 16
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 
 		//When User confirms update
 		let messageUpdate: MessageUpdate = {
@@ -89,7 +89,7 @@ suite('Update', function () {
 	test('Scenario044', async () => {
 		//Given Test function with valid Given-When-Then structure
 		await TestHelper.resetFiles();
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 		//Given Setting atddTestScriptor.prefixGiven equals Make
 		await workspace.getConfiguration('atddTestScriptor', Uri.file(TestHelper.pathOfTestProject)).update('prefixGiven', 'Make');
 		//Given Setting atddTestScriptor.prefixGivenHistory contains Create
@@ -118,7 +118,7 @@ suite('Update', function () {
 	test('Scenario087', async () => {
 		//Given Test function with valid Given-When-Then structure
 		await TestHelper.resetFiles();
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 		//Given Setting atddTestScriptor.prefixGiven equals Make
 		await workspace.getConfiguration('atddTestScriptor', Uri.file(TestHelper.pathOfTestProject)).update('prefixGiven', 'Make');
 		//Given Setting atddTestScriptor.prefixGivenHistory does not contain Create
@@ -147,7 +147,7 @@ suite('Update', function () {
 	test('Scenario051', async () => {
 		//Given Test function with valid Given-When-Then structure
 		await TestHelper.resetFiles();
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al');
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al');
 
 		//Given Duplicate "Valid Given"
 		let messageUpdate1: MessageUpdate = {
@@ -185,7 +185,7 @@ suite('Update', function () {
 	test('Scenario021', async () => {
 		//Given Test function with valid Given-When-Then structure
 		await TestHelper.resetFiles();
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 
 		//When Renamed "Valid Given" to "Renamed Valid Given"
 		let messageUpdate: MessageUpdate = {
@@ -209,7 +209,7 @@ suite('Update', function () {
 	})
 	test('Scenario023', async () => {
 		//Given Result from scenario 21
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 
 		//When Renamed "Renamed Valid Given" to "Valid Given"
 		let messageUpdate: MessageUpdate = {
@@ -234,7 +234,7 @@ suite('Update', function () {
 	test('Scenario047', async () => {
 		//Given Test function with valid Given-When-Then structure
 		await TestHelper.resetFiles();
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 
 		//When Rename "Valid Given" to "Renamed Valid Given"
 		let messageUpdate: MessageUpdate = {
@@ -259,7 +259,7 @@ suite('Update', function () {
 	test('Scenario025', async () => {
 		//Given Test function with Valid Given-When-Then structure
 		await TestHelper.resetFiles();
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 
 		//When Renamed "Valid Then" to "Renamed Valid Then"
 		let messageUpdate: MessageUpdate = {
@@ -283,7 +283,7 @@ suite('Update', function () {
 	})
 	test('Scenario027', async () => {
 		//Given Result from scenario 25
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 
 		//When Rename "Renamed Valid Then" to "Valid Then"
 		let messageUpdate: MessageUpdate = {
@@ -308,7 +308,7 @@ suite('Update', function () {
 	test('Scenario048', async () => {
 		//Given Test function with valid Given-When-Then structure
 		await TestHelper.resetFiles();
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 
 		//When Rename "Valid Then" to "Renamed Valid Then"
 		let messageUpdate: MessageUpdate = {
@@ -332,7 +332,7 @@ suite('Update', function () {
 	test('Scenario049', async () => {
 		//Given Test function with Valid Given-When-Then structure
 		await TestHelper.resetFiles();
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 		//Given Setting atddTestScriptor.prefixThen equals Check
 		await workspace.getConfiguration('atddTestScriptor', Uri.file(TestHelper.pathOfTestProject)).update('prefixThen', 'Check');
 		//Given Setting atddTestScriptor.prefixThenHistory contains Verify
@@ -361,7 +361,7 @@ suite('Update', function () {
 	test('Scenario088', async () => {
 		//Given Test function with Valid Given-When-Then structure
 		await TestHelper.resetFiles();
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 		//Given Setting atddTestScriptor.prefixThen equals Check
 		await workspace.getConfiguration('atddTestScriptor', Uri.file(TestHelper.pathOfTestProject)).update('prefixThen', 'Check');
 		//Given Setting atddTestScriptor.prefixThenHistory does not contain Verify
@@ -390,7 +390,7 @@ suite('Update', function () {
 	test('Scenario053', async () => {
 		//Given Test function with valid Given-When-Then structure
 		await TestHelper.resetFiles();
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al');
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al');
 
 		//Given Duplicate "Valid Then"
 		let messageUpdate1: MessageUpdate = {

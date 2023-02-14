@@ -1,4 +1,4 @@
-codeunit 50100 TestObjectFLX
+codeunit 50100 "TestObjectFLX"
 {
     Subtype = Test;
 
@@ -11,7 +11,7 @@ codeunit 50100 TestObjectFLX
     end;
 
     [Test]
-    procedure FirstTestFunctionWithValidGivenWhenThenstructure()
+    procedure FirstTestFunctionWithValidGivenWhenThenStructure()
     // [FEATURE] First test object
     begin
         // [SCENARIO 0001] First test function with valid Given-When-Then structure
@@ -68,17 +68,17 @@ codeunit 50100 TestObjectFLX
     var
         LibraryTestInitialize: Codeunit "Library - Test Initialize";
     begin
-        LibraryTestInitialize.OnTestInitialize(Codeunit::TestObjectFLX);
+        LibraryTestInitialize.OnTestInitialize(Codeunit::"TestObjectFLX");
 
         if IsInitialized then
             exit;
 
-        LibraryTestInitialize.OnBeforeTestSuiteInitialize(Codeunit::TestObjectFLX);
+        LibraryTestInitialize.OnBeforeTestSuiteInitialize(Codeunit::"TestObjectFLX");
 
         IsInitialized := true;
         Commit();
 
-        LibraryTestInitialize.OnAfterTestSuiteInitialize(Codeunit::TestObjectFLX);
+        LibraryTestInitialize.OnAfterTestSuiteInitialize(Codeunit::"TestObjectFLX");
     end;
 
     local procedure CreateNewGiven()
