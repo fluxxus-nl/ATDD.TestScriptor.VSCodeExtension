@@ -31,7 +31,7 @@ export class TestHelper {
 		assert.strictEqual(userInteractionMock.validate(), true, 'configured questions should match with the questions which popped up')
 		return result.wantsToContinue;
 	}
-	public static async verifyResult(messageUpdate: MessageUpdate, resultFsPath: string) {
+	public static async verifyResult(messageUpdate: MessageUpdate, resultFsPath: string, skipObjectTypeAndIdVerification: boolean = false) {
 		//Then save changes is valid
 		let successful: boolean = await new ObjectService().saveChanges(messageUpdate);
 		assert.strictEqual(successful, true, 'saveChanges() should run successfully.');
@@ -39,6 +39,10 @@ export class TestHelper {
 		let resultFilename: string = TestHelper.getFsPathOfResults(resultFsPath);
 		let expectedResult: string = readFileSync(resultFilename, { encoding: 'utf8' });
 		let actualResult: string = readFileSync(messageUpdate.FsPath, { encoding: 'utf8' });
+		if(skipObjectTypeAndIdVerification){
+			expectedResult = expectedResult.substring(expectedResult.match(/^\w+ \d+/)![0].length);
+			actualResult = actualResult.substring(actualResult.match(/^\w+ \d+/)![0].length);
+		}
 		assert.strictEqual(actualResult, expectedResult, 'fileContent should be identical.');
 	}
 	public static async resetConfigurations(): Promise<void> {

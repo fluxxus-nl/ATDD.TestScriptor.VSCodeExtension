@@ -27,6 +27,6 @@ suite('AddFeature', function () {
 		}
 		//Then
 		await TestHelper.verifyChangeIsValid(messageUpdate);
-		await TestHelper.verifyResult(messageUpdate, 'scenario086.al');
+		await TestHelper.verifyResult(messageUpdate, 'scenario086.al', true);
 	})
 });
