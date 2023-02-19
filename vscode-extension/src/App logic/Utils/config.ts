@@ -43,7 +43,7 @@ export class Config {
         return this.getConfig().get<boolean>('showConfirmations', true);
     }
     static setShowConfirmations(newValue: boolean) {
-        this.getConfig().update('showConfirmations', newValue, ConfigurationTarget.Workspace);
+        this.getConfig().update('showConfirmations', newValue, ConfigurationTarget.Global);
     }
     private static getConfig(uri?: Uri): WorkspaceConfiguration {
         return workspace.getConfiguration(this.app, uri);
