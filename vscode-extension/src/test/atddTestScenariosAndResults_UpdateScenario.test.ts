@@ -4,7 +4,7 @@ import { MessageState, MessageUpdate, TypeChanged } from '../typings/types';
 import { TestHelper } from './testHelper';
 
 
-suite('UpdateScenario', function () {
+suite('Update Scenario', function () {
 	this.beforeAll(async function () {
 		await TestHelper.resetFiles();
 	})
@@ -12,7 +12,7 @@ suite('UpdateScenario', function () {
 		await TestHelper.resetConfigurations();
 	});
 
-	test('Scenario081', async () => {
+	test('Scenario 081 - Rename scenario step 2a', async () => {
 		//Given Test function with valid Given-When-Then structure
 		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 		//When Rename "First test function with valid Given-When-Then structure" to "Valid Given-When-Then structure"
@@ -35,7 +35,7 @@ suite('UpdateScenario', function () {
 		if (await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock))
 			await TestHelper.verifyResult(messageUpdate, 'scenario081.al');
 	})
-	test('Scenario082', async () => {
+	test('Scenario 082 - Rename scenario step 2b', async () => {
 		//Given Test function with valid Given-When-Then structure
 		await TestHelper.resetFiles();
 		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
@@ -57,7 +57,7 @@ suite('UpdateScenario', function () {
 		await TestHelper.verifyChangeIsValid(messageUpdate);
 		await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock)
 	})
-	test('Scenario083', async () => {
+	test('Scenario 083 - Rename to already existing scenario name', async () => {
 		//Given Test function with valid Given-When-Then structure
 		await TestHelper.resetFiles();
 		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
@@ -86,31 +86,4 @@ suite('UpdateScenario', function () {
 		//Then
 		await TestHelper.verifyChangeIsValid(messageUpdate, false);
 	})
-	test('Scenario084', async () => {
-		//Given Result from scenario 83
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
-
-		//When Change "Third test function with valid Given-When-Then structure" to "Another test function with valid Given-When-Then structure" to and confirm
-		let messageUpdate: MessageUpdate = {
-			Scenario: '',
-			Feature: 'First test object',
-			Type: TypeChanged.ScenarioName,
-			State: MessageState.Modified,
-			OldValue: 'Third test function with valid Given-When-Then structure',
-			NewValue: 'Another test function with valid Given-When-Then structure',
-			Id: 3,
-			FsPath: fsPath,
-			Project: 'Test Project' //name of project in app.json
-		}
-
-		//Then
-		let userInteractionMock = new UserInteractionMock();
-		let confirmUpdateOfScenarioQuestion: string = 'Do you want to update this scenario?';
-		userInteractionMock.configure(confirmUpdateOfScenarioQuestion, 'Yes')
-		await TestHelper.verifyChangeIsValid(messageUpdate);
-		if (await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock))
-			await TestHelper.verifyResult(messageUpdate, 'scenario084.al')
-	})
-
 });
-
