@@ -11,7 +11,7 @@ suite('AddFeature', function () {
 		await TestHelper.resetConfigurations();
 	});
 
-	test('Scenario086', async () => {
+	test('Scenario 086 - Add Feature 2a', async () => {
 		//Given Test Directory
 		await workspace.getConfiguration('atddTestScriptor', Uri.file(TestHelper.pathOfTestProject)).update('testDirectory', 'src/codeunit')
 		//When User selects "Add Scenario" action
