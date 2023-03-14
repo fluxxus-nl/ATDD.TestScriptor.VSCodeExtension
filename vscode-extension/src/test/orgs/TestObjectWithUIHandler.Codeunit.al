@@ -1,16 +1,16 @@
-codeunit 50104 TestObjectWithUIHandlerFLX
+codeunit 50104 "TestObjectWithUIHandlerFLX"
 {
     Subtype = Test;
 
     trigger OnRun()
     begin
-        // [FEATURE] Test object with UI Hanldler
+        // [FEATURE] Test object with UI Handler
     end;
 
     [Test]
     [HandlerFunctions('AMessageHandler')]
     procedure FifthTestFunctionWithValidGivenWhenThenStructureAndUIHandler()
-    // [FEATURE] Test object with UI Hanldler
+    // [FEATURE] Test object with UI Handler
     begin
         // [SCENARIO 0005] Fifth test function with valid Given-When-Then structure and UI handler
         Initialize();
@@ -26,17 +26,17 @@ codeunit 50104 TestObjectWithUIHandlerFLX
     var
         LibraryTestInitialize: Codeunit "Library - Test Initialize";
     begin
-        LibraryTestInitialize.OnTestInitialize(Codeunit::TestObjectWithInitializeFLX);
+        LibraryTestInitialize.OnTestInitialize(Codeunit::"TestObjectWithInitializeFLX");
 
         if IsInitialized then
             exit;
 
-        LibraryTestInitialize.OnBeforeTestSuiteInitialize(Codeunit::TestObjectWithInitializeFLX);
+        LibraryTestInitialize.OnBeforeTestSuiteInitialize(Codeunit::"TestObjectWithInitializeFLX");
 
         IsInitialized := true;
         Commit();
 
-        LibraryTestInitialize.OnAfterTestSuiteInitialize(Codeunit::TestObjectWithInitializeFLX);
+        LibraryTestInitialize.OnAfterTestSuiteInitialize(Codeunit::"TestObjectWithInitializeFLX");
     end;
 
     local procedure CreateValidGiven()

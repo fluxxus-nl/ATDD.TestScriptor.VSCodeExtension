@@ -12,9 +12,9 @@ suite('Remove Scenario', function () {
 		await TestHelper.resetConfigurations();
 	});
 
-	test('Scenario058', async () => {
+	test('Scenario 058 - Remove Scenario step 3a', async () => {
 		//Given Test function with valid Given-When-Then structure
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 		//When Remove Scenario
 		let messageUpdate: MessageUpdate = {
 			Scenario: '',
@@ -36,10 +36,10 @@ suite('Remove Scenario', function () {
 		if (await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock))
 			await TestHelper.verifyResult(messageUpdate, 'scenario058.al');
 	})
-	test('Scenario059', async () => {
+	test('Scenario 059 - Remove Scenario step 2b', async () => {
 		//Given Test function with valid Given-When-Then structure
 		await TestHelper.resetFiles();
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 		//When Remove Scenario
 		let messageUpdate: MessageUpdate = {
 			Scenario: '',
@@ -58,10 +58,10 @@ suite('Remove Scenario', function () {
 		await TestHelper.verifyChangeIsValid(messageUpdate);
 		await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock)
 	})
-	test('Scenario060', async () => {
+	test('Scenario 060 - Remove Scenario step 3b', async () => {
 		//Given Test function with valid Given-When-Then structure
 		await TestHelper.resetFiles();
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 		//When Remove Scenario
 		let messageUpdate: MessageUpdate = {
 			Scenario: '',
@@ -83,10 +83,10 @@ suite('Remove Scenario', function () {
 		if (await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock))
 			await TestHelper.verifyResult(messageUpdate, 'scenario060.al');
 	})
-	test('Scenario068', async () => {
+	test('Scenario 068 - Remove Scenario with Initialize', async () => {
 		//Given Test codeunit with one test function with valid Given-When-Then structure and call to Initialize
 		await TestHelper.resetFiles();
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectWithInitializeFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectWithInitialize.Codeunit.al')
 		//When Remove Scenario
 		let messageUpdate: MessageUpdate = {
 			Scenario: '',
@@ -109,10 +109,10 @@ suite('Remove Scenario', function () {
 		if (await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock))
 			await TestHelper.verifyResult(messageUpdate, 'scenario068.al');
 	})
-	test('Scenario069', async () => {
+	test('Scenario 069 - Remove Scenario with UI Handler', async () => {
 		//Given Test codeunit with one test function with valid Given-When-Then structure and UI Handler
 		await TestHelper.resetFiles();
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectWithUIHandlerFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectWithUIHandler.Codeunit.al')
 		//When Remove Scenario
 		let messageUpdate: MessageUpdate = {
 			Scenario: '',
@@ -136,10 +136,10 @@ suite('Remove Scenario', function () {
 		if (await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock))
 			await TestHelper.verifyResult(messageUpdate, 'scenario069.al');
 	})
-	test('Scenario070', async () => {
+	test('Scenario 070 - Remove Scenario with UI Handler 2', async () => {
 		//Given Test codeunit with one test function with valid Given-When-Then structure and UI Handler
 		await TestHelper.resetFiles();
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectWithUIHandlerFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectWithUIHandler.Codeunit.al')
 		//When Remove Scenario
 		let messageUpdate: MessageUpdate = {
 			Scenario: '',
@@ -163,10 +163,10 @@ suite('Remove Scenario', function () {
 		if (await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock))
 			await TestHelper.verifyResult(messageUpdate, 'scenario070.al');
 	})
-	test('Scenario071', async () => {
+	test('Scenario 071 - Removal Mode "No confirmation, but removal"', async () => {
 		//Given Test codeunit with one test function with valid Given-When-Then structure and call to Initialize
 		await TestHelper.resetFiles();
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectWithInitializeFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectWithInitialize.Codeunit.al')
 		//Given Setting atddTestScriptor.removalMode equals "No confirmation, but removal"
 		await workspace.getConfiguration('atddTestScriptor', Uri.file(TestHelper.pathOfTestProject)).update('removalMode', 'No confirmation, but removal');
 
@@ -190,10 +190,10 @@ suite('Remove Scenario', function () {
 		if (await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock))
 			await TestHelper.verifyResult(messageUpdate, 'scenario071.al');
 	})
-	test('Scenario072', async () => {
+	test('Scenario 072 - Removal Mode "No confirmation & no removal"', async () => {
 		//Given Test codeunit with one test function with valid Given-When-Then structure and call to Initialize
 		await TestHelper.resetFiles();
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectWithInitializeFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectWithInitialize.Codeunit.al')
 		//Given Setting atddTestScriptor.removalMode equals "No confirmation, but removal"
 		await workspace.getConfiguration('atddTestScriptor', Uri.file(TestHelper.pathOfTestProject)).update('removalMode', 'No confirmation & no removal');
 

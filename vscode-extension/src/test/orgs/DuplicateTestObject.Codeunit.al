@@ -1,4 +1,4 @@
-codeunit 50101 DuplicateTestObjectFLX
+codeunit 50101 "DuplicateTestObjectFLX"
 {
     Subtype = Test;
 

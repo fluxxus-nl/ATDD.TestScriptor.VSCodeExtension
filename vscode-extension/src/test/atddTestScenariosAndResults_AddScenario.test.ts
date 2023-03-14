@@ -11,9 +11,9 @@ suite('AddScenario', function () {
 		await TestHelper.resetConfigurations();
 	});
 
-	test('Scenario055', async () => {
+	test('Scenario 055 - Add Scenario (to existing test codeunit with 1 feature)', async () => {
 		//Given Test function with valid Given-When-Then structure
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 		//When User selects "Add Scenario" action
 		let messageUpdate: MessageUpdate = {
 			Scenario: '',
@@ -30,9 +30,9 @@ suite('AddScenario', function () {
 		await TestHelper.verifyChangeIsValid(messageUpdate);
 		await TestHelper.verifyResult(messageUpdate, 'scenario055.al');
 	})
-	test('Scenario073', async () => {
+	test('Scenario 073 - Add another Scenario (to existing test codeunit with 1 feature)', async () => {
 		//Given Result from scenario 55
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 		//When User selects "Add Scenario" action
 		let messageUpdate: MessageUpdate = {
 			Scenario: '',
@@ -49,10 +49,10 @@ suite('AddScenario', function () {
 		await TestHelper.verifyChangeIsValid(messageUpdate);
 		await TestHelper.verifyResult(messageUpdate, 'scenario073.al');
 	})
-	test('Scenario078', async () => {
+	test('Scenario 078 - Add Scenario (to existing test codeunit with 1 feature) with Given-When-Then', async () => {
 		//Given Test function with valid Given-When-Then structure
 		await TestHelper.resetFiles();
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 		//Given Added scenario
 		let messageUpdate: MessageUpdate = {
 			Scenario: '',
@@ -87,9 +87,9 @@ suite('AddScenario', function () {
 		await TestHelper.verifyChangeIsValid(messageUpdate);
 		await TestHelper.verifyResult(messageUpdate, 'scenario078.al');
 	})
-	test('Scenario079', async () => {
+	test('Scenario 079 - Add another Scenario (to existing test codeunit with 1 feature) with Given-When-Then', async () => {
 		//Given Test function with valid Given-When-Then structure
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 		//Given Added scenario
 		let messageUpdate: MessageUpdate = {
 			Scenario: '',

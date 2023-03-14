@@ -31,7 +31,7 @@ export class TestHelper {
 		assert.strictEqual(userInteractionMock.validate(), true, 'configured questions should match with the questions which popped up')
 		return result.wantsToContinue;
 	}
-	public static async verifyResult(messageUpdate: MessageUpdate, resultFsPath: string) {
+	public static async verifyResult(messageUpdate: MessageUpdate, resultFsPath: string, skipObjectTypeAndIdVerification: boolean = false) {
 		//Then save changes is valid
 		let successful: boolean = await new ObjectService().saveChanges(messageUpdate);
 		assert.strictEqual(successful, true, 'saveChanges() should run successfully.');
@@ -39,6 +39,10 @@ export class TestHelper {
 		let resultFilename: string = TestHelper.getFsPathOfResults(resultFsPath);
 		let expectedResult: string = readFileSync(resultFilename, { encoding: 'utf8' });
 		let actualResult: string = readFileSync(messageUpdate.FsPath, { encoding: 'utf8' });
+		if(skipObjectTypeAndIdVerification){
+			expectedResult = expectedResult.substring(expectedResult.match(/^\w+ \d+/)![0].length);
+			actualResult = actualResult.substring(actualResult.match(/^\w+ \d+/)![0].length);
+		}
 		assert.strictEqual(actualResult, expectedResult, 'fileContent should be identical.');
 	}
 	public static async resetConfigurations(): Promise<void> {
@@ -57,7 +61,7 @@ export class TestHelper {
 		await config.update('testDirectory', 'src')
 	}
 	public static getFsPathOfTestProject(filename: string): string {
-		return join(TestHelper.pathOfTestProject, 'src', 'codeunit', filename);
+		return join(TestHelper.pathOfTestProject, 'test', filename);
 	}
 	public static getFsPathOfResults(filename: string): string {
 		return join(TestHelper.pathOfTestResults, filename)
@@ -66,7 +70,7 @@ export class TestHelper {
 
 	public static async resetFiles(): Promise<void> {
 		let orgsFolder: string = join(__dirname, '..', '..', 'src', 'test', 'orgs')
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 		let pathParts: string[] = fsPath.split(/[/\\]/)
 		pathParts.pop();
 		let actualFolder: string = pathParts.join('\\')

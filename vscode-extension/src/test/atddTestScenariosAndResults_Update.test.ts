@@ -14,10 +14,11 @@ suite('Update', function () {
 		await TestHelper.resetConfigurations();
 	});
 
-	test('Scenario016', async () => {
+	// Given
+	test('Scenario 016 - Rename "Valid Given" to "Renamed Valid Given"', async () => {
 		//Given Test function with valid Given-When-Then structure
 		await TestHelper.resetFiles();
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 
 		//When Rename "Valid Given" to "Renamed Valid Given"
 		let messageUpdate: MessageUpdate = {
@@ -38,9 +39,9 @@ suite('Update', function () {
 		await TestHelper.verifyChangeIsValid(messageUpdate);
 		await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock)
 	})
-	test('Scenario017', async () => {
+	test('Scenario 017 - Rename "Valid Given" to "Renamed Valid Given" step 2a', async () => {
 		//Given Result from scenario 16
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 
 		//When User confirms update
 		let messageUpdate: MessageUpdate = {
@@ -62,9 +63,9 @@ suite('Update', function () {
 		if (await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock))
 			await TestHelper.verifyResult(messageUpdate, 'scenario017.al')
 	})
-	test('Scenario019', async () => {
+	test('Scenario 019 - Revert Rename of Given step 2', async () => {
 		//Given Result from scenario 16
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 
 		//When User confirms update
 		let messageUpdate: MessageUpdate = {
@@ -86,10 +87,10 @@ suite('Update', function () {
 		if (await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock))
 			await TestHelper.verifyResult(messageUpdate, 'scenario019.al')
 	})
-	test('Scenario044', async () => {
+	test('Scenario 044 - Rename with other prefix', async () => {
 		//Given Test function with valid Given-When-Then structure
 		await TestHelper.resetFiles();
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 		//Given Setting atddTestScriptor.prefixGiven equals Make
 		await workspace.getConfiguration('atddTestScriptor', Uri.file(TestHelper.pathOfTestProject)).update('prefixGiven', 'Make');
 		//Given Setting atddTestScriptor.prefixGivenHistory contains Create
@@ -115,10 +116,10 @@ suite('Update', function () {
 		if (await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock))
 			await TestHelper.verifyResult(messageUpdate, 'scenario044.al')
 	})
-	test('Scenario087', async () => {
+	test('Scenario 087 - Rename with other prefix 2', async () => {
 		//Given Test function with valid Given-When-Then structure
 		await TestHelper.resetFiles();
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 		//Given Setting atddTestScriptor.prefixGiven equals Make
 		await workspace.getConfiguration('atddTestScriptor', Uri.file(TestHelper.pathOfTestProject)).update('prefixGiven', 'Make');
 		//Given Setting atddTestScriptor.prefixGivenHistory does not contain Create
@@ -144,10 +145,10 @@ suite('Update', function () {
 		if (await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock))
 			await TestHelper.verifyResult(messageUpdate, 'scenario087.al')
 	})
-	test('Scenario051', async () => {
+	test('Scenario 051 - Rename duplicate Given', async () => {
 		//Given Test function with valid Given-When-Then structure
 		await TestHelper.resetFiles();
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al');
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al');
 
 		//Given Duplicate "Valid Given"
 		let messageUpdate1: MessageUpdate = {
@@ -182,12 +183,15 @@ suite('Update', function () {
 		if (await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock))
 			await TestHelper.verifyResult(messageUpdate, 'scenario051.al')
 	})
-	test('Scenario021', async () => {
+
+	//When
+	test('Scenario 021 - Rename "Valid When" to "Renamed Valid When" step 2a', async () => {
+		//Given Result from scenario 20
 		//Given Test function with valid Given-When-Then structure
 		await TestHelper.resetFiles();
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 
-		//When Renamed "Valid Given" to "Renamed Valid Given"
+		//When Renamed "Valid When" to "Renamed Valid When"
 		let messageUpdate: MessageUpdate = {
 			Scenario: 'First test function with valid Given-When-Then structure',
 			Feature: 'First test object',
@@ -207,11 +211,11 @@ suite('Update', function () {
 		if (await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock))
 			await TestHelper.verifyResult(messageUpdate, 'scenario021.al')
 	})
-	test('Scenario023', async () => {
+	test('Scenario 023 - Revert Rename of When step 2', async () => {
 		//Given Result from scenario 21
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 
-		//When Renamed "Renamed Valid Given" to "Valid Given"
+		//When Renamed "Renamed Valid When" to "Valid When"
 		let messageUpdate: MessageUpdate = {
 			Scenario: 'First test function with valid Given-When-Then structure',
 			Feature: 'First test object',
@@ -231,19 +235,19 @@ suite('Update', function () {
 		if (await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock))
 			await TestHelper.verifyResult(messageUpdate, 'scenario023.al')
 	})
-	test('Scenario047', async () => {
+	test('Scenario 047 - Rename "Valid When" to "Renamed Valid When" step 2b', async () => {
 		//Given Test function with valid Given-When-Then structure
 		await TestHelper.resetFiles();
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 
-		//When Rename "Valid Given" to "Renamed Valid Given"
+		//When Rename "Valid When" to "Renamed Valid When"
 		let messageUpdate: MessageUpdate = {
 			Scenario: 'First test function with valid Given-When-Then structure',
 			Feature: 'First test object',
-			Type: TypeChanged.Given,
+			Type: TypeChanged.When,
 			State: MessageState.Modified,
-			OldValue: 'Valid Given',
-			NewValue: 'Renamed Valid Given',
+			OldValue: 'Valid When',
+			NewValue: 'Renamed Valid When',
 			ArrayIndex: 0,
 			FsPath: fsPath,
 			Project: 'Test Project' //name of project in app.json
@@ -256,10 +260,11 @@ suite('Update', function () {
 		await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock)
 	})
 
-	test('Scenario025', async () => {
+	// Then
+	test('Scenario 025 - Rename "Valid Then" to "Renamed Valid Then" step 2a', async () => {
 		//Given Test function with Valid Given-When-Then structure
 		await TestHelper.resetFiles();
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 
 		//When Renamed "Valid Then" to "Renamed Valid Then"
 		let messageUpdate: MessageUpdate = {
@@ -281,9 +286,9 @@ suite('Update', function () {
 		if (await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock))
 			await TestHelper.verifyResult(messageUpdate, 'scenario025.al')
 	})
-	test('Scenario027', async () => {
+	test('Scenario 027 - Revert Rename of Then step 2', async () => {
 		//Given Result from scenario 25
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 
 		//When Rename "Renamed Valid Then" to "Valid Then"
 		let messageUpdate: MessageUpdate = {
@@ -305,10 +310,10 @@ suite('Update', function () {
 		if (await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock))
 			await TestHelper.verifyResult(messageUpdate, 'scenario027.al')
 	})
-	test('Scenario048', async () => {
+	test('Scenario 048 - Rename "Valid Then" to "Renamed Valid Then" step 2b', async () => {
 		//Given Test function with valid Given-When-Then structure
 		await TestHelper.resetFiles();
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 
 		//When Rename "Valid Then" to "Renamed Valid Then"
 		let messageUpdate: MessageUpdate = {
@@ -329,10 +334,10 @@ suite('Update', function () {
 		await TestHelper.verifyChangeIsValid(messageUpdate);
 		await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock)
 	})
-	test('Scenario049', async () => {
+	test('Scenario 049 - Rename with other prefix', async () => {
 		//Given Test function with Valid Given-When-Then structure
 		await TestHelper.resetFiles();
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 		//Given Setting atddTestScriptor.prefixThen equals Check
 		await workspace.getConfiguration('atddTestScriptor', Uri.file(TestHelper.pathOfTestProject)).update('prefixThen', 'Check');
 		//Given Setting atddTestScriptor.prefixThenHistory contains Verify
@@ -358,10 +363,10 @@ suite('Update', function () {
 		if (await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock))
 			await TestHelper.verifyResult(messageUpdate, 'scenario049.al')
 	})
-	test('Scenario088', async () => {
+	test('Scenario 088 - Rename with other prefix', async () => {
 		//Given Test function with Valid Given-When-Then structure
 		await TestHelper.resetFiles();
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 		//Given Setting atddTestScriptor.prefixThen equals Check
 		await workspace.getConfiguration('atddTestScriptor', Uri.file(TestHelper.pathOfTestProject)).update('prefixThen', 'Check');
 		//Given Setting atddTestScriptor.prefixThenHistory does not contain Verify
@@ -387,10 +392,10 @@ suite('Update', function () {
 		if (await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock))
 			await TestHelper.verifyResult(messageUpdate, 'scenario088.al')
 	})
-	test('Scenario053', async () => {
+	test('Scenario 053 - Rename duplicate Then', async () => {
 		//Given Test function with valid Given-When-Then structure
 		await TestHelper.resetFiles();
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al');
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al');
 
 		//Given Duplicate "Valid Then"
 		let messageUpdate1: MessageUpdate = {

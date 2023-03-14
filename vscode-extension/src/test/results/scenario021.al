@@ -1,4 +1,4 @@
-codeunit 50100 TestObjectFLX
+codeunit 50100 "TestObjectFLX"
 {
     Subtype = Test;
 
@@ -8,7 +8,7 @@ codeunit 50100 TestObjectFLX
     end;
 
     [Test]
-    procedure FirstTestFunctionWithValidGivenWhenThenstructure()
+    procedure FirstTestFunctionWithValidGivenWhenThenStructure()
     // [FEATURE] First test object
     begin
         // [SCENARIO 0001] First test function with valid Given-When-Then structure

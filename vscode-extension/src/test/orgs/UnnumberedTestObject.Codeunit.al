@@ -1,4 +1,4 @@
-codeunit 50102 UnnumberedTestObjectFLX
+codeunit 50102 "UnnumberedTestObjectFLX"
 {
     Subtype = Test;
 

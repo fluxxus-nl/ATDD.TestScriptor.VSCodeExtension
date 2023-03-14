@@ -13,10 +13,10 @@ suite('Remove', function () {
 		await TestHelper.resetConfigurations();
 	});
 
-	test('Scenario030', async () => {
+	test('Scenario 030 - Remove Given step 3a', async () => {
 		//Given Test function with valid Given-When-Then structure
 		await TestHelper.resetFiles();
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 
 		//When Remove "Valid Given"
 		let messageUpdate: MessageUpdate = {
@@ -38,10 +38,10 @@ suite('Remove', function () {
 		if (await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock))
 			await TestHelper.verifyResult(messageUpdate, 'scenario030.al')
 	})
-	test('Scenario036', async () => {
+	test('Scenario 031 - Remove Given step 2b', async () => {
 		//Given Test function with valid Given-When-Then structure
 		await TestHelper.resetFiles();
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 
 		//When Remove "Valid Given"
 		let messageUpdate: MessageUpdate = {
@@ -61,10 +61,10 @@ suite('Remove', function () {
 		await TestHelper.verifyChangeIsValid(messageUpdate);
 		await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock);
 	})
-	test('Scenario032', async () => {
+	test('Scenario 032 - Remove Given step 3b', async () => {
 		//Given Test function with valid Given-When-Then structure
 		await TestHelper.resetFiles();
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 
 		//When Remove "Valid Given"
 		let messageUpdate: MessageUpdate = {
@@ -86,10 +86,10 @@ suite('Remove', function () {
 		if (await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock))
 			await TestHelper.verifyResult(messageUpdate, 'scenario032.al')
 	})
-	test('Scenario038', async () => {
+	test('Scenario 038 - Remove Duplicate Given', async () => {
 		//Given Test function with valid Given-When-Then structure
 		await TestHelper.resetFiles();
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al');
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al');
 
 		//Given Duplicate "Valid Given"
 		let messageUpdate1: MessageUpdate = {
@@ -123,10 +123,10 @@ suite('Remove', function () {
 		if (await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock))
 			await TestHelper.verifyResult(messageUpdate, 'scenario038.al')
 	})
-	test('Scenario040', async () => {
+	test('Scenario 040 - Remove Given with non-alphabetic or non-numerical characters 1a', async () => {
 		//Given Test function with valid Given-When-Then structure
 		await TestHelper.resetFiles();
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al');
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al');
 
 		//Given "New Given !@#$%^&*()"
 		let messageUpdate1: MessageUpdate = {
@@ -161,10 +161,10 @@ suite('Remove', function () {
 		if (await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock))
 			await TestHelper.verifyResult(messageUpdate, 'scenario040.al')
 	})
-	test('Scenario041', async () => {
+	test('Scenario 041 - Remove Given with non-alphabetic or non-numerical characters 1b', async () => {
 		//Given Test function with valid Given-When-Then structure
 		await TestHelper.resetFiles();
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al');
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al');
 
 		//Given "New Given !@#$%^&*()"
 		let messageUpdate1: MessageUpdate = {
@@ -200,10 +200,10 @@ suite('Remove', function () {
 	})
 
 
-	test('Scenario035', async () => {
+	test('Scenario 035 - Remove Then step 3a', async () => {
 		//Given Test function with valid Given-When-Then structure
 		await TestHelper.resetFiles();
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 
 		//When Remove "Valid Then"
 		let messageUpdate: MessageUpdate = {
@@ -225,10 +225,10 @@ suite('Remove', function () {
 		if (await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock))
 			await TestHelper.verifyResult(messageUpdate, 'scenario035.al')
 	})
-	test('Scenario036', async () => {
+	test('Scenario 036 - Remove Then step 2b', async () => {
 		//Given Test function with valid Given-When-Then structure
 		await TestHelper.resetFiles();
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 
 		//When Remove "Valid Then"
 		let messageUpdate: MessageUpdate = {
@@ -248,10 +248,10 @@ suite('Remove', function () {
 		await TestHelper.verifyChangeIsValid(messageUpdate);
 		await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock)
 	})
-	test('Scenario037', async () => {
+	test('Scenario 037 - Remove Then step 3b', async () => {
 		//Given Test function with valid Given-When-Then structure
 		await TestHelper.resetFiles();
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al')
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al')
 
 		//When Remove "Valid Then"
 		let messageUpdate: MessageUpdate = {
@@ -273,10 +273,10 @@ suite('Remove', function () {
 		if (await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock))
 			await TestHelper.verifyResult(messageUpdate, 'scenario037.al')
 	})
-	test('Scenario039', async () => {
+	test('Scenario 039 - Remove Duplicate Then', async () => {
 		//Given Test function with valid Given-When-Then structure
 		await TestHelper.resetFiles();
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al');
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al');
 
 		//Given Duplicate Given "Valid Then"
 		let messageUpdate1: MessageUpdate = {
@@ -310,10 +310,10 @@ suite('Remove', function () {
 		if (await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock))
 			await TestHelper.verifyResult(messageUpdate, 'scenario039.al')
 	})
-	test('Scenario042', async () => {
+	test('Scenario 042 - Remove Then with non-alphabetic or non-numerical characters 1a', async () => {
 		//Given Test function with valid Given-When-Then structure
 		await TestHelper.resetFiles();
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al');
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al');
 
 		//Given "New Then !@#$%^&*()"
 		let messageUpdate1: MessageUpdate = {
@@ -348,10 +348,10 @@ suite('Remove', function () {
 		if (await TestHelper.verifyUserQuestions(messageUpdate, userInteractionMock))
 			await TestHelper.verifyResult(messageUpdate, 'scenario042.al')
 	})
-	test('Scenario043', async () => {
+	test('Scenario 043 - Remove Then with non-alphabetic or non-numerical characters 1b', async () => {
 		//Given Test function with valid Given-When-Then structure
 		await TestHelper.resetFiles();
-		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObjectFLX.Codeunit.al');
+		let fsPath: string = TestHelper.getFsPathOfTestProject('TestObject.Codeunit.al');
 
 		//Given "New Then !@#$%^&*()"
 		let messageUpdate1: MessageUpdate = {
