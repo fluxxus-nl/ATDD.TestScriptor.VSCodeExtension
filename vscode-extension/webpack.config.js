@@ -33,10 +33,6 @@ function getEntry() {
     }
   }
 
-  // clipboardy is special
-  let clipboardyFallbacks = "node_modules/clipboardy/fallbacks";
-  fs.copySync(clipboardyFallbacks, "out/fallbacks");
-
   const list = getDependeciesFromNpm(mod);
   const moduleList = list.filter((value, index, self) => {
     return self.indexOf(value) === index && unbundledModule.indexOf(value) === -1 && !/^@types\//.test(value);
@@ -63,9 +59,7 @@ const config = {
   node: {
     __dirname: false,
     __filename: false,
-    console: true,
     global: true,
-    process: true    
   },
   externals: {
     vscode: "commonjs vscode"

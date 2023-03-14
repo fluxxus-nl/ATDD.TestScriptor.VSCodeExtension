@@ -120,14 +120,14 @@
         "workspace"
     ],
     "scripts": {
-        "vscode:prepublish": "yarn run compile && yarn run dist",
+        "vscode:prepublish": "npm run compile && npm run dist",
         "package": "vsce package",
-        "dist": "yarn webpack --mode production",
-        "dev": "yarn compile && yarn webpack --mode none",
+        "dist": "npx webpack --node-env production --mode production",
+        "dev": "npm run compile && npx webpack --mode none",
         "compile": "tsc -p ./",
         "lint": "tslint -p ./",
         "watch": "tsc -watch -p ./",
-        "pretest": "yarn run compile",
+        "pretest": "npm run compile",
         "test": "node ./out/test/runTest.js"
     },
     "devDependencies": {
@@ -137,22 +137,22 @@
         "@types/mocha": "^7.0.2",
         "@types/node": "^13.9.3",
         "@types/vscode": "~1.42.0",
+        "@vscode/test-electron": "^1.6.1",
+        "@vscode/vsce": "^2.15.0",
+        "eslint": "^8.29.0",
         "fs-plus": "^3.1.1",
         "glob": "^8.0.3",
         "mocha": "^7.2.0",
         "source-map-support": "^0.5.21",
         "ts-loader": "^6.2.1",
-        "eslint": "^8.29.0",
         "typescript": "^3.7.5",
-        "@vscode/vsce": "^2.15.0",
-        "@vscode/test-electron": "^1.6.1",
-        "webpack": "^4.42.0",
-        "webpack-cli": "^3.3.11"
+        "webpack": "^5.76.1",
+        "webpack-cli": "^5.0.1",
+        "vsce": "^2.15.0"
     },
     "dependencies": {
         "aurelia-dependency-injection": "^1.5.2",
         "aurelia-loader-nodejs": "^1.1.0",
-        "clipboardy": "^2.2.0",
         "exceljs": "^4.3.0",
         "fs-extra": "^11.1.0",
         "reflect-metadata": "^0.1.13"
