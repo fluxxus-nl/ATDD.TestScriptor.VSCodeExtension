@@ -54,7 +54,8 @@ export class TestList {
 
             console.log('saveChangesOK', message);
             if (message.Type == TypeChanged.ScenarioName && message.State == MessageState.Deleted) {
-                this.entries.splice(message.ArrayIndex, 1);                
+                this.entries.splice(message.ArrayIndex, 1);
+                this.appService.updateSidebarLinks(this.entries);               
                 this.focusRow(message.ArrayIndex - 1);
             } else {
                 let entry = this.entries[message.ArrayIndex];

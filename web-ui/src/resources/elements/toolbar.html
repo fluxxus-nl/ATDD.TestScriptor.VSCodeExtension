@@ -16,6 +16,10 @@
                     </div>
                 </li>
                 <li>
+                    <button class="btn btn-outline-info my-2 my-sm-0" click.delegate="sendCommand('Refresh')" title="Refresh">
+                        <i class="fa-solid fa-rotate"></i> <span class="d-none d-lg-inline">Refresh</span></button>
+                </li>                
+                <li>
                     <button class="btn btn-outline-success my-2 my-sm-0" click.delegate="sendCommand('NewFeature')" title="Manage Features"><i
                             class="fas fa-list"></i> <span class="d-none d-lg-inline">Features</span></button>
                 </li>
@@ -34,7 +38,7 @@
                 <li>
                     <button class="btn btn-outline-secondary my-2 my-sm-0" click.delegate="sendCommand('Export')" title="Export to Excel">
                         <i class="fas fa-file-excel"></i> <span class="d-none d-lg-inline">Export</span></button>
-                </li>
+                </li>                
                 <li>
                     <div class="btn-group-toggle my-2 my-sm-0" data-toggle="buttons" title="No Confirmation">
                         <label class="btn ${(noConfirmations ? 'btn-outline-success' : 'btn-outline-secondary')}">

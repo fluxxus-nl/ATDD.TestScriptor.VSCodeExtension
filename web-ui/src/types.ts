@@ -13,7 +13,8 @@ export enum AppEventPublisher {
     saveChanges = 'saveChanges',
     saveChangesOK = 'saveChangesOK',
     saveChangesCancelled = 'saveChangesCancelled',
-    onDeleteScenario = 'onDeleteScenario'
+    onDeleteScenario = 'onDeleteScenario',
+    refresh = 'refresh'
 }
 
 export class Message {

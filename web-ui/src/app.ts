@@ -40,6 +40,10 @@ export class App {
       this.sidebarLinks = this.appService.sidebarLinks;
     }));
 
+    this.subscriptions.push(this.eventAggregator.subscribe(AppEventPublisher.refresh, response => {
+      this.init();
+    }));
+
     this.subscriptions.push(this.eventAggregator.subscribe(AppEventPublisher.saveChanges, async (message: MessageUpdate) => {
       let result = await this.backendService.send({ Command: 'SaveChanges', Data: message });
       let userCancelledSaving: boolean = result.success === false;
@@ -57,10 +61,7 @@ export class App {
   }
 
   async attached() {
-    this.entries = await this.backendService.send({ Command: 'LoadTests' });
-
-    this.appService.updateSidebarLinks(this.entries);
-    this.appService.entries = this.entries;
+    await this.init();
 
     Split(['#test-col-1', '#test-col-2'], {
       sizes: [60, 40],
@@ -86,6 +87,14 @@ export class App {
       }
     });
   }
+
+  async init() {
+    this.entries = await this.backendService.send({ Command: 'LoadTests' });
+
+    this.appService.updateSidebarLinks(this.entries);
+    this.appService.entries = this.entries;
+  }
+
 
   detached() {
   }
