@@ -1,6 +1,8 @@
 import { BackendService } from 'services/backend-service';
 import { autoinject, bindable } from "aurelia-framework";
+import { EventAggregator } from 'aurelia-event-aggregator';
 import { CommandHandlerService } from 'backend/CommandHandlerService';
+import { AppEventPublisher } from 'types';
 
 @autoinject()
 export class Toolbar {
@@ -13,7 +15,7 @@ export class Toolbar {
 
     loaded: boolean = false;
 
-    constructor(private backendService: BackendService, private commandHandlerService: CommandHandlerService) {
+    constructor(private backendService: BackendService, private commandHandlerService: CommandHandlerService, private eventAggregator: EventAggregator) {
     }
 
     async attached() {
@@ -28,6 +30,11 @@ export class Toolbar {
     }
 
     async sendCommand(command: string, data?: any) {
+        if (command == 'Refresh') {
+            this.eventAggregator.publish(AppEventPublisher.refresh);
+            return;
+        }
+
         await this.commandHandlerService.dispatch(command, data);
     }
 
