@@ -1,3 +1,4 @@
+import { existsSync } from "fs";
 import { unlinkSync } from "fs-extra";
 import { Range, TextDocument, Uri, workspace, WorkspaceEdit } from "vscode";
 import { Application } from "../../Application";
@@ -23,6 +24,8 @@ export class ElementDeletionUtils {
             return await ElementDeletionUtils.deleteFeature(msg)
         } else {
             let edit: WorkspaceEdit = new WorkspaceEdit();
+            if (!existsSync(msg.FsPath))
+                return false;
             let document: TextDocument = await workspace.openTextDocument(msg.FsPath);
             if ([TypeChanged.Given, TypeChanged.When, TypeChanged.Then].includes(msg.Type))
                 await ElementDeletionUtils.deleteElementWithProcedureCall(edit, msg, document);
@@ -119,7 +122,7 @@ export class ElementDeletionUtils {
         let methodTreeNodes: ALFullSyntaxTreeNode[] = syntaxTree.collectNodesOfKindXInWholeDocument(FullSyntaxTreeNodeKind.getMethodDeclaration());
         methodTreeNodes = methodTreeNodes.filter(method =>
             proceduresToDelete.some(procedure =>
-                procedure.procedureName == ALFullSyntaxTreeNodeExt.findIdentifierAndGetValueOfTreeNode(document, method) &&
+                procedure !== undefined && procedure.procedureName == ALFullSyntaxTreeNodeExt.findIdentifierAndGetValueOfTreeNode(document, method) &&
                 JSON.stringify(TestMethodUtils.getParameterTypesOfMethod(method, document)) == JSON.stringify(procedure.parameterTypes)
             )
         );
