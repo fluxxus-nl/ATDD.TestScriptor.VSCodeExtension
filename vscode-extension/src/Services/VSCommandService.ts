@@ -7,7 +7,7 @@ import { commands, Uri } from 'vscode';
 
 @singleton(true)
 export class VSCommandService {
-
+    static lastFileChangeAt: Date | undefined;
     async executeCommand(command: string, ...rest: Array<any>): Promise<any> {
         Application.log.debug(`${command} executed`, rest);
         return await commands.executeCommand(command, rest);
@@ -29,13 +29,13 @@ export class VSCommandService {
             token.onCancellationRequested(() => {
                 Application.log.warn("User cancelled the AL Unit Test Discovery.");
             });
-    
+
             let middlewareService = Application.container.get(MiddlewareService);
             let start = Date.now();
             WebPanel.testList = await middlewareService.getObjects(Application.getWorkspacePaths());
             let end = Date.now();
             Application.log.info(`Workspace processed in ${end - start}ms`);
-    
+
             return true;
         });
     }
@@ -51,8 +51,20 @@ export async function localObjectWatcher(uri: Uri, type: ATDDFileChangeType) {
         }
     }
 
-    let webPanelService = Application.container.get(WebPanelCommandService);
-    await webPanelService.LoadTestsCommand();
+    let lastFileChangeAt: Date = new Date()
+    console.log('Inside file watcher')
+    if (!VSCommandService.lastFileChangeAt || lastFileChangeAt.getTime() > VSCommandService.lastFileChangeAt.getTime()) {
+        VSCommandService.lastFileChangeAt = lastFileChangeAt;
+        await new Promise(resolve => setTimeout(resolve, 800));
+        if (lastFileChangeAt === VSCommandService.lastFileChangeAt) {
+            console.log(new Date() + 'Tests updated after file change')
+            let webPanelService = Application.container.get(WebPanelCommandService);
+            await webPanelService.LoadTestsCommand();
+        }
+        else
+            console.log(new Date() + 'Tests not updated after file change1')
+    } else
+        console.log(new Date() + 'Tests not updated after file change2')
 }
 
 export enum VSDependency {
