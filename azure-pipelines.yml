@@ -117,4 +117,4 @@ steps:
       $fileName = 'latest-develop.vsix'
       $filePath = 'vscode-extension/latest-develop.vsix'
       az login --service-principal --username $clientId --password $clientSecretValue --tenant $tenantId
-      az storage blob upload --account-name $storageAccountName --container-name $containerName --name $fileName --file $filePath    
+      az storage blob upload --account-name $storageAccountName --container-name $containerName --name $fileName --file $filePath --overwrite true
