@@ -114,7 +114,7 @@ steps:
       $tenantId = '0440d7fc-a6f1-4954-b4a6-e6a439043bff'
       $storageAccountName = 'luxadofiles'
       $containerName = 'atddtestscriptorinsiderbuild'
-      $fileName = 'develop-latest.vsix'
+      $fileName = 'latest-develop.vsix'
       $filePath = 'vscode-extension/latest-develop.vsix'
       az login --service-principal --username $clientId --password $clientSecretValue --tenant $tenantId
       az storage blob upload --account-name $storageAccountName --container-name $containerName --name $fileName --file $filePath    
