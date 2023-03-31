@@ -83,6 +83,7 @@ steps:
   workingDirectory: 'vscode-extension'
   condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
 - task: AzureFileCopy@5
+  displayName: 'Upload to blob by version'
   inputs:
     SourcePath: 'vscode-extension/atdd-testscriptor-$(RunVersion).vsix'
     azureSubscription: 'TestScriptorConnection'
