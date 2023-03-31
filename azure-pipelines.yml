@@ -82,23 +82,21 @@ steps:
   displayName: 'Publish to Marketplace'
   workingDirectory: 'vscode-extension'
   condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
-- task: AzureFileCopy@5
+  
+- task: PowerShell@2
   displayName: 'Upload to blob by version'
   inputs:
-    SourcePath: 'vscode-extension/atdd-testscriptor-$(RunVersion).vsix'
-    azureSubscription: 'TestScriptorConnection'
-    Destination: 'AzureBlob'
-    storage: 'luxadofiles'
-    ContainerName: 'atddtestscriptorinsiderbuild'
-
-# - task: AzureFileCopy@4  
-#   displayName: 'Upload to blob by version'
-#   inputs:
-#     SourcePath: 'vscode-extension/atdd-testscriptor-$(RunVersion).vsix'
-#     azureSubscription: 'TestScriptorConnection'
-#     Destination: 'AzureBlob'
-#     storage: 'luxadofiles'
-#     ContainerName: 'atddtestscriptorinsiderbuild'    
+    targetType: 'inline'
+    script: |
+      $clientId = '6e782a19-df37-4484-a559-35efa4b8d230'
+      $clientSecretValue = '$(CLIENT_SECRET_VALUE_TO_SUBSCRIPTION)'
+      $tenantId = '0440d7fc-a6f1-4954-b4a6-e6a439043bff'
+      $storageAccountName = 'luxadofiles'
+      $containerName = 'atddtestscriptorinsiderbuild'
+      $fileName = 'atdd-testscriptor-$(RunVersion).vsix'
+      $filePath = 'vscode-extension/atdd-testscriptor-$(RunVersion).vsix'
+      az login --service-principal --username $clientId --password $clientSecretValue --tenant $tenantId
+      az storage blob upload --account-name $storageAccountName --container-name $containerName --name $fileName --file $filePath
 
 - task: PowerShell@2
   displayName: 'Prepare latest version'
