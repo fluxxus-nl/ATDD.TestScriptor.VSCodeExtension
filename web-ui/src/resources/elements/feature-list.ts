@@ -1,6 +1,7 @@
-import { transient } from 'aurelia-framework';
+import { EventAggregator } from 'aurelia-event-aggregator';
+import { transient, Disposable } from 'aurelia-framework';
 import { AppService } from 'services/app-service';
-import { AppEditMode, Message, MessageState, TypeChanged } from 'types';
+import { AppEditMode, AppEventPublisher, Message, MessageState, MessageUpdate, TypeChanged } from 'types';
 import dragula from 'dragula';
 
 @transient()
@@ -9,16 +10,31 @@ export class FeatureList {
     currentFeature: any;
     entries = [];
     dragApi: any;
+    subscriptions: Array<Disposable> = [];
 
-    constructor(private appService: AppService) {
+    constructor(private appService: AppService, private eventAggregator: EventAggregator) {
     }
 
     bind() {
         this.entries = this.appService.sidebarLinks;
+
+        this.subscriptions.push(this.eventAggregator.subscribe(AppEventPublisher.saveChangesCancelled, async (message: MessageUpdate) => {
+            if (message.Type != TypeChanged.Feature)
+                return;
+
+            let i = this.entries.findIndex(f => f.name == message.Project);
+            if (i != -1) {
+                let parent = this.entries[i];
+                parent.children.splice(message.ArrayIndex, 1, '');
+            }            
+        }));
     }
 
     attached() {
-        //this.setupDragula();
+    }
+
+    unbind() {
+        this.subscriptions.forEach(s => s.dispose());
     }
 
     setupDragula() {
