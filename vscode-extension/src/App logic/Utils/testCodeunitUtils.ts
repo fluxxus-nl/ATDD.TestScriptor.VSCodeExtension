@@ -294,7 +294,7 @@ export class TestCodeunitUtils {
         ];
         if (Config.getAddInitializeFunction(uri))
             procedure.splice(4, 0, '        Initialize();');
-        if (featureNecessary) {
+        if (featureNecessary && feature) {
             procedure.splice(2, 0, '    ' + ElementUtils.getElementComment(TypeChanged.Feature, feature));
         }
 
