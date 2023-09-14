@@ -78,6 +78,10 @@ export class EntryFormGroup {
         this.appService.sendChangeNotification(this.getTypeChanged(), MessageState.Deleted, null, currValue, message);
     }
 
+    focus(index: number) {
+        return index == this.entries.length - 1;
+    }
+
     getTypeChanged() {
         let changedType: TypeChanged;
         switch (this.type) {

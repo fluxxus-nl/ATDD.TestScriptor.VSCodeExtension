@@ -3,7 +3,7 @@
         <div class="card-body">
             <h5 class="card-title">${title}</h5>
             <div class="input-group mb-2" repeat.for="entry of entries">
-                <input type="text" class="form-control" placeholder="${title}..." aria-label="${title}..."
+                <input type="text" class="form-control" placeholder="${title}..." aria-label="${title}..." focus.bind="focus($index)"
                     aria-describedby="button-addon2" value.bind="entry" change.delegate="update($index, entry)" maxlength="${maxInputLength}">
                 <div hidden.bind="singleEntry" class="input-group-append">
                     <button class="btn btn-outline-danger" type="button" click.delegate="remove($index, $event)"><i
