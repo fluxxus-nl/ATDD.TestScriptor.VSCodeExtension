@@ -40,11 +40,11 @@
                         <i class="fas fa-file-excel"></i> <span class="d-none d-lg-inline">Export</span></button>
                 </li>                
                 <li>
-                    <div class="btn-group-toggle my-2 my-sm-0" data-toggle="buttons" title="No Confirmation">
+                    <div class="btn-group-toggle my-2 my-sm-0" data-toggle="buttons" title="Disable Confirmations">
                         <label class="btn ${(noConfirmations ? 'btn-outline-success' : 'btn-outline-secondary')}">
                             <span show.bind="noConfirmations"><i class="fas fa-check-square"></i></span>
                             <span show.bind="!noConfirmations"><i class="far fa-square"></i></span>
-                            <span class="d-none d-lg-inline">No Confirmation</span>
+                            <span class="d-none d-lg-inline">Disable Confirmations</span>
                             <input type="checkbox" value.bind="noConfirmations" checked.bind="noConfirmations">
                         </label>
                     </div>
